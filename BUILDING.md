@@ -38,6 +38,27 @@ to Download the binary for Microsoft Visual Studio with the specific package you
 (you can easily skip this process by doing to the `setup` folder located in the root directory of this repository,
  and running `msvc-windows.bat`)
 
+After running `setup\windows.bat`, **also run `setup\windows-msvc-fix.ps1`** (Windows MSVC only):
+
+```
+powershell -ExecutionPolicy Bypass -File setup\windows-msvc-fix.ps1
+```
+
+This ensures the active `hxcpp` haxelib is the git checkout (the FunkinCrew fork)
+that `setup\windows.bat` installs, rather than a release build such as `4.3.2`.
+The git checkout is required on Windows MSVC because:
+
+* It supports hxcpp's `<assembler>` element, so hxluau's libffi `.asm` files
+  get assembled with `ml64.exe`. `hxcpp 4.3.2` ignores them, causing
+  `LNK1181: cannot open input file 'win64.obj'`.
+* It honors the `HXCPP_CPP17` haxedef that hxluau's `haxelib.json` emits, so
+  Luau sources compile with `/std:c++17`. `hxcpp 4.3.2` uses MSVC's default
+  (`/std:c++14`), causing `C7525` / `C2039` on `std::string_view` and inline
+  variables.
+
+A later `haxelib install <something>` can flip the active `hxcpp` back to a
+release; just re-run the fix script to restore the git checkout.
+
 ---
 ### Linux Distributions
 
