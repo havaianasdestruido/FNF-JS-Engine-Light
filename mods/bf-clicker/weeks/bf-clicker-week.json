@@ -1,0 +1,22 @@
+{
+	"songs": [
+		["bf-clicker", "bf", [146, 113, 253]]
+	],
+	"weekCharacters": [
+		"",
+		"bf",
+		""
+	],
+	"weekBackground": "stage",
+	"weekBefore": "",
+	"storyName": "BF Clicker",
+	"weekName": "BF Clicker",
+	"freeplayColor": [
+		146,
+		113,
+		253
+	],
+	"startUnlocked": true,
+	"hideStoryMode": true,
+	"hideFreeplay": false
+}
