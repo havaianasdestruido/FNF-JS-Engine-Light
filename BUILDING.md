@@ -94,6 +94,30 @@ where `<platform>` gets replaced with `windows`, `linux`, or `mac`
 
 ---
 
+### Script modding levels
+
+By default the game ships with both **Lua** and **Python** script modding enabled on desktop.
+You can force a specific level with `-DMODDING_LEVEL`:
+
+| Value | Script support                              |
+|-------|---------------------------------------------|
+| `0`   | No Lua or Python scripts                    |
+| `1`   | Lua only                                    |
+| `2`   | Lua + Python (default on desktop)           |
+
+For example, a Lua-only build:
+
+`lime test windows -DMODDING_LEVEL=1`
+
+Python scripts work exactly like Lua scripts: drop a `.py` file with `def onCreate():`,
+`def onUpdate(elapsed):`, etc. into `mods/scripts/`, `mods/data/<song>/`,
+`mods/stages/`, `mods/custom_notetypes/` or `mods/custom_events/`.
+See `docs/TemplateScript.py` for the full list of callbacks. The interpreter
+is [Hython](https://github.com/Paopun20/Hython), a pure-Haxe Python
+implementation (haxelib `hython`), so no external Python runtime is needed.
+
+---
+
 ### "It's taking a while, should I be worried?"
 
 No, that is normal, when you compile flixel games for the first time, it usually takes around 5 to 10 minutes,
