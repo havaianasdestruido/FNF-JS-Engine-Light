@@ -3033,13 +3033,13 @@ class ChartingState extends MusicBeatState
       if (#if MOBILE_CONTROLS_ALLOWED mobileButtonJustPressed('Z') || #end (FlxG.keys.justPressed.Z && FlxG.keys.pressed.CONTROL))
         undo();
 
-      if (#if MOBILE_CONTROLS_ALLOWED mobileButtonJustPressed('V') || #end FlxG.keys.justPressed.Z && curZoom > 0 && !FlxG.keys.pressed.CONTROL)
+      if((#if MOBILE_CONTROLS_ALLOWED mobileButtonJustPressed('V') || #end FlxG.keys.justPressed.Z) && curZoom > 0 && !FlxG.keys.pressed.CONTROL)
       {
         --curZoom;
         updateZoom();
         updateGrid();
       }
-      if(#if MOBILE_CONTROLS_ALLOWED mobileButtonJustPressed('D') || #end FlxG.keys.justPressed.X && curZoom < zoomList.length-1)
+      if((#if MOBILE_CONTROLS_ALLOWED mobileButtonJustPressed('D') || #end FlxG.keys.justPressed.X) && curZoom < zoomList.length-1)
       {
         curZoom++;
         updateZoom();
