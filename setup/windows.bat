@@ -10,12 +10,13 @@ haxelib git flixel https://github.com/JS-Engine-things/flixel-JS-Engine --quiet
 haxelib install flixel-addons 3.2.3 --quiet
 haxelib install flixel-tools 1.5.1 --quiet
 haxelib install flixel-ui 2.6.0 --quiet
-haxelib install hython 0.0.352-beta --quiet
 haxelib git hscript https://github.com/CodenameCrew/hscript-improved --quiet
 haxelib install hxcpp-debug-server --quiet
+haxelib install hxgamemode --quiet
 haxelib git tjson https://github.com/moxie-coder/tjson --quiet
 haxelib git hxcpp https://github.com/FunkinCrew/hxcpp --quiet
 haxelib git flxanimate https://github.com/Dot-Stuff/flxanimate 768740a56b26aa0c072720e0d1236b94afe68e3e --quiet
+haxelib install hython 0.0.352-beta --quiet
 haxelib git hxluajit https://github.com/ShadowEngineTeam/hxluajit --quiet
 haxelib git funkin.vis https://github.com/JS-Engine-things/funkVis-FrequencyFixed --quiet
 haxelib git grig.audio https://github.com/JS-Engine-things/grig.audio --quiet
