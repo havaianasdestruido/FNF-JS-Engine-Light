@@ -600,7 +600,7 @@ class Project extends HXProject
 			addHaxelib('hxdiscord_rpc'); // Discord API
 
 		if (isDesktop() && LUA_ALLOWED.isEnabled(this))
-			addHaxelib('hxluau'); // Lua API
+			addHaxelib('hxluajit'); // Lua API
 
 		if (PYTHON_ALLOWED.isEnabled(this))
 			addHaxelib('hython'); // Python API (pure Haxe interpreter)
