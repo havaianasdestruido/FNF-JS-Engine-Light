@@ -1,342 +1,148 @@
-# This is a basic workflow to help you get started with Actions
-
 name: Build
 
-
-# Controls when the action will run.
 on:
-  # Triggers the workflow on push or pull request events but only for the master branch
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
-
-# For release builds
+    branches: [main]
   workflow_call:
     inputs:
       buildFlags:
         required: false
         type: string
-
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+# Keep the haxelib installation inside the workspace so it can be restored on
+# subsequent runs instead of downloading and compiling dependencies every time.
+env:
+  HAXELIB_PATH: ${{ github.workspace }}/.haxelib
+
 jobs:
-  # This workflow contains a single job called "build"
-  buildLinux:
-    runs-on: ubuntu-latest
+  build:
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Linux
+            os: ubuntu-latest
+            target: linux
+            cache_name: linux
+            artifact: linuxBuild
+            artifact_path: export/release/linux/bin
+            setup: unix
+          - name: Windows
+            os: windows-latest
+            target: windows
+            cache_name: windows
+            artifact: windowsBuild
+            artifact_path: export/release/windows/bin
+            setup: windows
+          - name: macOS (Intel)
+            os: macos-15
+            target: mac
+            target_args: -64 -D HXCPP_M64
+            cache_name: macos-intel
+            artifact: macBuild-intel
+            artifact_path: export/release/macos/bin
+            setup: unix
+          - name: macOS (ARM)
+            os: macos-15
+            target: mac
+            target_args: -arm64 -D HXCPP_ARM64
+            cache_name: macos-arm
+            artifact: macBuild-arm
+            artifact_path: export/release/macos/bin
+            setup: unix
 
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@main
-
+      - uses: actions/checkout@v4
       - uses: krdlab/setup-haxe@master
         with:
           haxe-version: 4.3.7
-      - name: Restore Previous Cache
-        id: cache-build-linux-restore
-        uses: actions/cache/restore@main
+
+      # The old cache targeted build/release, but Lime writes to export/release.
+      # A dependency-only key makes the expensive haxelib and hxcpp setup reusable.
+      - name: Restore haxelib and hxcpp tools
+        id: haxelib-cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.HAXELIB_PATH }}
+          key: haxelib-${{ runner.os }}-haxe-4.3.7-${{ hashFiles('hmm.json', 'setup/unix.sh', 'setup/windows.bat') }}
+
+      - name: Install Linux packages
+        if: matrix.setup == 'unix' && runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y libgtk-3-dev libgl-dev libx11-dev libxi-dev libxpm-dev libxrandr-dev libncurses-dev libvlc-dev libvlccore-dev
+
+      - name: Install haxelib dependencies (Unix)
+        if: matrix.setup == 'unix' && steps.haxelib-cache.outputs.cache-hit != 'true'
+        shell: bash
+        run: |
+          haxelib setup "$HAXELIB_PATH"
+          chmod +x ./setup/unix.sh
+          SKIP_SYSTEM_DEPENDENCIES=1 ./setup/unix.sh
+
+      - name: Install haxelib dependencies (Windows)
+        if: matrix.setup == 'windows' && steps.haxelib-cache.outputs.cache-hit != 'true'
+        shell: cmd
+        run: |
+          haxelib setup "%HAXELIB_PATH%"
+          call setup\windows.bat
+
+      - name: Compile hxcpp tools (Unix)
+        if: matrix.setup == 'unix' && steps.haxelib-cache.outputs.cache-hit != 'true'
+        shell: bash
+        run: |
+          cd "$HAXELIB_PATH/hxcpp/git/tools/run" && haxe compile.hxml
+          cd "$HAXELIB_PATH/hxcpp/git/tools/hxcpp" && haxe compile.hxml
+
+      - name: Compile hxcpp tools (Windows)
+        if: matrix.setup == 'windows' && steps.haxelib-cache.outputs.cache-hit != 'true'
+        shell: cmd
+        run: |
+          cd /d "%HAXELIB_PATH%\hxcpp\git\tools\run" && haxe compile.hxml
+          cd /d "%HAXELIB_PATH%\hxcpp\git\tools\hxcpp" && haxe compile.hxml
+
+      # Restore the most recent generated C++ files even when the source hash
+      # changes. Lime/hxcpp then recompiles only the files affected by the change.
+      - name: Restore generated C++ cache
+        id: build-cache
+        uses: actions/cache/restore@v4
         with:
           path: |
-            .haxelib/
-            build/release/linux/haxe/
-            build/release/linux/obj/
-          key: cache-linux-build
-      # Runs a set of commands using the runners shell
-      - name: Install Haxelib
-        run: |
-          sudo apt-get install libvlc-dev
-          sudo apt-get install libvlccore-dev
-          haxelib setup ~/haxelib
-          haxelib install hxcpp > /dev/null --quiet
-          chmod +x ./setup/unix.sh
-          sh ./setup/unix.sh
-      - name: Compile hxcpp
-        run: |
-          cd ~/haxelib/hxcpp/git/tools/run
-          haxe compile.hxml
-          cd ..
-          cd ./hxcpp
-          haxe compile.hxml
-          cd ../..
-      - name: Compile
+            export/release/${{ matrix.target }}/haxe
+            export/release/${{ matrix.target }}/obj
+          key: hxcpp-${{ runner.os }}-${{ matrix.cache_name }}-${{ inputs.buildFlags || 'commit' }}-${{ hashFiles('project.hxp', 'source/**') }}
+          restore-keys: |
+            hxcpp-${{ runner.os }}-${{ matrix.cache_name }}-${{ inputs.buildFlags || 'commit' }}-
+
+      - name: Compile (Unix)
+        if: matrix.setup == 'unix'
+        shell: bash
         run: |
           rm -f assets/preload/gameRenders/renderlol.bat
-          haxelib run lime build linux -D ${{ inputs.buildFlags || 'commit' }}
-      - name: Clear Previous Cache
-        uses: actions/github-script@main
-        with:
-          script: |
-            try {
-            	const caches = await github.rest.actions.getActionsCacheList({
-            		owner: context.repo.owner,
-            		repo: context.repo.repo,
-            	})
-            	if (typeof caches.data.actions_caches != null && caches.data.actions_caches.length > 0) {
-            		for (const cache of caches.data.actions_caches) {
-            			if (cache.key == "cache-linux-build") {
-            				console.log('Clearing ' + cache.key + '...')
-            				await github.rest.actions.deleteActionsCacheById({
-            					owner: context.repo.owner,
-            					repo: context.repo.repo,
-            					cache_id: cache.id,
-            				})
-            				console.log("Previous Cache Cleared!")
-            			}
-            		}
-            	}
-            } catch (error) {
-            	console.log(error.message);
-            }
+          haxelib run lime build ${{ matrix.target }} ${{ matrix.target_args }} -D "${{ inputs.buildFlags || 'commit' }}" -D HXCPP_COMPILE_THREADS="$(getconf _NPROCESSORS_ONLN)"
 
-      - name: Save Current Cache
-        id: cache-build-linux-save
-        uses: actions/cache/save@main
-        with:
-          path: |
-            .haxelib/
-            build/release/linux/haxe/
-            build/release/linux/obj/
-          key: cache-linux-build
-      - name: Publish Artifact
-        uses: actions/upload-artifact@main
-        with:
-          name: linuxBuild
-          path: build/release/linux/bin
-
-  buildWindows:
-    runs-on: windows-latest
-
-    steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@main
-
-      - uses: krdlab/setup-haxe@master
-        with:
-          haxe-version: 4.3.7
-      - name: Restore Previous Cache
-        id: cache-build-windows-restore
-        uses: actions/cache/restore@main
-        with:
-          path: |
-            .haxelib/
-            build/release/windows/haxe/
-            build/release/windows/obj/
-          key: cache-windows-build
-      # Runs a set of commands using the runners shell
-      - name: Install Haxelib
-        run: |
-          haxelib setup C:/haxelib
-          haxelib install hxcpp > /dev/null --quiet
-          .\"setup/windows.bat"
-        shell: cmd
-      - name: Compile hxcpp
-        run: |
-          cd C:/haxelib/hxcpp/git/tools/run
-          haxe compile.hxml
-          cd ..
-          cd ./hxcpp
-          haxe compile.hxml
-          cd ../..
-      - name: Compile
+      - name: Compile (Windows)
+        if: matrix.setup == 'windows'
+        shell: pwsh
         run: |
           Remove-Item -Force assets/preload/gameRenders/renderlinux.sh
-          haxelib run lime build windows -D ${{ inputs.buildFlags || 'commit' }}
-      - name: Clear Previous Cache
-        uses: actions/github-script@main
-        with:
-          script: |
-            try {
-            	const caches = await github.rest.actions.getActionsCacheList({
-            		owner: context.repo.owner,
-            		repo: context.repo.repo,
-            	})
-            	if (typeof caches.data.actions_caches != null && caches.data.actions_caches.length > 0) {
-            		for (const cache of caches.data.actions_caches) {
-            			if (cache.key == "cache-windows-build") {
-            				console.log('Clearing ' + cache.key + '...')
-            				await github.rest.actions.deleteActionsCacheById({
-            					owner: context.repo.owner,
-            					repo: context.repo.repo,
-            					cache_id: cache.id,
-            				})
-            				console.log("Previous Cache Cleared!")
-            			}
-            		}
-            	}
-            } catch (error) {
-            	console.log(error.message);
-            }
+          haxelib run lime build windows -D "${{ inputs.buildFlags || 'commit' }}" -D "HXCPP_COMPILE_THREADS=$env:NUMBER_OF_PROCESSORS"
 
-      - name: Save Current Cache
-        id: cache-build-windows-save
-        uses: actions/cache/save@main
+      - name: Save generated C++ cache
+        if: always() && steps.build-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
         with:
           path: |
-            .haxelib/
-            build/release/windows/haxe/
-            build/release/windows/obj/
-          key: cache-windows-build
-      - name: Publish Artifact
-        uses: actions/upload-artifact@main
-        with:
-          name: windowsBuild
-          path: build/release/windows/bin
-  buildMacIntel:
-    runs-on: macos-15
+            export/release/${{ matrix.target }}/haxe
+            export/release/${{ matrix.target }}/obj
+          key: ${{ steps.build-cache.outputs.cache-primary-key }}
 
-    steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@main
-
-      - uses: krdlab/setup-haxe@master
+      - name: Publish artifact
+        uses: actions/upload-artifact@v4
         with:
-          haxe-version: 4.3.7
-      - name: Restore Previous Cache
-        id: cache-build-macosintel-restore
-        uses: actions/cache/restore@main
-        with:
-          path: |
-            .haxelib/
-            build/release/macos/haxe/
-            build/release/macos/obj/
-          key: cache-macos-build
-      # Runs a set of commands using the runners shell
-      - name: Install Haxelib
-        run: |
-          haxelib setup ~/haxelib
-          haxelib install hxcpp > /dev/null --quiet
-          chmod +x ./setup/unix.sh
-          sh ./setup/unix.sh
-      - name: Compile hxcpp
-        run: |
-          cd ~/haxelib/hxcpp/git/tools/run
-          haxe compile.hxml
-          cd ..
-          cd ./hxcpp
-          haxe compile.hxml
-          cd ../..
-      - name: Compile
-        run: |
-          rm -f assets/preload/gameRenders/renderlol.bat
-          haxelib run lime build mac -64 -D ${{ inputs.buildFlags || 'commit' }} -D HXCPP_M64
-      - name: Clear Previous Cache
-        uses: actions/github-script@main
-        with:
-          script: |
-            try {
-            	const caches = await github.rest.actions.getActionsCacheList({
-            		owner: context.repo.owner,
-            		repo: context.repo.repo,
-            	})
-            	if (typeof caches.data.actions_caches != null && caches.data.actions_caches.length > 0) {
-            		for (const cache of caches.data.actions_caches) {
-            			if (cache.key == "cache-macosintel-build") {
-            				console.log('Clearing ' + cache.key + '...')
-            				await github.rest.actions.deleteActionsCacheById({
-            					owner: context.repo.owner,
-            					repo: context.repo.repo,
-            					cache_id: cache.id,
-            				})
-            				console.log("Previous Cache Cleared!")
-            			}
-            		}
-            	}
-            } catch (error) {
-            	console.log(error.message);
-            }
-
-      - name: Save Current Cache
-        id: cache-build-macosintel-save
-        uses: actions/cache/save@main
-        with:
-          path: |
-            .haxelib/
-            build/release/macos/haxe/
-            build/release/macos/obj/
-          key: cache-macosintel-build
-      - name: Publish Artifact
-        uses: actions/upload-artifact@main
-        with:
-          name: macBuild-intel
-          path: build/release/macos/bin
-
-  buildMacArm:
-    runs-on: macos-15
-
-    steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@main
-
-      - uses: krdlab/setup-haxe@master
-        with:
-          haxe-version: 4.3.7
-      - name: Restore Previous Cache
-        id: cache-build-macosarm-restore
-        uses: actions/cache/restore@main
-        with:
-          path: |
-            .haxelib/
-            build/release/macos/haxe/
-            build/release/macos/obj/
-          key: cache-macos-build
-      # Runs a set of commands using the runners shell
-      - name: Install Haxelib
-        run: |
-          haxelib setup ~/haxelib
-          haxelib install hxcpp > /dev/null --quiet
-          chmod +x ./setup/unix.sh
-          sh ./setup/unix.sh
-      - name: Compile hxcpp
-        run: |
-          cd ~/haxelib/hxcpp/git/tools/run
-          haxe compile.hxml
-          cd ..
-          cd ./hxcpp
-          haxe compile.hxml
-          cd ../..
-      - name: Compile
-        run: |
-          rm -f assets/preload/gameRenders/renderlol.bat
-          haxelib run lime build mac -arm64 -D ${{ inputs.buildFlags || 'commit' }} -D HXCPP_ARM64
-      - name: Clear Previous Cache
-        uses: actions/github-script@main
-        with:
-          script: |
-            try {
-            	const caches = await github.rest.actions.getActionsCacheList({
-            		owner: context.repo.owner,
-            		repo: context.repo.repo,
-            	})
-            	if (typeof caches.data.actions_caches != null && caches.data.actions_caches.length > 0) {
-            		for (const cache of caches.data.actions_caches) {
-            			if (cache.key == "cache-macosarm-build") {
-            				console.log('Clearing ' + cache.key + '...')
-            				await github.rest.actions.deleteActionsCacheById({
-            					owner: context.repo.owner,
-            					repo: context.repo.repo,
-            					cache_id: cache.id,
-            				})
-            				console.log("Previous Cache Cleared!")
-            			}
-            		}
-            	}
-            } catch (error) {
-            	console.log(error.message);
-            }
-
-      - name: Save Current Cache
-        id: cache-build-macosarm-save
-        uses: actions/cache/save@main
-        with:
-          path: |
-            .haxelib/
-            build/release/macos/haxe/
-            build/release/macos/obj/
-          key: cache-macosarm-build
-      - name: Publish Artifact
-        uses: actions/upload-artifact@main
-        with:
-          name: macBuild-arm
-          path: build/release/macos/bin
+          name: ${{ matrix.artifact }}
+          path: ${{ matrix.artifact_path }}
+          if-no-files-found: error

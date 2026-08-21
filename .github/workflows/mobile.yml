@@ -10,6 +10,9 @@ on:
         required: false
         type: string
 
+env:
+  HAXELIB_PATH: ${{ github.workspace }}/.haxelib
+
 jobs:
   Mobile:
     runs-on: ${{matrix.os}}
@@ -39,10 +42,31 @@ jobs:
           unzip -qq android-ndk.zip
           echo "NDK r27c successfully downloaded and extracted!"
 
+      - name: Restore haxelib dependencies
+        id: haxelib-cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.HAXELIB_PATH }}
+          key: mobile-haxelib-${{ runner.os }}-haxe-4.3.6-${{ hashFiles('hmm.json') }}
+
       - name: Install Libraries
+        if: steps.haxelib-cache.outputs.cache-hit != 'true'
         run: |
+          haxelib setup "$HAXELIB_PATH"
           haxelib install hmm --quiet
           haxelib run hmm install --quiet
+
+      - name: Restore generated build cache
+        id: build-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            export/release/${{ startsWith(matrix.os, 'ubuntu') && 'android' || 'ios' }}/haxe
+            export/release/${{ startsWith(matrix.os, 'ubuntu') && 'android' || 'ios' }}/obj
+            ~/.gradle/caches
+          key: mobile-build-${{ runner.os }}-${{ inputs.buildFlags || 'commit' }}-${{ hashFiles('project.hxp', 'source/**') }}
+          restore-keys: |
+            mobile-build-${{ runner.os }}-${{ inputs.buildFlags || 'commit' }}-
 
       - name: Configure Android
         if: startsWith(matrix.os, 'ubuntu')
@@ -54,11 +78,11 @@ jobs:
 
       - name: Compile (Android)
         if: startsWith(matrix.os, 'ubuntu')
-        run: haxelib run lime build android -D ${{ inputs.buildFlags }}
+        run: haxelib run lime build android -D ${{ inputs.buildFlags || 'commit' }} -D HXCPP_COMPILE_THREADS=2
 
       - name: Compile (iOS)
         if: startsWith(matrix.os, 'macos')
-        run: haxelib run lime build ios -nosign -D ${{ inputs.buildFlags }}
+        run: haxelib run lime build ios -nosign -D ${{ inputs.buildFlags || 'commit' }} -D HXCPP_COMPILE_THREADS=2
 
       - name: Make Ipa
         if: startsWith(matrix.os, 'macos')
@@ -71,9 +95,19 @@ jobs:
           mv JSEngine.app Payload
           zip -r JSEngine.ipa Payload
 
+      - name: Save generated build cache
+        if: always() && steps.build-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            export/release/${{ startsWith(matrix.os, 'ubuntu') && 'android' || 'ios' }}/haxe
+            export/release/${{ startsWith(matrix.os, 'ubuntu') && 'android' || 'ios' }}/obj
+            ~/.gradle/caches
+          key: ${{ steps.build-cache.outputs.cache-primary-key }}
+
       - name: Upload Artifact (Android)
         if: startsWith(matrix.os, 'ubuntu')
-        uses: actions/upload-artifact@main
+        uses: actions/upload-artifact@v4
         with:
           name: androidBuild
           path: export/release/android/bin/app/build/outputs/apk/release/*.apk
@@ -81,7 +115,7 @@ jobs:
 
       - name: Upload Artifact (iOS)
         if: startsWith(matrix.os, 'macos')
-        uses: actions/upload-artifact@main
+        uses: actions/upload-artifact@v4
         with:
           name: iOSBuild
           path: export/release/ios/build/Release-iphoneos/*.ipa
