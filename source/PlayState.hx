@@ -3424,7 +3424,6 @@ class PlayState extends MusicBeatState
 				else if (ClientPrefs.charsAndBG) playerDance();
 
 				amountOfRenderedNotes = 0;
-				//BOTTLENECK: high `[notes, sustainNotes]` allocates a fresh Array every frame and group.sort(FlxSort.byY) runs O(n log n) EVERY frame even when 0-1 notes exist | FIX: hoist array to a field; skip sort when group.length < 2 and only re-sort when notes moved
 				notes.forEach(updateNote);
 				if (notes.length > 1)
 					notes.sort(FlxSort.byY, ClientPrefs.downScroll ? FlxSort.ASCENDING : FlxSort.DESCENDING);
@@ -4901,7 +4900,6 @@ class PlayState extends MusicBeatState
 	private function keyShit():Void
 	{
 		// HOLDING
-		//BOTTLENECK: high keyShit() runs parseKeys() 3x EVERY frame — each does 8 Reflect.getProperty(controls) calls (24/frame) and allocates a new Bool array; strumHeldAmount filter() allocates another array + closure | FIX: preallocate 3 persistent Bool arrays, read controls.keyA... directly, track held-key count incrementally
 		parseKeys(holdArray);
 		parseKeys(pressArray, '_P');
 		parseKeys(releaseArray, '_R');

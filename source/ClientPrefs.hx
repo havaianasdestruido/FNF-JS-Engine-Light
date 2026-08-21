@@ -75,7 +75,6 @@ class ClientPrefs { //default settings if it can't find a save file containing y
 	public static var tipTexts:Bool = true;
 	public static var discordRPC:Bool = true;
 	public static var peOGCrash:Bool = false;
-	public static var fpsBorder:Bool = false;
 
 	//Graphics
 	public static var lowQuality:Bool = false;
@@ -89,7 +88,6 @@ class ClientPrefs { //default settings if it can't find a save file containing y
 
 	//Optimization
 	public static var charsAndBG:Bool = true;
-	public static var rainFX:Bool = true;
 	public static var enableGC:Bool = true;
 	public static var opponentLightStrum:Bool = true;
 	public static var botLightStrum:Bool = true;

@@ -391,7 +391,6 @@ class AlphaCharacter extends FlxSprite
 			if(curLetter != null && curLetter.anim != null) alphaAnim = curLetter.anim;
 
 			var anim:String = alphaAnim + suffix;
-			//BOTTLENECK: high addByPrefix + play per letter on every setText/rebuild: full frame-list scan plus a new FlxAnimation alloc per char, never cached | FIX: pre-build letter animation templates once and copy/play them; skip addByPrefix when sprite already set up
 			if (animation.getByName(anim) == null) animation.addByPrefix(anim, anim, 24);
 			animation.play(anim, true);
 			if(animation.curAnim == null)
@@ -430,7 +429,6 @@ class AlphaCharacter extends FlxSprite
 
 	private function set_image(name:String)
 	{
-		//BOTTLENECK: high every new AlphaCharacter (one per letter, per setText) re-parses the alphabet atlas XML via Paths.getSparrowAtlas -> FlxAtlasFrames.fromSparrow (Xml.parse + ~160 FlxFrame objects per letter) | FIX: static-cache the 'alphabet' FlxAtlasFrames once (like noteSkinFramesMap) and share frames across all letters
 		if(frames == null) //first setup
 		{
 			image = name;

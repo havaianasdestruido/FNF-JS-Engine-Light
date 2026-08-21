@@ -45,8 +45,8 @@ class ChartingState extends MusicBeatState
       'Hurt Note',
       'GF Sing',
       'No Animation',
-			'Cross Fade',
-			'GF Cross Fade'
+	  'Cross Fade',
+	  'GF Cross Fade'
     ];
 
   private var noteTypeIntMap:Map<Int, String> = new Map<Int, String>();
@@ -2367,7 +2367,6 @@ class ChartingState extends MusicBeatState
       opponentVocals.destroy();
     }
 
-    //BOTTLENECK fix: invalidate cached waveform bytes whenever audio is (re)loaded
     waveformCacheSound = null;
     waveformCacheBytes = null;
     waveformCacheBuffer = null;
@@ -3355,12 +3354,10 @@ class ChartingState extends MusicBeatState
 
   function reloadGridLayer()
   {
-    //BOTTLENECK: high grid recreated every zoom/section change via FlxGridOverlay.create — height reaches ~122,880px at max zoom, duplicated for nextGridBG (line 3364) | FIX: pre-render a tiled grid tile and stretch; cap resolution
     var curBeats:Float = getSectionBeats();
     var hasNextSec:Bool = sectionStartTime(1) <= FlxG.sound.music.length;
     var nextBeats:Float = hasNextSec ? getSectionBeats(curSec + 1) : 0;
 
-    //BOTTLENECK fix: skip the expensive rebuild when nothing the grid depends on actually changed (zoom, beats, grid visibility, vortex, next-section presence)
     if (gridBG != null && gridLayer != null && curZoom == lastGridZoom && curBeats == lastGridBeats && nextBeats == lastGridBeatsNext
       && showTheGrid == lastGridShow && vortex == lastGridVortex && hasNextSec == lastGridHasNext && Std.int(gridBG.height) == lastGridBGHeight)
     {
@@ -3391,7 +3388,6 @@ class ChartingState extends MusicBeatState
         var nextHeight:Int = Std.int(GRID_SIZE * nextBeats * 4 * zoomList[curZoom]);
         if (nextHeight == Std.int(gridBG.height))
         {
-          //BOTTLENECK fix: reuse the current section's grid bitmap when the next section's grid is identical (clone the sprite, share the graphic)
           nextGridBG = new FlxSprite(gridBG.x, gridBG.height, gridBG.graphic);
         } else
         {
@@ -3494,8 +3490,6 @@ class ChartingState extends MusicBeatState
     else if (FlxG.save.data.chart_waveformOppVoices) sound = opponentVocals;
     if (sound._sound != null && sound._sound.__buffer != null)
     {
-      //BOTTLENECK: high updateWaveform() copies the ENTIRE audio buffer via toBytes() then scans sample-by-sample on every section change/zoom (reloadGridLayer:3351, changeSection) | FIX: cache waveform peaks once at song load; resample cached peaks only
-      //BOTTLENECK fix: cache the raw buffer bytes once per loaded sound/buffer; only re-copy when the audio source actually changes
       if (waveformCacheBytes == null || waveformCacheSound != sound || waveformCacheBuffer != sound._sound.__buffer)
       {
         waveformCacheBytes = sound._sound.__buffer.data.toBytes();
@@ -4405,7 +4399,6 @@ class ChartingState extends MusicBeatState
     return GRID_SIZE * beats * 4 * zoomList[curZoom] * value + gridBG.y;
   }
 
-  //BOTTLENECK: high saveUndo() runs Json.stringify + Song.parseJSON over the WHOLE song on every note placed/deleted/select (addNote, deleteNote, doANoteThing) | FIX: snapshot only the edited section; throttle; cap song size
   public function saveUndo(_song:SwagSong)
   {
     if (CoolUtil.getNoteAmount(_song) <= 50000 && FlxG.save.data.allowUndo)
@@ -4414,7 +4407,6 @@ class ChartingState extends MusicBeatState
         { // doin this so it doesnt act as a reference
           "song": _song
         });
-      //BOTTLENECK fix: dedupe — skip pushing when the snapshot is byte-identical to the last one, and cap the undo stack size
       if (lastUndoShit == shit) return;
       lastUndoShit = shit;
       var song:SwagSong = Song.parseJSON(shit);
@@ -4433,7 +4425,7 @@ class ChartingState extends MusicBeatState
       _song.notes = undos[0];
       redos.unshift(undos[0]);
       undos.splice(0, 1);
-      lastUndoShit = null; //BOTTLENECK fix: re-arm dedupe after undo so a re-created identical state still snapshots
+      lastUndoShit = null;
       trace("Performed an Undo! Undos remaining: " + undos.length);
       unsavedChanges = true;
       if (curSection > _song.notes.length) changeSection(_song.notes.length - 1);

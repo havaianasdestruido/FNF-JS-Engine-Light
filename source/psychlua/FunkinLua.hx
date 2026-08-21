@@ -3000,7 +3000,6 @@ class FunkinLua {
 
 	public static function setVarInArray(instance:Dynamic, variable:String, value:Dynamic):Any
 	{
-		//BOTTLENECK: high setVarInArray/getVarInArray do variable.split('[') Array alloc (2992/3030) + PlayState.variables string Map lookup + Reflect.getProperty per call — hit every frame by modchart getProperty/setProperty paths | FIX: fast-path no-bracket vars without split; precompile dotted path to cached (obj,key) chain once
 		if(variable.indexOf('[') == -1)
 		{
 			if(PlayState.instance.variables.exists(variable))
@@ -3300,7 +3299,6 @@ class FunkinLua {
 		try {
 			if(lua == null) return Function_Continue;
 
-			//BOTTLENECK: ultra call() runs per-frame per-script for onUpdate/onUpdatePost (PlayState.callOnLuas fires 2x/frame): string getglobal hash lookup + type check + arg pushes + pcall for EVERY script EVERY frame | FIX: cache resolved Lua function ref per (script,event) at first call; skip getglobal+type when func missing
 			if(_missingCalls.exists(func)) return Function_Continue;
 
 			Lua.getglobal(lua, func);
