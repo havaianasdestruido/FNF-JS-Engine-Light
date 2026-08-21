@@ -16,6 +16,15 @@ class CustomSubstate extends MusicBeatSubstate
 		Convert.addCallback(lua, "insertToCustomSubstate", insertToCustomSubstate);
 	}
 	#end
+
+	#if PYTHON_ALLOWED
+	public static function implementPython(python:PythonScript)
+	{
+		python.set("openCustomSubstate", openCustomSubstate);
+		python.set("closeCustomSubstate", closeCustomSubstate);
+		python.set("insertToCustomSubstate", insertToCustomSubstate);
+	}
+	#end
 	
 	public static function openCustomSubstate(name:String, ?pauseGame:Bool = false)
 	{

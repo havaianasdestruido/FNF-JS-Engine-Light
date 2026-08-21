@@ -362,6 +362,12 @@ class PlayState extends MusicBeatState
 	public var luaArray:Array<FunkinLua> = [];
 	private var luaDebugGroup:FlxTypedGroup<DebugLuaText>;
 	#end
+
+	// Python shit
+	#if PYTHON_ALLOWED
+	public var pythonArray:Array<PythonScript> = [];
+	private var pythonDebugGroup:FlxTypedGroup<DebugLuaText>;
+	#end
 	public var introSoundsSuffix:String = '';
 
 	// Debug buttons
@@ -656,8 +662,14 @@ class PlayState extends MusicBeatState
 		add(luaDebugGroup);
 		#end
 
+		#if PYTHON_ALLOWED
+		pythonDebugGroup = new FlxTypedGroup<DebugLuaText>();
+		pythonDebugGroup.cameras = [camOther];
+		add(pythonDebugGroup);
+		#end
+
 		// "GLOBAL" SCRIPTS
-		#if LUA_ALLOWED
+		#if (LUA_ALLOWED || PYTHON_ALLOWED)
 		var filesPushed:Array<String> = [];
 		var foldersToCheck:Array<String> = [Paths.getPreloadPath('scripts/')];
 
@@ -676,11 +688,20 @@ class PlayState extends MusicBeatState
 			{
 				for (file in FileSystem.readDirectory(folder))
 				{
+					#if LUA_ALLOWED
 					if(file.endsWith('.lua') && !filesPushed.contains(file))
 					{
 						new FunkinLua(folder + file);
 						filesPushed.push(file);
 					}
+					#end
+					#if PYTHON_ALLOWED
+					if(file.endsWith('.py') && !filesPushed.contains(file))
+					{
+						new PythonScript(folder + file);
+						filesPushed.push(file);
+					}
+					#end
 				}
 			}
 		}
@@ -689,6 +710,9 @@ class PlayState extends MusicBeatState
 		// STAGE SCRIPTS
 		#if (MODS_ALLOWED && LUA_ALLOWED)
 		startLuasOnFolder('stages/' + curStage + '.lua');
+		#end
+		#if (MODS_ALLOWED && PYTHON_ALLOWED)
+		startPythonScriptOnFolder('stages/' + curStage + '.py');
 		#end
 		var gfVersion:String = SONG.gfVersion;
 
@@ -1384,14 +1408,24 @@ class PlayState extends MusicBeatState
 		startingSong = true;
 		MusicBeatState.windowNameSuffix = " - " + SONG.song + " " + (isStoryMode ? "(Story Mode)" : "(Freeplay)");
 
-		#if LUA_ALLOWED
+		#if (LUA_ALLOWED || PYTHON_ALLOWED)
 		for (notetype in noteTypeMap.keys())
 		{
+			#if LUA_ALLOWED
 			startLuasOnFolder('custom_notetypes/' + notetype + '.lua');
+			#end
+			#if PYTHON_ALLOWED
+			startPythonScriptOnFolder('custom_notetypes/' + notetype + '.py');
+			#end
 		}
 		for (event in eventPushedMap.keys())
 		{
+			#if LUA_ALLOWED
 			startLuasOnFolder('custom_events/' + event + '.lua');
+			#end
+			#if PYTHON_ALLOWED
+			startPythonScriptOnFolder('custom_events/' + event + '.py');
+			#end
 		}
 		#end
 		noteTypeMap.clear();
@@ -1406,7 +1440,7 @@ class PlayState extends MusicBeatState
 		}
 
 		// SONG SPECIFIC SCRIPTS
-		#if LUA_ALLOWED
+		#if (LUA_ALLOWED || PYTHON_ALLOWED)
 		var filesPushed:Array<String> = [];
 		var foldersToCheck:Array<String> = [Paths.getPreloadPath('data/' + Paths.formatToSongPath(SONG.song) + '/')];
 
@@ -1425,11 +1459,20 @@ class PlayState extends MusicBeatState
 			{
 				for (file in FileSystem.readDirectory(folder))
 				{
+					#if LUA_ALLOWED
 					if(file.endsWith('.lua') && !filesPushed.contains(file))
 					{
 						new FunkinLua(folder + file);
 						filesPushed.push(file);
 					}
+					#end
+					#if PYTHON_ALLOWED
+					if(file.endsWith('.py') && !filesPushed.contains(file))
+					{
+						new PythonScript(folder + file);
+						filesPushed.push(file);
+					}
+					#end
 				}
 			}
 		}
@@ -5649,6 +5692,16 @@ class PlayState extends MusicBeatState
 		FunkinLua.registeredFunctions.clear();
 		#end
 
+		#if PYTHON_ALLOWED
+		for (python in pythonArray) {
+			python.call('onDestroy', []);
+			python.stop();
+		}
+		pythonArray = [];
+		PythonScript.customFunctions.clear();
+		PythonScript.registeredFunctions.clear();
+		#end
+
 		if (camFollow != null) camFollow.put();
 
 		/*
@@ -6019,22 +6072,85 @@ class PlayState extends MusicBeatState
 	}
 	#end
 
-	public function callOnLuas(event:String, args:Array<Dynamic> = null, ignoreStops = true, exclusions:Array<String> = null, excludeValues:Array<Dynamic> = null):Dynamic {
+	#if PYTHON_ALLOWED
+	public function startPythonScriptOnFolder(pyFile:String)
+	{
+		for (script in pythonArray)
+		{
+			if(script.scriptName == pyFile) return false;
+		}
+
+		#if MODS_ALLOWED
+		var pyToLoad:String = Paths.modFolders(pyFile);
+		if(FileSystem.exists(pyToLoad))
+		{
+			new PythonScript(pyToLoad);
+			return true;
+		}
+		else
+		{
+			pyToLoad = Paths.getPreloadPath(pyFile);
+			if(FileSystem.exists(pyToLoad))
+			{
+				new PythonScript(pyToLoad);
+				return true;
+			}
+		}
+		#elseif sys
+		var pyToLoad:String = Paths.getPreloadPath(pyFile);
+		if(OpenFlAssets.exists(pyToLoad))
+		{
+			new PythonScript(pyToLoad);
+			return true;
+		}
+		#end
+		return false;
+	}
+	#end
+
+	/**
+	 * Dispatch a callback to every Lua AND Python script. Returns the last
+	 * non-`Function_Continue` value returned by any script.
+	 */
+	public function callOnScripts(event:String, args:Array<Dynamic> = null, ignoreStops = true, exclusions:Array<String> = null, excludeValues:Array<Dynamic> = null):Dynamic {
 		var returnVal = FunkinLua.Function_Continue;
-		#if LUA_ALLOWED
 		if(args == null) args = [];
 		if(exclusions == null) exclusions = [];
 		if(excludeValues == null) excludeValues = [];
 
+		var stopAll:Bool = false;
+
+		#if LUA_ALLOWED
 		for (script in luaArray) {
+			if(stopAll) break;
 			if(exclusions.contains(script.scriptName))
 				continue;
 
 			final myValue = script.call(event, args);
-			if(myValue == FunkinLua.Function_StopLua && !ignoreStops)
+			if(myValue == FunkinLua.Function_StopLua && !ignoreStops) {
+				stopAll = true;
 				break;
+			}
 
 			if(myValue != null && myValue != FunkinLua.Function_Continue) {
+				returnVal = myValue;
+			}
+		}
+		#end
+
+		#if PYTHON_ALLOWED
+		for (script in pythonArray) {
+			if(stopAll) break;
+			if(exclusions.contains(script.scriptName))
+				continue;
+
+			final myValue = script.call(event, args);
+			if(myValue == PythonScript.Function_StopAll && !ignoreStops) {
+				stopAll = true;
+				break;
+			}
+
+			if(myValue != null && myValue != PythonScript.Function_Continue) {
 				returnVal = myValue;
 			}
 		}
@@ -6042,12 +6158,28 @@ class PlayState extends MusicBeatState
 		return returnVal;
 	}
 
-	public function setOnLuas(variable:String, arg:Dynamic) {
+	// Kept for compatibility: dispatches to both Lua and Python scripts.
+	public function callOnLuas(event:String, args:Array<Dynamic> = null, ignoreStops = true, exclusions:Array<String> = null, excludeValues:Array<Dynamic> = null):Dynamic {
+		return callOnScripts(event, args, ignoreStops, exclusions, excludeValues);
+	}
+
+	public function setOnScripts(variable:String, arg:Dynamic) {
 		#if LUA_ALLOWED
 		for (i in 0...luaArray.length) {
 			luaArray[i].set(variable, arg);
 		}
 		#end
+
+		#if PYTHON_ALLOWED
+		for (i in 0...pythonArray.length) {
+			pythonArray[i].set(variable, arg);
+		}
+		#end
+	}
+
+	// Kept for compatibility: dispatches to both Lua and Python scripts.
+	public function setOnLuas(variable:String, arg:Dynamic) {
+		setOnScripts(variable, arg);
 	}
 
 	function StrumPlayAnim(isDad:Bool, id:Int, time:Float) {

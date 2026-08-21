@@ -109,6 +109,7 @@ class Project extends HXProject
 	static final officialBuild:FeatureFlag = "officialBuild";
 	static final MODS_ALLOWED:FeatureFlag = "MODS_ALLOWED";
 	static final LUA_ALLOWED:FeatureFlag = "LUA_ALLOWED";
+	static final PYTHON_ALLOWED:FeatureFlag = "PYTHON_ALLOWED";
 	static final VIDEOS_ALLOWED:FeatureFlag = "VIDEOS_ALLOWED";
 	static final FEATURE_DEBUG_FUNCTIONS:FeatureFlag = "FEATURE_DEBUG_FUNCTIONS";
 	static final FUNNY_ALLOWED:FeatureFlag = "FUNNY_ALLOWED";
@@ -350,6 +351,27 @@ class Project extends HXProject
 	}
 
 	/**
+	 * Read the `-DMODDING_LEVEL` define (0/1/2). Returns -1 when unset,
+	 * in which case the platform defaults are used instead.
+	 */
+	function getModdingLevel():Int
+	{
+		var levelStr:Null<String> = null;
+		if (haxedefs.exists('MODDING_LEVEL'))
+			levelStr = haxedefs.get('MODDING_LEVEL');
+		else if (defines.exists('MODDING_LEVEL'))
+			levelStr = defines.get('MODDING_LEVEL');
+
+		if (levelStr == null || levelStr.length < 1)
+			return -1;
+
+		var level:Null<Int> = Std.parseInt(levelStr);
+		if (level == null)
+			return 2;
+		return level;
+	}
+
+	/**
 	 * Apply various feature flags based on the target platform and the user-provided build flags.
 	 */
 	function configureFeatureFlags()
@@ -359,7 +381,31 @@ class Project extends HXProject
 
 		// Should be true unless explicitly requested.
 		MODS_ALLOWED.apply(this, (isDesktop() || isMobile()) && !isWeb());
-		LUA_ALLOWED.apply(this, (isDesktop() || isMobile()) && (!isWeb() || !isHashLink()));
+
+		// Script modding level. Pass `-DMODDING_LEVEL=0|1|2` to force:
+		//   0 = no Lua/Python scripts, 1 = Lua only, 2 = Lua + Python
+		var moddingLevel:Int = getModdingLevel();
+		if (moddingLevel >= 0)
+		{
+			switch (moddingLevel)
+			{
+				case 0:
+					LUA_ALLOWED.disable(this, false);
+					PYTHON_ALLOWED.disable(this, false);
+				case 1:
+					LUA_ALLOWED.enable(this, false);
+					PYTHON_ALLOWED.disable(this, false);
+				default:
+					LUA_ALLOWED.enable(this, false);
+					PYTHON_ALLOWED.enable(this, false);
+			}
+		}
+		else
+		{
+			LUA_ALLOWED.apply(this, (isDesktop() || isMobile()) && (!isWeb() || !isHashLink()));
+			PYTHON_ALLOWED.apply(this, (isDesktop() || isMobile()) && (!isWeb() || !isHashLink()));
+		}
+
 		VIDEOS_ALLOWED.apply(this, (isDesktop() || isMobile()) && (!isWeb() || !is32Bit()));
 		CRASH_HANDLER.apply(this, true);
 		ACHIEVEMENTS_ALLOWED.apply(this, true);
@@ -555,6 +601,9 @@ class Project extends HXProject
 
 		if (isDesktop() && LUA_ALLOWED.isEnabled(this))
 			addHaxelib('hxluajit'); // Lua API
+
+		if (PYTHON_ALLOWED.isEnabled(this))
+			addHaxelib('hython'); // Python API (pure Haxe interpreter)
 
 		if (isDebug() && isCPP())
 			addHaxelib("hxcpp-debug-server");
