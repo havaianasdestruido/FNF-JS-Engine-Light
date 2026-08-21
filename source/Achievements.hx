@@ -312,6 +312,58 @@ class Achievements {
 		Convert.addCallback(lua, "achievementExists", function(name:String) return achievements.exists(name));
 	}
 	#end
+
+	#if PYTHON_ALLOWED
+	public static function addPythonCallbacks(python:PythonScript)
+	{
+		python.set("getAchievementScore", function(name:String):Float
+		{
+			if(!achievements.exists(name))
+			{
+				python.pyTrace('getAchievementScore: Couldnt find achievement: $name', false, false, FlxColor.RED);
+				return -1;
+			}
+			return getScore(name);
+		});
+		python.set("setAchievementScore", function(name:String, ?value:Float = 1, ?saveIfNotUnlocked:Bool = true):Float
+		{
+			if(!achievements.exists(name))
+			{
+				python.pyTrace('setAchievementScore: Couldnt find achievement: $name', false, false, FlxColor.RED);
+				return -1;
+			}
+			return setScore(name, value, saveIfNotUnlocked);
+		});
+		python.set("addAchievementScore", function(name:String, ?value:Float = 1, ?saveIfNotUnlocked:Bool = true):Float
+		{
+			if(!achievements.exists(name))
+			{
+				python.pyTrace('addAchievementScore: Couldnt find achievement: $name', false, false, FlxColor.RED);
+				return -1;
+			}
+			return addScore(name, value, saveIfNotUnlocked);
+		});
+		python.set("unlockAchievement", function(name:String):Dynamic
+		{
+			if(!achievements.exists(name))
+			{
+				python.pyTrace('unlockAchievement: Couldnt find achievement: $name', false, false, FlxColor.RED);
+				return null;
+			}
+			return unlock(name);
+		});
+		python.set("isAchievementUnlocked", function(name:String):Dynamic
+		{
+			if(!achievements.exists(name))
+			{
+				python.pyTrace('isAchievementUnlocked: Couldnt find achievement: $name', false, false, FlxColor.RED);
+				return null;
+			}
+			return isUnlocked(name);
+		});
+		python.set("achievementExists", function(name:String) return achievements.exists(name));
+	}
+	#end
 	#end
 }
 #end

@@ -38,6 +38,27 @@ to Download the binary for Microsoft Visual Studio with the specific package you
 (you can easily skip this process by doing to the `setup` folder located in the root directory of this repository,
  and running `msvc-windows.bat`)
 
+After running `setup\windows.bat`, **also run `setup\windows-msvc-fix.ps1`** (Windows MSVC only):
+
+```
+powershell -ExecutionPolicy Bypass -File setup\windows-msvc-fix.ps1
+```
+
+This ensures the active `hxcpp` haxelib is the git checkout (the FunkinCrew fork)
+that `setup\windows.bat` installs, rather than a release build such as `4.3.2`.
+The git checkout is required on Windows MSVC because:
+
+* It supports hxcpp's `<assembler>` element, so hxluau's libffi `.asm` files
+  get assembled with `ml64.exe`. `hxcpp 4.3.2` ignores them, causing
+  `LNK1181: cannot open input file 'win64.obj'`.
+* It honors the `HXCPP_CPP17` haxedef that hxluau's `haxelib.json` emits, so
+  Luau sources compile with `/std:c++17`. `hxcpp 4.3.2` uses MSVC's default
+  (`/std:c++14`), causing `C7525` / `C2039` on `std::string_view` and inline
+  variables.
+
+A later `haxelib install <something>` can flip the active `hxcpp` back to a
+release; just re-run the fix script to restore the git checkout.
+
 ---
 ### Linux Distributions
 
@@ -91,6 +112,30 @@ sit back, relax, wait for haxelib to do its magic, and once everything is done, 
 `lime test <platform>`
 
 where `<platform>` gets replaced with `windows`, `linux`, or `mac`
+
+---
+
+### Script modding levels
+
+By default the game ships with both **Lua** and **Python** script modding enabled on desktop.
+You can force a specific level with `-DMODDING_LEVEL`:
+
+| Value | Script support                              |
+|-------|---------------------------------------------|
+| `0`   | No Lua or Python scripts                    |
+| `1`   | Lua only                                    |
+| `2`   | Lua + Python (default on desktop)           |
+
+For example, a Lua-only build:
+
+`lime test windows -DMODDING_LEVEL=1`
+
+Python scripts work exactly like Lua scripts: drop a `.py` file with `def onCreate():`,
+`def onUpdate(elapsed):`, etc. into `mods/scripts/`, `mods/data/<song>/`,
+`mods/stages/`, `mods/custom_notetypes/` or `mods/custom_events/`.
+See `docs/TemplateScript.py` for the full list of callbacks. The interpreter
+is [Hython](https://github.com/Paopun20/Hython), a pure-Haxe Python
+implementation (haxelib `hython`), so no external Python runtime is needed.
 
 ---
 
