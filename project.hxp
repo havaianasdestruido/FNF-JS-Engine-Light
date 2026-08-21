@@ -682,7 +682,9 @@ class Project extends HXProject
 		var shouldPreloadArt = false;
 		// addAsset("art/readme.txt", "do NOT readme.txt", "art", shouldEmbedArt);
 		// addAsset("CHANGELOG.md", "changelog.txt", "/", shouldEmbedArt);
-		addAssetPath("example_mods", "mods", "default", ["*"], exclude, shouldEmbed); // lololololoolollo
+		// Ship the built-in mods alongside native binaries so they are available
+		// from the game's mods directory in CI artifacts and release archives.
+		addAssetPath("mods", "mods", "default", ["*"], exclude, shouldEmbed);
 
 		if (isLinux() && !isDebug())
 			addAsset("gamemode.ini");
