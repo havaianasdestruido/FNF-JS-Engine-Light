@@ -1,4 +1,11 @@
 # TemplateScript.py
+
+# This is a demo of the Work In progress
+# python modding experiment;
+# I recommend using python if you want to
+# make extremely advanced softmodding.
+# For anything more simpler, use Lua modding.
+
 # Drop this into mods/scripts/ (or any mod's scripts/ folder) and it will run
 # on every song. Python modding works exactly like Lua modding: define
 # top-level `def` callbacks and call the same engine functions.
