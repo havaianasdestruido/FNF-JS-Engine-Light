@@ -10,6 +10,7 @@ haxelib git flixel https://github.com/JS-Engine-things/flixel-JS-Engine --quiet
 haxelib install flixel-addons 3.2.3 --quiet
 haxelib install flixel-tools 1.5.1 --quiet
 haxelib install flixel-ui 2.6.0 --quiet
+haxelib install hython 0.0.352-beta --quiet
 haxelib git hscript https://github.com/CodenameCrew/hscript-improved --quiet
 haxelib install hxcpp-debug-server --quiet
 haxelib git tjson https://github.com/moxie-coder/tjson --quiet
