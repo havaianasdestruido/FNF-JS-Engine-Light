@@ -4,8 +4,14 @@
 # https://haxe.org/download
 echo Installing dependencies...
 echo This might take a few moments depending on your internet speed.
-sudo apt update
-sudo apt install libgtk-3-dev libgl-dev libx11-dev libxi-dev libxpm-dev libxrandr-dev libncurses-dev
+if [ "${SKIP_SYSTEM_DEPENDENCIES:-0}" != "1" ]; then
+  if ! command -v apt-get >/dev/null 2>&1; then
+    echo "Skipping system dependencies: install the required development packages with your platform's package manager."
+  else
+    sudo apt update
+    sudo apt install libgtk-3-dev libgl-dev libx11-dev libxi-dev libxpm-dev libxrandr-dev libncurses-dev
+  fi
+fi
 haxelib git lime https://github.com/JS-Engine-things/lime-8.1.2 --quiet
 haxelib git openfl https://github.com/JS-Engine-things/openfl --quiet
 haxelib git flixel https://github.com/JS-Engine-things/flixel-JS-Engine --quiet
