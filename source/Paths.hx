@@ -576,27 +576,34 @@ class Paths
 
   static public function getTextFromFile(key:String, ?ignoreMods:Bool = false):String
   {
+    var text:String = null;
     #if sys
     #if MODS_ALLOWED
-    if (!ignoreMods && FileSystem.exists(modFolders(key))) return File.getContent(modFolders(key));
+    if (text == null && !ignoreMods && FileSystem.exists(modFolders(key))) text = File.getContent(modFolders(key));
     #end
 
-    if (FileSystem.exists(getPreloadPath(key))) return File.getContent(getPreloadPath(key));
+    if (text == null && FileSystem.exists(getPreloadPath(key))) text = File.getContent(getPreloadPath(key));
 
-    if (currentLevel != null)
+    if (text == null && currentLevel != null)
     {
       var levelPath:String = '';
       if (currentLevel != 'shared')
       {
         levelPath = getLibraryPathForce(key, currentLevel);
-        if (FileSystem.exists(levelPath)) return File.getContent(levelPath);
+        if (FileSystem.exists(levelPath)) text = File.getContent(levelPath);
       }
 
-      levelPath = getLibraryPathForce(key, 'shared');
-      if (FileSystem.exists(levelPath)) return File.getContent(levelPath);
+      if (text == null)
+      {
+        levelPath = getLibraryPathForce(key, 'shared');
+        if (FileSystem.exists(levelPath)) text = File.getContent(levelPath);
+      }
     }
     #end
-    return Assets.getText(getPath(key, TEXT));
+    if (text == null) text = Assets.getText(getPath(key, TEXT));
+
+    if (text.charCodeAt(0) == 0xFEFF) text = text.substr(1); //Strip BOM to prevent Json.parse errors
+    return text;
   }
 
   inline static public function font(key:String)
