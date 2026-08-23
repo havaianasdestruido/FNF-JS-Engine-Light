@@ -29,6 +29,7 @@ jobs:
           - name: Linux
             os: ubuntu-latest
             target: linux
+            target_dir: linux
             cache_name: linux
             artifact: linuxBuild
             artifact_path: build/release/linux/bin
@@ -36,6 +37,7 @@ jobs:
           - name: Windows
             os: windows-latest
             target: windows
+            target_dir: windows
             cache_name: windows
             artifact: windowsBuild
             artifact_path: build/release/windows/bin
@@ -43,18 +45,20 @@ jobs:
           - name: macOS (Intel)
             os: macos-15
             target: mac
+            target_dir: macos
             target_args: -64 -D HXCPP_M64
             cache_name: macos-intel
             artifact: macBuild-intel
-            artifact_path: build/release/mac/bin
+            artifact_path: build/release/macos/bin
             setup: unix
           - name: macOS (ARM)
             os: macos-15
             target: mac
+            target_dir: macos
             target_args: -arm64 -D HXCPP_ARM64
             cache_name: macos-arm
             artifact: macBuild-arm
-            artifact_path: build/release/mac/bin
+            artifact_path: build/release/macos/bin
             setup: unix
 
     steps:
@@ -118,8 +122,8 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: |
-            build/release/${{ matrix.target }}/haxe
-            build/release/${{ matrix.target }}/obj
+            build/release/${{ matrix.target_dir }}/haxe
+            build/release/${{ matrix.target_dir }}/obj
             ${{ env.HXCPP_CACHE_DIR }}
           key: hxcpp-${{ runner.os }}-${{ matrix.cache_name }}-${{ inputs.buildFlags || 'commit' }}-${{ hashFiles('project.hxp', 'source/**') }}
           restore-keys: |
@@ -149,8 +153,8 @@ jobs:
         uses: actions/cache/save@v4
         with:
           path: |
-            build/release/${{ matrix.target }}/haxe
-            build/release/${{ matrix.target }}/obj
+            build/release/${{ matrix.target_dir }}/haxe
+            build/release/${{ matrix.target_dir }}/obj
             ${{ env.HXCPP_CACHE_DIR }}
           key: ${{ steps.build-cache.outputs.cache-primary-key }}
 
