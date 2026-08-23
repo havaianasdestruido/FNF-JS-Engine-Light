@@ -6,7 +6,7 @@ import backend.FunkinGame;
 import lime.app.Application;
 import openfl.Lib;
 import openfl.display.Sprite;
-#if (linux && !debug)
+#if GAMEMODE_ALLOWED
 import hxgamemode.GamemodeClient;
 #end
 #if (linux || mac)
@@ -48,16 +48,25 @@ class Main extends Sprite
   @:noCompletion
   private static function __init__():Void
   {
-    #if (linux && !debug)
-    // Request we start game mode
+    #if GAMEMODE_ALLOWED
+    // Request we start game mode. Non-fatal: gamemoded may simply not be
+    // installed, and the header-only client fails gracefully in that case.
     if (GamemodeClient.request_start() != 0)
-    {
       Sys.println('Failed to request gamemode start: ${GamemodeClient.error_string()}...');
-      openfl.system.System.exit(1);
-    } else
-    {
-      Sys.println('Succesfully requested gamemode to start...');
-    }
+    else
+      Sys.println('Successfully requested gamemode to start...');
+    #end
+  }
+
+  /**
+   * Best-effort GameMode cleanup. Called on application exit; the daemon also
+   * unregisters the process automatically when it terminates.
+   */
+  public static function shutdownGameMode():Void
+  {
+    #if GAMEMODE_ALLOWED
+    if (GamemodeClient.query_status() > 0 && GamemodeClient.request_end() != 0)
+      Sys.println('Failed to request gamemode end: ${GamemodeClient.error_string()}...');
     #end
   }
 
@@ -140,6 +149,10 @@ class Main extends Sprite
     #end
 
     #if DISCORD_ALLOWED DiscordClient.prepare(); #end
+
+    #if GAMEMODE_ALLOWED
+    Application.current.onExit.add(function(_:Int) shutdownGameMode());
+    #end
 
     // shader coords fix
     FlxG.signals.gameResized.add(function(w, h) {

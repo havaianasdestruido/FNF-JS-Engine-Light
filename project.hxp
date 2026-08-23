@@ -116,6 +116,7 @@ class Project extends HXProject
 	static final HSCRIPT_ALLOWED:FeatureFlag = "HSCRIPT_ALLOWED";
 	static final SHADERS_ALLOWED:FeatureFlag = "SHADERS_ALLOWED";
 	static final DISCORD_ALLOWED:FeatureFlag = "DISCORD_ALLOWED";
+	static final GAMEMODE_ALLOWED:FeatureFlag = "GAMEMODE_ALLOWED";
 	static final PRELOAD_ALL:FeatureFlag = "PRELOAD_ALL";
 	static final EMBED_ASSETS:FeatureFlag = "EMBED_ASSETS";
 	static final FEATURE_FILE_DROP:FeatureFlag = "FEATURE_FILE_DROP";
@@ -407,6 +408,9 @@ class Project extends HXProject
 		}
 
 		VIDEOS_ALLOWED.apply(this, (isDesktop() || isMobile()) && (!isWeb() || !is32Bit()));
+		// Feral GameMode integration (Linux only). Degrades gracefully when
+		// gamemode isn't installed, so it is safe to enable on all Linux builds.
+		GAMEMODE_ALLOWED.apply(this, isDesktop() && isLinux());
 		CRASH_HANDLER.apply(this, true);
 		ACHIEVEMENTS_ALLOWED.apply(this, true);
 		CHECK_FOR_UPDATES.apply(this, true);
@@ -608,7 +612,7 @@ class Project extends HXProject
 		if (isDebug() && isCPP())
 			addHaxelib("hxcpp-debug-server");
 
-		if (isLinux() && !isDebug())
+		if (GAMEMODE_ALLOWED.isEnabled(this))
 			addHaxelib("hxgamemode");
 
 		if (isDesktop() && VIDEOS_ALLOWED.isEnabled(this))
@@ -686,7 +690,7 @@ class Project extends HXProject
 		// from the game's mods directory in CI artifacts and release archives.
 		addAssetPath("mods", "mods", "default", ["*"], exclude, shouldEmbed);
 
-		if (isLinux() && !isDebug())
+		if (GAMEMODE_ALLOWED.isEnabled(this))
 			addAsset("gamemode.ini");
 	}
 
