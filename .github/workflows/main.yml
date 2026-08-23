@@ -16,7 +16,16 @@ on:
 # subsequent runs instead of downloading and compiling dependencies every time.
 env:
   HAXELIB_PATH: ${{ github.workspace }}/.haxelib
-  HXCPP_CACHE_DIR: ${{ github.workspace }}/.hxcpp_cache
+  # Must be named HXCPP_COMPILE_CACHE - that's the variable hxcpp itself reads
+  # to enable its object cache. Renaming this back to anything else silently
+  # disables caching (no error, it just never gets used).
+  HXCPP_COMPILE_CACHE: ${{ github.workspace }}/.hxcpp_cache
+  # -D HXCPP_OPTIMIZE_LINK turns on LTO / whole-program optimization
+  # (-flto on mac, /GL+LTCG on MSVC, respected on Linux too). This is the
+  # actual cross-platform performance knob hxcpp exposes; there's no plain
+  # -O3 define for native gcc/clang/MSVC builds (only the mingw toolchain has
+  # that shortcut, which isn't what's used here). Trade-off: link times go up.
+  HXCPP_PERF_FLAGS: "-D HXCPP_OPTIMIZE_LINK"
 
 jobs:
   build:
@@ -69,9 +78,11 @@ jobs:
 
       # The old cache targeted build/release, but Lime writes to export/release.
       # A dependency-only key makes the expensive haxelib and hxcpp setup reusable.
+      # Restore-only here; the matching save step (below, after compile) runs
+      # with if: always() so a later build failure doesn't cost us this cache.
       - name: Restore haxelib and hxcpp tools
         id: haxelib-cache
-        uses: actions/cache@v4
+        uses: actions/cache/restore@v4
         with:
           path: ${{ env.HAXELIB_PATH }}
           key: haxelib-${{ runner.os }}-haxe-4.3.7-${{ hashFiles('hmm.json', 'setup/unix.sh', 'setup/windows.bat') }}
@@ -115,6 +126,13 @@ jobs:
           cd /d "%HAXELIB_PATH%\hxcpp\git\tools\run" && haxe compile.hxml
           cd /d "%HAXELIB_PATH%\hxcpp\git\tools\hxcpp" && haxe compile.hxml
 
+      - name: Save haxelib and hxcpp tools
+        if: always() && steps.haxelib-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: ${{ env.HAXELIB_PATH }}
+          key: ${{ steps.haxelib-cache.outputs.cache-primary-key }}
+
       # Restore the most recent generated C++ files even when the source hash
       # changes. Lime/hxcpp then recompiles only the files affected by the change.
       - name: Restore generated C++ cache
@@ -124,7 +142,7 @@ jobs:
           path: |
             build/release/${{ matrix.target_dir }}/haxe
             build/release/${{ matrix.target_dir }}/obj
-            ${{ env.HXCPP_CACHE_DIR }}
+            ${{ env.HXCPP_COMPILE_CACHE }}
           key: hxcpp-${{ runner.os }}-${{ matrix.cache_name }}-${{ inputs.buildFlags || 'commit' }}-${{ hashFiles('project.hxp', 'source/**') }}
           restore-keys: |
             hxcpp-${{ runner.os }}-${{ matrix.cache_name }}-${{ inputs.buildFlags || 'commit' }}-
@@ -137,7 +155,7 @@ jobs:
           HXCPP_COMPILE_THREADS: 4
         run: |
           rm -f assets/preload/gameRenders/renderlol.bat
-          haxelib run lime build ${{ matrix.target }} ${{ matrix.target_args }} -D"${{ inputs.buildFlags || 'commit' }}"
+          haxelib run lime build ${{ matrix.target }} ${{ matrix.target_args }} -D"${{ inputs.buildFlags || 'commit' }}" ${{ env.HXCPP_PERF_FLAGS }}
 
       - name: Compile (Windows)
         if: matrix.setup == 'windows'
@@ -146,7 +164,7 @@ jobs:
           HXCPP_COMPILE_THREADS: $env:NUMBER_OF_PROCESSORS
         run: |
           Remove-Item -Force assets/preload/gameRenders/renderlinux.sh
-          haxelib run lime build windows -D"${{ inputs.buildFlags || 'commit' }}"
+          haxelib run lime build windows -D"${{ inputs.buildFlags || 'commit' }}" ${{ env.HXCPP_PERF_FLAGS }}
 
       - name: Save generated C++ cache
         if: always() && steps.build-cache.outputs.cache-hit != 'true'
@@ -155,7 +173,7 @@ jobs:
           path: |
             build/release/${{ matrix.target_dir }}/haxe
             build/release/${{ matrix.target_dir }}/obj
-            ${{ env.HXCPP_CACHE_DIR }}
+            ${{ env.HXCPP_COMPILE_CACHE }}
           key: ${{ steps.build-cache.outputs.cache-primary-key }}
 
       - name: Publish artifact
