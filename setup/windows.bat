@@ -26,4 +26,4 @@ haxelib git hxnativefiledialog https://github.com/MAJigsaw77/hxnativefiledialog 
 haxelib install hxp
 @echo off
 echo Finished!
-pause
+if not defined CI pause

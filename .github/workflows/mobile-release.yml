@@ -41,15 +41,24 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Download Android artifact
-        uses: actions/download-artifact@main
+        uses: actions/download-artifact@v4
         with:
           name: androidBuild
+      - name: Locate APK
+        id: locate_apk
+        run: |
+          APK_FILE=$(find . -maxdepth 2 -name "*.apk" | head -n 1)
+          if [ -z "$APK_FILE" ]; then
+            echo "No APK file found!"
+            exit 1
+          fi
+          echo "apk_path=$APK_FILE" >> $GITHUB_OUTPUT
       - name: Upload Android Build to Release
         uses: svenstaro/upload-release-action@2.5.0
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ env.TAG_NAME }}
-          file: JSEngine-release.apk
+          file: ${{ steps.locate_apk.outputs.apk_path }}
           asset_name: FNF-JS-Engine-android.apk
           overwrite: false
 
@@ -59,7 +68,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Download iOS artifact
-        uses: actions/download-artifact@main
+        uses: actions/download-artifact@v4
         with:
           name: iOSBuild
       - name: Zip For Release
