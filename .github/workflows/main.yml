@@ -31,14 +31,14 @@ jobs:
             target: linux
             cache_name: linux
             artifact: linuxBuild
-            artifact_path: export/release/linux/bin
+            artifact_path: build/release/linux/bin
             setup: unix
           - name: Windows
             os: windows-latest
             target: windows
             cache_name: windows
             artifact: windowsBuild
-            artifact_path: export/release/windows/bin
+            artifact_path: build/release/windows/bin
             setup: windows
           - name: macOS (Intel)
             os: macos-15
@@ -46,7 +46,7 @@ jobs:
             target_args: -64 -D HXCPP_M64
             cache_name: macos-intel
             artifact: macBuild-intel
-            artifact_path: export/release/macos/bin
+            artifact_path: build/release/mac/bin
             setup: unix
           - name: macOS (ARM)
             os: macos-15
@@ -54,7 +54,7 @@ jobs:
             target_args: -arm64 -D HXCPP_ARM64
             cache_name: macos-arm
             artifact: macBuild-arm
-            artifact_path: export/release/macos/bin
+            artifact_path: build/release/mac/bin
             setup: unix
 
     steps:
@@ -118,8 +118,8 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: |
-            export/release/${{ matrix.target }}/haxe
-            export/release/${{ matrix.target }}/obj
+            build/release/${{ matrix.target }}/haxe
+            build/release/${{ matrix.target }}/obj
             ${{ env.HXCPP_CACHE_DIR }}
           key: hxcpp-${{ runner.os }}-${{ matrix.cache_name }}-${{ inputs.buildFlags || 'commit' }}-${{ hashFiles('project.hxp', 'source/**') }}
           restore-keys: |
@@ -129,24 +129,28 @@ jobs:
       - name: Compile (Unix)
         if: matrix.setup == 'unix'
         shell: bash
+        env:
+          HXCPP_COMPILE_THREADS: 4
         run: |
           rm -f assets/preload/gameRenders/renderlol.bat
-          haxelib run lime build ${{ matrix.target }} ${{ matrix.target_args }} -D "${{ inputs.buildFlags || 'commit' }}" -D HXCPP_COMPILE_THREADS="$(getconf _NPROCESSORS_ONLN 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 4)"
+          haxelib run lime build ${{ matrix.target }} ${{ matrix.target_args }} -D"${{ inputs.buildFlags || 'commit' }}"
 
       - name: Compile (Windows)
         if: matrix.setup == 'windows'
         shell: pwsh
+        env:
+          HXCPP_COMPILE_THREADS: $env:NUMBER_OF_PROCESSORS
         run: |
           Remove-Item -Force assets/preload/gameRenders/renderlinux.sh
-          haxelib run lime build windows -D "${{ inputs.buildFlags || 'commit' }}" -D "HXCPP_COMPILE_THREADS=$env:NUMBER_OF_PROCESSORS"
+          haxelib run lime build windows -D"${{ inputs.buildFlags || 'commit' }}"
 
       - name: Save generated C++ cache
         if: always() && steps.build-cache.outputs.cache-hit != 'true'
         uses: actions/cache/save@v4
         with:
           path: |
-            export/release/${{ matrix.target }}/haxe
-            export/release/${{ matrix.target }}/obj
+            build/release/${{ matrix.target }}/haxe
+            build/release/${{ matrix.target }}/obj
             ${{ env.HXCPP_CACHE_DIR }}
           key: ${{ steps.build-cache.outputs.cache-primary-key }}
 
