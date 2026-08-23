@@ -82,6 +82,8 @@ class PythonScript
 			#end
 				code = Paths.getTextFromFile(scriptName);
 		}
+		// hython's lexer miscounts indentation on CRLF files, normalize to LF
+		code = code.split("\r\n").join("\n");
 
 		try
 		{
