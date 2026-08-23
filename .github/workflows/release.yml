@@ -24,6 +24,9 @@ jobs:
   ensure-tag:
     name: Create Tag (if needed)
     runs-on: ubuntu-latest
+    outputs:
+      pre_changelog_body: ${{ steps.pre_changelog_message.outputs.body }}
+      tag_name: ${{ steps.tagger.outputs.tag_name }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -71,7 +74,7 @@ jobs:
 
   release-linux:
     name: Release linuxBuild
-    needs: build
+    needs: [ensure-tag, build]
     runs-on: ubuntu-latest
     steps:
       - name: Download Linux artifact
@@ -89,18 +92,19 @@ jobs:
         uses: svenstaro/upload-release-action@2.5.0
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          tag: ${{ github.event.inputs.tag_name }}
+          tag: ${{ needs.ensure-tag.outputs.tag_name }}
+          release_name: ${{ env.TAG_NAME }}
           file: linuxBuild.zip
           asset_name: FNF-JS-Engine-linux.zip
           draft: true
           prerelease: ${{ github.event.inputs.prerelease == 'true' }}
-          body: ${{ steps.build_body.outputs.body }}
+          body: ${{ needs.ensure-tag.outputs.pre_changelog_body }}
           generate_release_notes: true
           overwrite: true
 
   release-windows:
     name: Release windowsBuild
-    needs: build
+    needs: [ensure-tag, build]
     runs-on: ubuntu-latest
     steps:
       - name: Download Windows artifact
@@ -118,18 +122,19 @@ jobs:
         uses: svenstaro/upload-release-action@2.5.0
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          tag: ${{ env.TAG_NAME }}
+          tag: ${{ needs.ensure-tag.outputs.tag_name }}
+          release_name: ${{ env.TAG_NAME }}
           file: windowsBuild.zip
           asset_name: FNF-JS-Engine-windows.zip
           draft: true
           prerelease: ${{ github.event.inputs.prerelease == 'true' }}
-          body: ${{ steps.build_body.outputs.body }}
+          body: ${{ needs.ensure-tag.outputs.pre_changelog_body }}
           generate_release_notes: true
           overwrite: true
 
   release-mac:
     name: Release macBuild
-    needs: build
+    needs: [ensure-tag, build]
     runs-on: ubuntu-latest
     steps:
       - name: Download Mac Intel artifact
@@ -159,12 +164,13 @@ jobs:
         uses: svenstaro/upload-release-action@2.5.0
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          tag: ${{ env.TAG_NAME }}
+          tag: ${{ needs.ensure-tag.outputs.tag_name }}
+          release_name: ${{ env.TAG_NAME }}
           file: macBuild-intel.zip
           asset_name: FNF-JS-Engine-macOS-Intel.zip
           draft: true
           prerelease: ${{ github.event.inputs.prerelease == 'true' }}
-          body: ${{ steps.build_body.outputs.body }}
+          body: ${{ needs.ensure-tag.outputs.pre_changelog_body }}
           generate_release_notes: true
           overwrite: true
 
@@ -172,11 +178,12 @@ jobs:
         uses: svenstaro/upload-release-action@2.5.0
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          tag: ${{ env.TAG_NAME }}
+          tag: ${{ needs.ensure-tag.outputs.tag_name }}
+          release_name: ${{ env.TAG_NAME }}
           file: macBuild-arm.zip
           asset_name: FNF-JS-Engine-macOS-ARM.zip
           draft: true
           prerelease: ${{ github.event.inputs.prerelease == 'true' }}
-          body: ${{ steps.build_body.outputs.body }}
+          body: ${{ needs.ensure-tag.outputs.pre_changelog_body }}
           generate_release_notes: true
           overwrite: true
