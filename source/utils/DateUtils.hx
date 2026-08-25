@@ -1,4 +1,8 @@
-package utils;
+﻿package utils;
+
+// REFACTOR: imports for relocated root classes
+import backend.ClientPrefs;
+import backend.CoolUtil;
 
 // An utilties class for Date and Time related things (so we don't have to bloat CoolUtil)
 // and also because I didn't like how things weren't unified lol

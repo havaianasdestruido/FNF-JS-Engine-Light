@@ -3,6 +3,7 @@ package psychlua;
 import flixel.FlxCamera;
 import flixel.tweens.FlxEase;
 import flixel.util.FlxColor;
+import play.PlayState;
 
 import openfl.display.BlendMode;
 
@@ -14,6 +15,23 @@ using StringTools;
 
 @:allow(psychlua.FunkinLua)
 class LuaUtils {
+	// REFACTOR: root classes moved into packages; resolve legacy bare class names from scripts
+	public static function resolveClassCompat(className:String):Class<Dynamic>
+	{
+		if (className == null || className.length < 1) return null;
+		var cls:Class<Dynamic> = Type.resolveClass(className);
+		if (cls != null) return cls;
+		var prefixes:Array<String> = ['backend', 'states', 'states.substates', 'objects', 'play', 'play.helpers',
+			'data', 'shaders', 'editors', 'editors.charting', 'stages', 'stages.objects', 'options', 'psychlua',
+			'psychlua.callbacks', 'psychlua.pystdlib'];
+		for (p in prefixes)
+		{
+			cls = Type.resolveClass(p + '.' + className);
+			if (cls != null) return cls;
+		}
+		return null;
+	}
+
 	public static function getLuaTween(options:Dynamic)
 	{
 		return (options != null) ? {

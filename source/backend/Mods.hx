@@ -1,5 +1,6 @@
 package backend;
 
+import backend.CoolUtil;
 import haxe.Json;
 
 typedef ModsList = {

@@ -1,7 +1,8 @@
 package stages.objects;
+import play.PlayState;
 
-import Note;
-import Character;
+import objects.Note;
+import objects.Character;
 
 // Pico Note functions
 class PicoBlazinHandler

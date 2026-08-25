@@ -1,4 +1,6 @@
 package stages.objects;
+import backend.ClientPrefs;
+import backend.Paths;
 
 #if funkin.vis
 import funkin.vis.dsp.SpectralAnalyzer;

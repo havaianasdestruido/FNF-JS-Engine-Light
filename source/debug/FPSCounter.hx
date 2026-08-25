@@ -1,4 +1,4 @@
-package debug;
+﻿package debug;
 
 import debug.mem.GetTotalMemory;
 import lime.system.System as LimeSystem;
@@ -6,6 +6,11 @@ import openfl.events.Event;
 import openfl.text.TextField;
 import openfl.text.TextFormat;
 import openfl.text.TextFormatAlign;
+
+// REFACTOR: imports for relocated root classes
+import backend.ClientPrefs;
+import play.PlayState;
+import states.MainMenuState;
 
 class FPSCounter extends TextField
 {

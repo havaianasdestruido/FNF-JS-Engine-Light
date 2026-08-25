@@ -1,5 +1,7 @@
 package psychlua;
 
+import backend.ClientPrefs;
+
 #if flxanimate
 class ModchartAnimateSprite extends FlxAnimate
 {

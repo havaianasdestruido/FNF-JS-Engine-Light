@@ -1,4 +1,7 @@
 package stages.objects;
+import backend.CoolUtil;
+import backend.Paths;
+import play.PlayState;
 
 class BackgroundGirls extends FlxSprite
 {

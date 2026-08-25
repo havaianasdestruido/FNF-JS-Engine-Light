@@ -1,9 +1,15 @@
 package stages;
+import backend.ClientPrefs;
+import backend.Conductor;
+import backend.Paths;
+import objects.BGSprite;
+import play.BaseStage;
+import play.BaseStage.Countdown;
 
 import stages.objects.*;
-import CutsceneHandler;
-import GameOverSubstate;
-import Character;
+import play.CutsceneHandler;
+import states.substates.GameOverSubstate;
+import objects.Character;
 
 class Tank extends BaseStage
 {

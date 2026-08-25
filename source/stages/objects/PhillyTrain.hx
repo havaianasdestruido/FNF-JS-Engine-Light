@@ -1,4 +1,8 @@
 package stages.objects;
+import backend.ClientPrefs;
+import backend.Paths;
+import objects.BGSprite;
+import play.PlayState;
 
 class PhillyTrain extends BGSprite
 {

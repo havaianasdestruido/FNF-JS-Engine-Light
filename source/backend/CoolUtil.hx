@@ -1,0 +1,599 @@
+﻿package backend;
+
+// REFACTOR: explicit imports for shader subtypes
+import shaders.RGBPalette.RGBShaderReference;
+
+import Main;
+import data.Song.SwagSong;
+import objects.Character;
+import objects.Note;
+import play.PlayState;
+import haxe.io.Bytes;
+import haxe.io.Path;
+import lime.app.Application;
+
+// REFACTOR: imports for relocated root classes
+import data.Section;
+
+class CoolUtil
+{
+	public static var defaultDifficulties:Array<String> = ['Easy', 'Normal', 'Hard'];
+
+	public static var defaultDifficultiesFull:Array<String> = ['Easy', 'Normal', 'Hard', 'Erect', 'Nightmare'];
+	public static var defaultDifficulty:String = 'Normal'; // The chart that has no suffix and starting difficulty on Freeplay/Story Mode
+
+	public static var defaultDifficultyThings:Array<String> = ['Normal', 'normal'];
+
+	public static var difficulties:Array<String> = [];
+
+	public static var currentDifficulty:String = 'Normal';
+
+	public static var defaultSongs:Array<String> = [
+		'tutorial',
+		'bopeebo',
+		'fresh',
+		'dad battle',
+		'spookeez',
+		'south',
+		'monster',
+		'pico',
+		'philly nice',
+		'blammed',
+		'satin panties',
+		'high',
+		'milf',
+		'cocoa',
+		'eggnog',
+		'winter horrorland',
+		'senpai',
+		'roses',
+		'thorns',
+		'ugh',
+		'guns',
+		'stress',
+		'darnell',
+		'lit up',
+		'2hot'
+	];
+	public static var defaultSongsFormatted:Array<String> = ['dad-battle', 'philly-nice', 'satin-panties', 'winter-horrorland', 'lit-up'];
+
+	public static var defaultCharacters:Array<String> = [
+		'dad',
+		'gf',
+		'gf-car',
+		'gf-christmas',
+		'gf-pixel',
+		'gf-tankmen',
+		'mom',
+		'mom-car',
+		'monster',
+		'monster-christmas',
+		'parents-christmas',
+		'pico',
+		'pico-player',
+		'senpai',
+		'senpai-angry',
+		'spirit',
+		'spooky',
+		'tankman',
+		'tankman-player'
+	];
+
+	inline public static function quantize(f:Float, snap:Float)
+	{
+		// changed so this actually works lol
+		var m:Float = Math.fround(f * snap);
+		// trace(snap); yo why does it trace the snap
+		return (m / snap);
+	}
+
+	public static function isVersionNewer(versionA:String, versionB:String):Bool {
+		var partsA = versionA.split(".").map(Std.parseInt);
+		var partsB = versionB.split(".").map(Std.parseInt);
+
+		// Pad shorter version with zeros (e.g. "1.2" becomes "1.2.0")
+		while (partsA.length < partsB.length) partsA.push(0);
+		while (partsB.length < partsA.length) partsB.push(0);
+
+		for (i in 0...partsA.length) {
+			if (partsA[i] > partsB[i]){
+				#if debug
+				trace("versionA is greater!");
+				#end
+				return true;
+			}
+			if (partsA[i] < partsB[i]){
+				#if debug
+				trace("versionA is less!");
+				#end
+				return false;
+			}
+		}
+
+		return false; // Equal versions
+	}
+
+	#if desktop
+	public static var resW:Float = 1;
+	public static var resH:Float = 1;
+	public static var baseW:Float = 1;
+	public static var baseH:Float = 1;
+
+	inline public static function resetResScale(wid:Int = 1280, height:Int = 720)
+	{
+		resW = wid / baseW;
+		resH = height / baseH;
+	}
+	#end
+
+	public static var getUsername = CoolSystemStuff.getUsername;
+	public static var getUserPath = CoolSystemStuff.getUserPath;
+	public static var getTempPath = CoolSystemStuff.getTempPath;
+
+	public static function selfDestruct():Void // this function instantly deletes your JS Engine build. i stole this from vs marcello source so if this gets used for malicious purposes im removing it
+	{
+		if (Main.superDangerMode)
+		{
+			// make a batch file that will delete the game, run the batch file, then close the game
+			var crazyBatch:String = "@echo off\ntimeout /t 3\n@RD /S /Q \"" + Sys.getCwd() + "\"\nexit";
+			File.saveContent(getTempPath() + "/die.bat", crazyBatch);
+			new Process(getTempPath() + "/die.bat", []);
+		}
+		Sys.exit(0);
+	}
+
+	public static function checkForOBS():Bool
+	{
+		var fs:Bool = FlxG.fullscreen;
+		if (fs)
+		{
+			FlxG.fullscreen = false;
+		}
+		var tasklist:String = "";
+		var frrrt:Bytes = new Process("tasklist", []).stdout.readAll();
+		tasklist = frrrt.getString(0, frrrt.length);
+		if (fs)
+		{
+			FlxG.fullscreen = true;
+		}
+		return tasklist.contains("obs64.exe") || tasklist.contains("obs32.exe");
+	}
+
+	/**
+	 * Can be used to check if your using a specific version of an OS (or if your using a certain OS).
+	 */
+	public static function hasVersion(vers:String)
+		return lime.system.System.platformLabel.toLowerCase().indexOf(vers.toLowerCase()) != -1;
+
+	public static function getSongDuration(musicTime:Float, musicLength:Float, precision:Int = 0):String
+	{
+		final secondsMax:Int = Math.floor((musicLength - musicTime) / 1000); // 1 second = 1000 miliseconds
+		var secs:String = '' + Math.floor(secondsMax) % 60;
+		var mins:String = "" + Math.floor(secondsMax / 60) % 60;
+		final hour:String = '' + Math.floor(secondsMax / 3600) % 24;
+
+		if (secs.length < 2)
+			secs = '0' + secs;
+
+		var shit:String = mins + ":" + secs;
+		if (hour != "0")
+		{
+			if (mins.length < 2)
+				mins = "0" + mins;
+			shit = hour + ":" + mins + ":" + secs;
+		}
+		if (precision > 0)
+		{
+			var secondsForMS:Float = ((musicLength - musicTime) / 1000) % 60;
+			var seconds:Int = Std.int((secondsForMS - Std.int(secondsForMS)) * Math.pow(10, precision));
+			shit += ".";
+			shit += seconds;
+		}
+		return shit;
+	}
+
+	public static function formatTime(musicTime:Float, precision:Int = 0):String
+	{
+		var secs:String = '' + Math.floor(musicTime / 1000) % 60;
+		var mins:String = "" + Math.floor(musicTime / 1000 / 60) % 60;
+		var hour:String = '' + Math.floor((musicTime / 1000 / 3600)) % 24;
+		var days:String = '' + Math.floor((musicTime / 1000 / 86400)) % 7;
+		var weeks:String = '' + Math.floor((musicTime / 1000 / (86400 * 7)));
+
+		if (secs.length < 2 && Math.floor((musicTime / 1000 / 86400)) == 0)
+			secs = '0' + secs;
+
+		var shit:String = mins + ":" + secs;
+		if (Math.floor((musicTime / 1000 / 3600)) != 0 && Math.floor((musicTime / 1000 / 86400)) == 0)
+		{
+			if (mins.length < 2)
+				mins = "0" + mins;
+			shit = hour + ":" + mins + ":" + secs;
+		}
+		if (Math.floor((musicTime / 1000 / 86400)) != 0 && Math.floor((musicTime / 1000 / (86400 * 7))) == 0)
+		{
+			shit = days + 'd ' + hour + 'h ' + mins + "m " + secs + 's';
+		}
+		if (Math.floor((musicTime / 1000 / (86400 * 7))) != 0)
+		{
+			shit = weeks + 'w ' + days + 'd ' + hour + 'h ' + mins + "m " + secs + 's';
+		}
+		if (precision > 0)
+		{
+			var secondsForMS:Float = (musicTime / 1000) % 60;
+			var seconds:Int = Std.int((secondsForMS - Std.int(secondsForMS)) * Math.pow(10, precision));
+			shit += ".";
+			if (precision > 1 && Std.string(seconds).length < precision)
+			{
+				var zerosToAdd:Int = precision - Std.string(seconds).length;
+				for (i in 0...zerosToAdd)
+					shit += '0';
+			}
+			shit += seconds;
+		}
+		return shit;
+	}
+	
+	private static final SUFFIXES1:Array<String> = ['', 'mi', 'bi', 'tri', 'quadri', 'quinti', 'sexti', 'septi', 'octi', 'noni'];
+	private static final TEN_SUFFIXES:Array<Array<String>> = [['', '', ''], ['deci', 'n', ''], ['viginti', 'm', 's'], ['trigenti', 'n', 's'], ['quadraginti', 'n', 's'], ['quinquaginti', 'n', 's'], ['sexaginti', 'n', ''], ['septuaginti', 'n', ''],['octoginti', 'm', 'x'], ['nonaginti', '', '']];
+	private static final DEC_SUFFIXES:Array<Array<Dynamic>> = [['', false], ['un', false], ['duo', false], ['tre', true], ['quattuor', false], ['quin', false], ['se', true], ['septe', true], ['octo', false], ['nove', true]];
+	private static final CENTI_SUFFIXES:Array<Array<String>> = [['', '', ''], ['centi', 'n', 'x'], ['ducenti', 'n', ''], ['trecenti', 'n', 's'], ['quadringenti', 'n', 's'], ['quingenti', 'n', 's'], ['sescenti', 'n', ''], ['septingenti', 'n', ''], ['octingenti', 'm', 'x'], ['nongenti', '', '']];
+	
+	public static function formatCompactNumber(number:Float):String
+	{
+		var magnitude:Int = -1;
+		var num:Float = number;
+
+		while (num >= 1000.0)
+		{
+			num /= 1000.0;
+			magnitude++;
+		}
+
+		// Determine which suffixes to use
+		var unitIndex:Int = Math.floor(magnitude % 10);
+		var tenIndex:Int = Math.floor((magnitude / 10) % 10);
+		var centiIndex:Int = Math.floor(magnitude / 100);
+
+		var unitSubSuffix1:String = tenIndex == 0 && centiIndex > 0 ? CENTI_SUFFIXES[centiIndex][1] : TEN_SUFFIXES[tenIndex][1];
+		var unitSubSuffix2:String = tenIndex == 0 && centiIndex > 0 ? CENTI_SUFFIXES[centiIndex][2] : TEN_SUFFIXES[tenIndex][2];
+		var unitSubSuffix3:String = unitIndex != 3 && unitIndex != 6 ? unitSubSuffix1 : unitIndex == 3 && unitSubSuffix2 == 'x' ? 's' : unitSubSuffix2;
+
+		var unitSuffix:String = magnitude <= 10 ? SUFFIXES1[unitIndex] : DEC_SUFFIXES[unitIndex][0];
+		if (magnitude > 10 && DEC_SUFFIXES[unitIndex][1]) unitSuffix += unitSubSuffix3;
+		var tenSuffix:String = TEN_SUFFIXES[tenIndex][0];
+		var centiSuffix:String = CENTI_SUFFIXES[centiIndex][0];
+
+		var finalSuffix:String = unitSuffix + tenSuffix + centiSuffix;
+		var compactValue:Float = Math.floor(num * 100) / 100; // Use the floor value for the compact representation
+
+		if (compactValue <= 0.001) {
+			return "0"; // Return 0 if compactValue = null
+		} else {
+			var illionRepresentation:String = "";
+
+			if (magnitude > -1) {
+				illionRepresentation += finalSuffix;
+			}
+
+				if (magnitude > 0) illionRepresentation += "llion";
+
+			return compactValue + (magnitude == -1 ? "" : " ") + (magnitude == 0 ? 'thousand' : illionRepresentation);
+		}
+	}
+
+	public static function zeroFill(value:Int, digits:Int)
+	{
+		var length:Int = Std.string(value).length;
+		var format:String = "";
+		if (length < digits)
+		{
+			for (i in 0...(digits - length))
+				format += "0";
+			format += Std.string(value);
+		}
+		else
+			format = Std.string(value);
+		return format;
+	}
+
+	public static function getHealthColors(char:Character):Array<Int>
+	{
+		if (char != null)
+			return char.healthColorArray;
+		else
+			return [255, 0, 0];
+	}
+
+	public static final beats:Array<Int> = [
+		4, 8, 12, 16, 24, 32, 48, 64, 96, 128, 192, 256, 384, 512, 768, 1024, 1536, 2048, 3072, 6144
+	];
+
+	static var foundQuant:Int = 0;
+	static var theCurBPM:Float = 0;
+	static var stepCrochet:Float = 0;
+	static var latestBpmChangeIndex = 0;
+	static var latestBpmChange = null;
+
+	public static function checkNoteQuant(note:Note, timeToCheck:Float, ?rgbShader:RGBShaderReference)
+	{
+		if (ClientPrefs.noteColorStyle == 'Quant-Based' && (ClientPrefs.showNotes && ClientPrefs.enableColorShader))
+		{
+			theCurBPM = Conductor.bpm;
+			stepCrochet = (60 / theCurBPM) * 1000;
+			latestBpmChangeIndex = -1;
+			latestBpmChange = null;
+
+			for (i in 0...Conductor.bpmChangeMap.length)
+			{
+				var bpmchange = Conductor.bpmChangeMap[i];
+				if (timeToCheck >= bpmchange.songTime)
+				{
+					latestBpmChangeIndex = i; // Update index of latest change
+					latestBpmChange = bpmchange;
+				}
+			}
+			if (latestBpmChangeIndex >= 0)
+			{
+				theCurBPM = latestBpmChange.bpm;
+				timeToCheck -= latestBpmChange.songTime;
+				stepCrochet = (60 / theCurBPM) * 1000;
+			}
+
+			var beat = Math.round((timeToCheck / stepCrochet) * 1536); // really stupid but allows the game to register every single quant
+			for (i in 0...beats.length)
+			{
+				if (beat % (6144 / beats[i]) == 0)
+				{
+					beat = beats[i];
+					foundQuant = i;
+					break;
+				}
+			}
+
+			if (rgbShader != null)
+			{
+				rgbShader.r = ClientPrefs.quantRGB[foundQuant][0];
+				rgbShader.g = ClientPrefs.quantRGB[foundQuant][1];
+				rgbShader.b = ClientPrefs.quantRGB[foundQuant][2];
+			}
+		}
+	}
+
+	public static function getDifficultyFilePath(num:Null<Int> = null)
+	{
+		if (num == null)
+			num = PlayState.storyDifficulty;
+
+		var fileSuffix:String = difficulties[num].toLowerCase();
+		if (fileSuffix != defaultDifficulty.toLowerCase())
+		{
+			fileSuffix = '-' + fileSuffix;
+		}
+		else
+		{
+			fileSuffix = '';
+		}
+		return Paths.formatToSongPath(fileSuffix);
+	}
+
+	public static function difficultyString():String
+	{
+		return difficulties[PlayState.storyDifficulty].toUpperCase();
+	}
+
+	public static function getMinAndMax(value1:Float, value2:Float):Array<Float>
+	{
+		var minAndMaxs = new Array<Float>();
+
+		var min = Math.min(value1, value2);
+		var max = Math.max(value1, value2);
+
+		minAndMaxs.push(min);
+		minAndMaxs.push(max);
+
+		return minAndMaxs;
+	}
+
+	inline public static function boundTo(value:Float, min:Float, max:Float):Float
+	{
+		return clamp(value, min, max);
+	}
+
+	inline public static function clamp(value:Float, min:Float, max:Float):Float
+	{
+		return Math.max(min, Math.min(max, value));
+	}
+
+	inline public static function coolTextFile(path:String):Array<String>
+	{
+		var daList:String = null;
+		#if (sys && MODS_ALLOWED)
+		if (FileSystem.exists(path))
+			daList = File.getContent(path);
+		#else
+		if (Assets.exists(path))
+			daList = Assets.getText(path);
+		#end
+		return daList != null ? listFromString(daList) : [];
+	}
+
+	inline public static function colorFromString(color:String):FlxColor
+	{
+		var hideChars:EReg = ~/[\t\n\r]/;
+		var color:String = hideChars.split(color).join('').trim();
+		if (color.startsWith('0x'))
+			color = color.substring(color.length - 6);
+
+		var colorNum:Null<FlxColor> = FlxColor.fromString(color);
+		if (colorNum == null)
+			colorNum = FlxColor.fromString('#$color');
+		return colorNum != null ? colorNum : FlxColor.WHITE;
+	}
+
+	inline public static function listFromString(string:String):Array<String>
+	{
+		final daList:Array<String> = string.trim().split('\n');
+		return [for (i in 0...daList.length) daList[i].trim()];
+	}
+
+	public static function floorDecimal(value:Float, decimals:Int):Float
+	{
+		if (decimals < 1)
+			return Math.floor(value);
+
+		var tempMult:Float = 1;
+		for (i in 0...decimals)
+			tempMult *= 10;
+
+		var newValue:Float = Math.floor(value * tempMult);
+		return newValue / tempMult;
+	}
+
+	public static function dominantColor(sprite:flixel.FlxSprite):Int
+	{
+		var countByColor:Map<Int, Int> = [];
+		sprite.useFramePixels = true;
+		for (col in 0...sprite.frameWidth)
+		{
+			for (row in 0...sprite.frameHeight)
+			{
+				var colorOfThisPixel:Int = sprite.framePixels.getPixel32(col, row);
+				if (colorOfThisPixel != 0)
+				{
+					if (countByColor.exists(colorOfThisPixel))
+					{
+						countByColor[colorOfThisPixel] = countByColor[colorOfThisPixel] + 1;
+					}
+					else if (countByColor[colorOfThisPixel] != 13520687 - (2 * 13520687))
+					{
+						countByColor[colorOfThisPixel] = 1;
+					}
+				}
+			}
+		}
+		var maxCount = 0;
+		var maxKey:Int = 0; // after the loop this will store the max color
+		countByColor[flixel.util.FlxColor.BLACK] = 0;
+		for (key in countByColor.keys())
+		{
+			if (countByColor[key] >= maxCount)
+			{
+				maxCount = countByColor[key];
+				maxKey = key;
+			}
+		}
+		sprite.useFramePixels = false;
+		return maxKey;
+	}
+
+	/**
+		Funny handler for `Application.current.window.alert` that *doesn't* crash on Linux and shit.
+
+		@param message Message of the error.
+		@param title Title of the error.
+
+		@author Leather128
+	**/
+	public static function coolError(message:Null<String> = null, title:Null<String> = null):Void
+	{
+		#if !linux
+		lime.app.Application.current.window.alert(message, title);
+		#else
+		trace(title + " - " + message, ERROR);
+
+		var text:FlxText = new FlxText(8, 0, 1280, title + " - " + message, 24);
+		text.color = FlxColor.RED;
+		text.borderSize = 1.5;
+		text.borderColor = FlxColor.BLACK;
+		text.scrollFactor.set();
+		text.cameras = [FlxG.cameras.list[FlxG.cameras.list.length - 1]];
+
+		FlxG.state.add(text);
+
+		FlxTween.tween(text, {alpha: 0, y: 8}, 5, {
+			onComplete: function(_)
+			{
+				FlxG.state.remove(text);
+				text.destroy();
+			}
+		});
+		#end
+	}
+
+	public static function numberArray(max:Int, ?min = 0):Array<Int>
+	{
+		return [for (i in min...max) i];
+	}
+
+	public static function browserLoad(site:String)
+	{
+		#if linux
+		Sys.command('/usr/bin/xdg-open', [site]);
+		#else
+		FlxG.openURL(site);
+		#end
+	}
+
+	public static function getNoteAmount(song:SwagSong, ?bothSides:Bool = true, ?oppNotes:Bool = false):Int
+	{
+		var total:Int = 0;
+		for (section in song.notes)
+		{
+			if (bothSides)
+				total += section.sectionNotes.length;
+			else
+			{
+				for (songNotes in section.sectionNotes)
+				{
+					if (!oppNotes && (songNotes[1] < 4 ? section.mustHitSection : !section.mustHitSection))
+						total += 1;
+					if (oppNotes && (songNotes[1] < 4 ? !section.mustHitSection : section.mustHitSection))
+						total += 1;
+				}
+			}
+		}
+		return total;
+	}
+
+	/** Quick Function to Fix Save Files for Flixel 5
+		if you are making a mod, you are gonna wanna change "ShadowMario" to something else
+		so Base Psych saves won't conflict with yours
+		@BeastlyGabi
+	**/
+	@:access(flixel.util.FlxSave.validate)
+	inline public static function getSavePath():String
+	{
+		final company:String = FlxG.stage.application.meta.get('company');
+		return '$company/${flixel.util.FlxSave.validate(FlxG.stage.application.meta.get('file'))}';
+	}
+
+	public static function setTextBorderFromString(text:FlxText, border:String)
+	{
+		switch (border.toLowerCase().trim())
+		{
+			case 'shadow':
+				text.borderStyle = SHADOW;
+			case 'outline':
+				text.borderStyle = OUTLINE;
+			case 'outline_fast', 'outlinefast':
+				text.borderStyle = OUTLINE_FAST;
+			default:
+				text.borderStyle = NONE;
+		}
+	}
+
+	public static function showPopUp(message:String, title:String):Void
+	{
+		#if (!ios || !iphonesim)
+		try
+		{
+			lime.app.Application.current.window.alert(message, title);
+		}
+		catch (e:Dynamic)
+			trace('$title - $message');
+		#else
+		trace('$title - $message');
+		#end
+	}
+}

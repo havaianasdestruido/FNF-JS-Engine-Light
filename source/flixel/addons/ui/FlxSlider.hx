@@ -1,7 +1,10 @@
-package flixel.addons.ui;
+﻿package flixel.addons.ui;
 
 #if FLX_MOUSE
 import flixel.util.FlxSpriteUtil;
+
+// REFACTOR: imports for relocated root classes
+import backend.Controls;
 
 /**
  * A slider GUI element for float and integer manipulation.

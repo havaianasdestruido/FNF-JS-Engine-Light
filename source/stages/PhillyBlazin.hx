@@ -1,11 +1,19 @@
-package stages;
+﻿package stages;
+import backend.ClientPrefs;
+import backend.Paths;
+import objects.BGSprite;
+import play.BaseStage;
+import play.PlayState;
 
-import GameOverSubstate;
-import Note;
+import states.substates.GameOverSubstate;
+import objects.Note;
 import flixel.addons.display.FlxTiledSprite;
 import openfl.filters.ShaderFilter;
 import shaders.RainShader;
 import stages.objects.*;
+
+// REFACTOR: imports for relocated root classes
+import objects.Character;
 
 class PhillyBlazin extends BaseStage
 {

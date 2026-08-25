@@ -1,7 +1,14 @@
-package editors;
+﻿package editors;
+import backend.ClientPrefs;
+import backend.DiscordClient;
+import backend.MusicBeatState;
+import backend.Paths;
+import states.TitleState;
+import objects.TypedAlphabet;
+import objects.FlxUIDropDownMenuCustom;
 
-import Alphabet;
-import DialogueBoxPsych;
+import objects.Alphabet;
+import objects.DialogueBoxPsych;
 import flixel.addons.ui.FlxInputText;
 import flixel.addons.ui.FlxUI9SliceSprite;
 import flixel.addons.ui.FlxUI;
@@ -14,6 +21,9 @@ import lime.system.Clipboard;
 import openfl.events.Event;
 import openfl.events.IOErrorEvent;
 import openfl.net.FileReference;
+
+// REFACTOR: imports for relocated root classes
+import objects.Character;
 
 class DialogueEditorState extends MusicBeatState
 {
@@ -567,3 +577,4 @@ class DialogueEditorState extends MusicBeatState
 		    super.onFocus();
 	    }
 }
+

@@ -1,4 +1,4 @@
-package psychlua;
+﻿package psychlua;
 
 #if HSCRIPT_ALLOWED
 import hscript.Parser;
@@ -7,8 +7,12 @@ import hscript.Expr;
 #end
 
 import haxe.Exception;
-
-// import objects.Character;
+import backend.Paths;
+import backend.Conductor;
+import backend.ClientPrefs;
+import objects.Character;
+import objects.Alphabet;
+import play.PlayState;
 
 /*
 * TODO: Decouple Lua from HScript and allow for more powerful HScript
@@ -114,7 +118,9 @@ class HScript
 				if(libPackage.length > 0)
 					str = libPackage + '.';
 
-				interp.variables.set(libName, Type.resolveClass(str + libName));
+				var resolved:Class<Dynamic> = Type.resolveClass(str + libName); // REFACTOR: legacy bare-name fallback
+				if (resolved == null) resolved = LuaUtils.resolveClassCompat(libName);
+				interp.variables.set(libName, resolved);
 			}
 			catch (e:Dynamic) {
 				FunkinLua.lastCalledScript = parent;
@@ -224,7 +230,9 @@ class HScript
 				if(libPackage.length > 0)
 					str = libPackage + '.';
 
-				funk.hscript.variables.set(libName, Type.resolveClass(str + libName));
+				var resolved:Class<Dynamic> = Type.resolveClass(str + libName); // REFACTOR: legacy bare-name fallback
+				if (resolved == null) resolved = LuaUtils.resolveClassCompat(libName);
+				funk.hscript.variables.set(libName, resolved);
 			}
 			catch (e:Dynamic) {
 				LuaUtils.luaTrace(funk.lua, funk.scriptName + ":" + funk.lastCalledFunction + " - " + e, false, false, FlxColor.RED);
@@ -236,3 +244,4 @@ class HScript
 		#end
 	}
 }
+

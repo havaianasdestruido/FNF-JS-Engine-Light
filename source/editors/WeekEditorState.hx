@@ -1,6 +1,15 @@
-package editors;
+﻿package editors;
+import backend.ClientPrefs;
+import backend.DiscordClient;
+import backend.MusicBeatState;
+import backend.Paths;
+import states.TitleState;
+import objects.Alphabet;
+import objects.HealthIcon;
+import objects.MenuCharacter;
+import objects.MenuItem;
 
-import WeekData;
+import backend.WeekData;
 import flixel.addons.ui.FlxInputText;
 import flixel.addons.ui.FlxUI9SliceSprite;
 import flixel.addons.ui.FlxUI;
@@ -13,6 +22,11 @@ import lime.system.Clipboard;
 import openfl.events.Event;
 import openfl.events.IOErrorEvent;
 import openfl.net.FileReference;
+
+// REFACTOR: imports for relocated root classes
+import backend.Controls;
+import data.Song;
+import objects.BGSprite;
 
 class WeekEditorState extends MusicBeatState
 {
@@ -844,3 +858,4 @@ class WeekEditorFreeplayState extends MusicBeatState
 		    super.onFocus();
 	    }
 }
+

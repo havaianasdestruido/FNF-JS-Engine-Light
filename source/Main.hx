@@ -1,11 +1,22 @@
-package;
+﻿package;
 
 import backend.SSPlugin as ScreenShotPlugin;
 import debug.FPSCounter;
 import backend.FunkinGame;
+// REFACTOR: relocated root classes
+import backend.CrashHandler;
+import states.InitState;
 import lime.app.Application;
 import openfl.Lib;
 import openfl.display.Sprite;
+
+// REFACTOR: imports for relocated root classes
+import backend.Achievements;
+import backend.ClientPrefs;
+import backend.CoolUtil;
+import backend.DiscordClient;
+import backend.WindowColorMode;
+import play.PlayState;
 #if GAMEMODE_ALLOWED
 import hxgamemode.GamemodeClient;
 #end

@@ -1,6 +1,9 @@
 package psychlua;
 
 import flixel.FlxObject;
+import backend.MusicBeatState;
+import backend.MusicBeatSubstate;
+import play.PlayState;
 
 class CustomSubstate extends MusicBeatSubstate
 {

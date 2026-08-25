@@ -1,7 +1,11 @@
 package stages;
+import backend.ClientPrefs;
+import objects.BGSprite;
+import objects.Note;
+import play.BaseStage;
 
 import stages.objects.*;
-import Character;
+import objects.Character;
 
 class StageWeek1 extends BaseStage
 {

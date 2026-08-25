@@ -1,6 +1,9 @@
 package psychlua;
 
 import openfl.utils.Assets;
+import backend.MusicBeatState;
+import backend.Paths;
+import play.PlayState;
 
 #if LUA_ALLOWED
 import psychlua.FunkinLua.State;

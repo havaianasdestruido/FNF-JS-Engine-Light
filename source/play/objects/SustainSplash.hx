@@ -1,4 +1,11 @@
-package play.objects;
+﻿package play.objects;
+
+import backend.ClientPrefs;
+import backend.Conductor;
+import objects.Note;
+import objects.NoteSplash;
+import objects.StrumNote;
+import play.PlayState;
 
 import shaders.RGBPalette;
 
@@ -6,7 +13,7 @@ import shaders.RGBPalette;
 
 class SustainSplash extends FlxSprite
 {
-	public var rgbShader:NoteSplash.PixelSplashShaderRef;
+	public var rgbShader:objects.NoteSplash.PixelSplashShaderRef;
 
 	public static var startCrochet:Float;
 	public static var frameRate:Int;
@@ -20,7 +27,7 @@ class SustainSplash extends FlxSprite
 	public function new():Void
 	{
 		super();
-		rgbShader = new NoteSplash.PixelSplashShaderRef();
+		rgbShader = new objects.NoteSplash.PixelSplashShaderRef();
 		shader = rgbShader.shader;
 		var skin:String = defaultNoteHoldSplash + getSplashSkinPostfix();
 		frames = Paths.getSparrowAtlas(skin);

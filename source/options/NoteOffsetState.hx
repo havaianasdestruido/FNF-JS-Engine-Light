@@ -1,6 +1,16 @@
-package options;
+﻿package options;
 
 import flixel.ui.FlxBar;
+
+// REFACTOR: imports for relocated root classes
+import backend.ClientPrefs;
+import backend.Conductor;
+import backend.Controls;
+import backend.MusicBeatState;
+import objects.Alphabet;
+import objects.BGSprite;
+import objects.Character;
+import objects.Note;
 
 class NoteOffsetState extends MusicBeatState
 {

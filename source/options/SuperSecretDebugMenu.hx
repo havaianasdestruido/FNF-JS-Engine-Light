@@ -1,9 +1,16 @@
-package options;
+﻿package options;
 
-import Controls;
+import backend.Controls;
 import flixel.graphics.FlxGraphic;
 import flixel.input.keyboard.FlxKey;
 import haxe.Exception;
+
+// REFACTOR: imports for relocated root classes
+import backend.ClientPrefs;
+import objects.Prompt;
+import states.MainMenuState;
+import states.OutdatedState;
+import states.TitleState;
 
 class SuperSecretDebugMenu extends BaseOptionsMenu
 {

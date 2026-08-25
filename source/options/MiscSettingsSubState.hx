@@ -1,9 +1,13 @@
-package options;
+﻿package options;
 
-import Controls;
+import backend.Controls;
 import flixel.graphics.FlxGraphic;
 import flixel.input.keyboard.FlxKey;
 import openfl.Lib;
+
+// REFACTOR: imports for relocated root classes
+import data.Song;
+import objects.Note;
 
 class MiscSettingsSubState extends BaseOptionsMenu
 {

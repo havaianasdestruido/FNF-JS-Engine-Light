@@ -1,4 +1,6 @@
 package stages.objects;
+import backend.ClientPrefs;
+import backend.Paths;
 
 class BackgroundDancer extends FlxSprite
 {

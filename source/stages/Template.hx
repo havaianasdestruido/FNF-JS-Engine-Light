@@ -1,4 +1,8 @@
 package stages;
+import objects.Note;
+import play.BaseStage;
+import play.BaseStage.Countdown;
+import play.PlayState;
 
 import stages.objects.*;
 

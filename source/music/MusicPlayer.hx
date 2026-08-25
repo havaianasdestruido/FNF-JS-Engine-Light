@@ -1,8 +1,13 @@
-package music;
+﻿package music;
 
-import FreeplayState;
+import states.FreeplayState;
 import flixel.group.FlxGroup;
 import flixel.ui.FlxBar;
+
+// REFACTOR: imports for relocated root classes
+import backend.ClientPrefs;
+import backend.Controls;
+import data.Song;
 
 /**
  * Music player used for Freeplay

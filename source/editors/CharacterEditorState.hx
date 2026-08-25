@@ -1,6 +1,16 @@
-package editors;
+﻿package editors;
+import objects.Character;
+import backend.ClientPrefs;
+import backend.CoolUtil;
+import backend.DiscordClient;
+import backend.MusicBeatState;
+import backend.Paths;
+import states.TitleState;
+import play.PlayState;
+import objects.BGSprite;
+import objects.HealthIcon;
+import objects.FlxUIDropDownMenuCustom;
 
-import Character;
 import flixel.FlxState;
 import flixel.addons.ui.FlxInputText;
 import flixel.addons.ui.FlxUI9SliceSprite;
@@ -21,6 +31,10 @@ import lime.system.Clipboard;
 import openfl.events.Event;
 import openfl.events.IOErrorEvent;
 import openfl.net.FileReference;
+
+// REFACTOR: imports for relocated root classes
+import backend.Controls;
+import objects.Note;
 
 /**
 	*DEBUG MODE
@@ -1640,3 +1654,4 @@ enum CharacterChange {
 	CChangeOffset(name:String, change:FlxPoint);
 	CResetOffsets(oldOffsets:Map<String, FlxPoint>);
 }
+

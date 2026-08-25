@@ -1,4 +1,12 @@
-package objects;
+﻿package objects;
+
+import backend.Paths;
+import backend.Conductor;
+import backend.ClientPrefs;
+import play.PlayState;
+
+// REFACTOR: imports for relocated root classes
+import data.Song;
 
 //A helper class for popups.
 //This was added to fix issues with rating popups not disappearing correctly when Combo Stacking is turned on.

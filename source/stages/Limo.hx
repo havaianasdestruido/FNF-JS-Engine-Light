@@ -1,4 +1,10 @@
 package stages;
+import backend.Achievements;
+import backend.ClientPrefs;
+import backend.Paths;
+import objects.BGSprite;
+import objects.Note;
+import play.BaseStage;
 
 import stages.objects.*;
 

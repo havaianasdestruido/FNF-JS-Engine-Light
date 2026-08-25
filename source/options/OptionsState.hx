@@ -1,8 +1,21 @@
-package options;
+﻿package options;
 
-import Controls;
+import backend.Controls;
 import flixel.graphics.FlxGraphic;
 import flixel.input.keyboard.FlxKey;
+
+// REFACTOR: imports for relocated root classes
+import backend.ClientPrefs;
+import backend.CoolUtil;
+import backend.DiscordClient;
+import backend.MusicBeatState;
+import data.StageData;
+import objects.Alphabet;
+import objects.Note;
+import play.PlayState;
+import states.LoadingState;
+import states.MainMenuState;
+import states.substates.PauseSubState;
 
 class OptionsState extends MusicBeatState
 {

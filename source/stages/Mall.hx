@@ -1,4 +1,10 @@
 package stages;
+import backend.ClientPrefs;
+import backend.Paths;
+import objects.BGSprite;
+import play.BaseStage;
+import play.BaseStage.Countdown;
+import play.PlayState;
 
 import stages.objects.*;
 

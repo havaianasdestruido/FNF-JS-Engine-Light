@@ -1,4 +1,4 @@
-package flixel.addons.ui;
+﻿package flixel.addons.ui;
 
 import flixel.addons.ui.FlxUI.NamedString;
 import lime.system.Clipboard;
@@ -6,16 +6,19 @@ import openfl.errors.Error;
 import openfl.events.KeyboardEvent;
 import openfl.geom.Rectangle;
 
+// REFACTOR: imports for relocated root classes
+import objects.Character;
+
 /**
  * FlxInputText v1.11, ported to Haxe
  * @author larsiusprime, (Lars Doucet)
  * @link http://github.com/haxeflixel/flixel-ui
  *
  * FlxInputText v1.10, Input text field extension for Flixel
- * @author Gama11, Mr_Walrus, nitram_cero (Martín Sebastián Wain)
+ * @author Gama11, Mr_Walrus, nitram_cero (MartÃ­n SebastiÃ¡n Wain)
  * @link http://forums.flixel.org/index.php/topic,272.0.html
  *
- * Copyright (c) 2009 Martín Sebastián Wain
+ * Copyright (c) 2009 MartÃ­n SebastiÃ¡n Wain
  * License: Creative Commons Attribution 3.0 United States
  * @link http://creativecommons.org/licenses/by/3.0/us/
  *

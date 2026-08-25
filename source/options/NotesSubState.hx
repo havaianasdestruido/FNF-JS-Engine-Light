@@ -1,15 +1,27 @@
-package options;
+﻿package options;
 
-import Note;
-import StrumNote;
+// REFACTOR: explicit imports for shader subtypes
+import shaders.RGBPalette.RGBShaderReference;
+
+import objects.Note;
+import objects.StrumNote;
 import flixel.addons.display.FlxBackdrop;
 import flixel.addons.display.shapes.FlxShapeCircle;
 import flixel.input.gamepad.FlxGamepadInputID;
 import flixel.input.keyboard.FlxKey;
 import flixel.util.FlxGradient;
 import lime.system.Clipboard;
-import shaders.RGBPalette.RGBShaderReference;
 import shaders.RGBPalette;
+
+// REFACTOR: imports for relocated root classes
+import backend.ClientPrefs;
+import backend.Controls;
+import backend.CoolUtil;
+import backend.DiscordClient;
+import backend.MusicBeatSubstate;
+import objects.Alphabet;
+import objects.AttachedText;
+import play.PlayState;
 
 class NotesSubState extends MusicBeatSubstate
 {

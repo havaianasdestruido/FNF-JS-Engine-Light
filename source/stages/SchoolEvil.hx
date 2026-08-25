@@ -1,7 +1,14 @@
 package stages;
+import backend.ClientPrefs;
+import backend.CoolUtil;
+import backend.Paths;
+import objects.BGSprite;
+import objects.Note;
+import play.BaseStage;
+import play.PlayState;
 
-import DialogueBox;
-import GameOverSubstate;
+import objects.DialogueBox;
+import states.substates.GameOverSubstate;
 import flixel.addons.effects.FlxTrail;
 import stages.objects.*;
 

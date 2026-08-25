@@ -1,10 +1,19 @@
-package options;
+﻿package options;
 
-import Controls;
+import backend.Controls;
 import flixel.addons.ui.FlxUIInputText; // These are both for the search bars
 import flixel.graphics.FlxGraphic;
 import flixel.input.keyboard.FlxKey;
 import flixel.ui.FlxButton;
+
+// REFACTOR: imports for relocated root classes
+import backend.ClientPrefs;
+import backend.DiscordClient;
+import backend.MusicBeatSubstate;
+import objects.Alphabet;
+import objects.AttachedText;
+import objects.Character;
+import objects.CheckboxThingie;
 
 class BaseOptionsMenu extends MusicBeatSubstate
 {

@@ -1,4 +1,5 @@
 package editors;
+import backend.Paths;
 //We gotta have music in the Editors!
 
 
@@ -78,3 +79,4 @@ class EditingMusic extends flixel.FlxBasic
 		music.update(elapsed);
 	}
 }
+

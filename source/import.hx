@@ -1,5 +1,9 @@
-#if !macro
-import Paths;
+﻿#if !macro
+// REFACTOR: root classes relocated; Paths -> backend, BaseStage -> play
+import backend.Paths;
+
+// REFACTOR: imports for relocated root classes
+import play.BaseStage;
 
 #if sys
 import sys.*;
@@ -27,7 +31,7 @@ import backend.Mods;
 #end
 
 //so that it doesn't bring up a "Type not found: Countdown"
-import BaseStage.Countdown;
+import play.BaseStage.Countdown;
 
 //Flixel
 import flixel.sound.FlxSound;

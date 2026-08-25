@@ -1,5 +1,8 @@
 package psychlua;
 
+import backend.ClientPrefs;
+import play.PlayState;
+
 class ModchartSprite extends FlxSprite
 {
 	public var wasAdded:Bool = false;

@@ -1,4 +1,11 @@
-package options;
+﻿package options;
+
+// REFACTOR: explicit imports for shader subtypes
+import shaders.RainShader.Light;
+
+
+// REFACTOR: imports for relocated root classes
+import objects.Note;
 
 class OptimizationSubState extends BaseOptionsMenu
 {

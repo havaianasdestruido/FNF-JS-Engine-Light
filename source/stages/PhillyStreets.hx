@@ -1,8 +1,15 @@
 package stages;
+import backend.ClientPrefs;
+import backend.Conductor;
+import backend.Paths;
+import objects.BGSprite;
+import objects.VideoSprite;
+import play.BaseStage;
+import play.PlayState;
 
-import CutsceneHandler;
-import GameOverSubstate;
-import Note;
+import play.CutsceneHandler;
+import states.substates.GameOverSubstate;
+import objects.Note;
 import flixel.addons.display.FlxTiledSprite;
 import openfl.filters.ShaderFilter;
 import shaders.RainShader;

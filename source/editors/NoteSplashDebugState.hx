@@ -1,14 +1,20 @@
-package editors;
+﻿package editors;
+import backend.ClientPrefs;
+import backend.MusicBeatState;
+import backend.Paths;
 
-import Note;
-import NoteSplash;
-import StrumNote;
+import objects.Note;
+import objects.NoteSplash;
+import objects.StrumNote;
 import flixel.addons.ui.FlxInputText;
 import flixel.addons.ui.FlxUINumericStepper;
 
+// REFACTOR: imports for relocated root classes
+import backend.Controls;
+
 class NoteSplashDebugState extends MusicBeatState
 {
-	var config:NoteSplash.NoteSplashConfig;
+	var config:objects.NoteSplash.NoteSplashConfig;
 	var forceFrame:Int = -1;
 	var curSelected:Int = 0;
 	var maxNotes:Int = 4;
@@ -478,3 +484,4 @@ class NoteSplashDebugState extends MusicBeatState
 		super.destroy();
 	}
 }
+

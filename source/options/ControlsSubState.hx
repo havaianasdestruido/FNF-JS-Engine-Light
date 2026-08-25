@@ -1,6 +1,14 @@
-package options;
+﻿package options;
 
 import flixel.input.keyboard.FlxKey;
+
+// REFACTOR: imports for relocated root classes
+import backend.ClientPrefs;
+import backend.Controls;
+import backend.InputFormatter;
+import backend.MusicBeatSubstate;
+import objects.Alphabet;
+import objects.AttachedText;
 
 class ControlsSubState extends MusicBeatSubstate {
 	private static var curSelected:Int = 1;

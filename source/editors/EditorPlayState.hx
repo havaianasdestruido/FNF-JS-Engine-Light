@@ -1,13 +1,29 @@
-package editors;
+﻿package editors;
+import backend.Conductor;
+import backend.ClientPrefs;
+import backend.CoolUtil;
+import backend.MusicBeatState;
+import backend.Paths;
+import states.LoadingState;
+import play.PlayState;
+import data.Section;
+import data.Song;
+import objects.Note;
+import objects.NoteSplash;
+import objects.StrumNote;
 
-import Character.CharacterFile;
-import Note.PreloadedChartNote;
-import Section.SwagSection;
-import Song.SwagSong;
+import objects.Character.CharacterFile;
+import objects.Note.PreloadedChartNote;
+import data.Section.SwagSection;
+import data.Song.SwagSong;
 import flixel.input.keyboard.FlxKey;
 import flixel.util.FlxSort;
 import openfl.events.KeyboardEvent;
 import play.objects.SustainSplash;
+
+// REFACTOR: imports for relocated root classes
+import backend.Controls;
+import objects.Character;
 
 class EditorPlayState extends MusicBeatState
 {
@@ -1038,3 +1054,4 @@ class EditorPlayState extends MusicBeatState
 		super.destroy();
 	}
 }
+

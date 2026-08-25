@@ -4,7 +4,9 @@ package objects;
 import openfl.events.Event;
 import openfl.geom.Matrix;
 import openfl.Lib;
-import Achievements;
+import backend.Achievements;
+import backend.Paths;
+import backend.ClientPrefs;
 
 class AchievementPopup extends openfl.display.Sprite {
 	public var onFinish:Void->Void = null;

@@ -1,4 +1,7 @@
 package stages.objects;
+import backend.ClientPrefs;
+import backend.Conductor;
+import backend.Paths;
 
 class TankmenBG extends FlxSprite
 {

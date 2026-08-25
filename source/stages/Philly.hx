@@ -1,6 +1,12 @@
 package stages;
+import backend.ClientPrefs;
+import backend.Conductor;
+import backend.Paths;
+import objects.BGSprite;
+import objects.Note;
+import play.BaseStage;
 
-import Character;
+import objects.Character;
 import stages.objects.*;
 
 class Philly extends BaseStage

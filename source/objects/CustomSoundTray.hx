@@ -1,5 +1,6 @@
 package objects;
 
+import backend.Paths;
 import flixel.system.frontEnds.SoundFrontEnd;
 import flixel.system.ui.FlxSoundTray;
 import openfl.Assets;

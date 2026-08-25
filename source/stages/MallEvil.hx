@@ -1,4 +1,8 @@
 package stages;
+import backend.Paths;
+import objects.BGSprite;
+import play.BaseStage;
+import play.PlayState;
 
 import stages.objects.*;
 

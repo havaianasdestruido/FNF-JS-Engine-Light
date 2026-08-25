@@ -1,4 +1,6 @@
 package stages.objects;
+import backend.ClientPrefs;
+import objects.BGSprite;
 
 class DadBattleFog extends FlxSpriteGroup
 {

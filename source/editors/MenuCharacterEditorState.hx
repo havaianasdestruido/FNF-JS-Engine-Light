@@ -1,6 +1,11 @@
 package editors;
+import backend.ClientPrefs;
+import backend.DiscordClient;
+import backend.MusicBeatState;
+import backend.Paths;
+import states.TitleState;
 
-import MenuCharacter;
+import objects.MenuCharacter;
 import flixel.addons.ui.FlxInputText;
 import flixel.addons.ui.FlxUI9SliceSprite;
 import flixel.addons.ui.FlxUI;
@@ -447,3 +452,4 @@ class MenuCharacterEditorState extends MusicBeatState
 		    super.onFocus();
 	    }
 }
+

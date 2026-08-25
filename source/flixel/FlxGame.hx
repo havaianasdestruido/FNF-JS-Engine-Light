@@ -1,4 +1,4 @@
-package flixel;
+﻿package flixel;
 
 import flixel.graphics.tile.FlxDrawBaseItem;
 import flixel.system.FlxSplash;
@@ -12,6 +12,12 @@ import openfl.display.StageScaleMode;
 import openfl.events.Event;
 import openfl.filters.BitmapFilter;
 import lime.system.System;
+
+// REFACTOR: imports for relocated root classes
+import backend.ClientPrefs;
+import data.Section;
+import objects.Note;
+import play.PlayState;
 #if desktop
 import openfl.events.FocusEvent;
 #end

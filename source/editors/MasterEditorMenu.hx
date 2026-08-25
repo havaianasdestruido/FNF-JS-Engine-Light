@@ -1,4 +1,17 @@
-package editors;
+﻿package editors;
+import backend.DiscordClient;
+import backend.MusicBeatState;
+import backend.Paths;
+import backend.WeekData;
+import states.FreeplayState;
+import states.LoadingState;
+import states.MainMenuState;
+import objects.Alphabet;
+
+// REFACTOR: imports for relocated root classes
+import backend.Controls;
+import objects.Character;
+import objects.Note;
 
 class MasterEditorMenu extends MusicBeatState
 {
@@ -207,3 +220,4 @@ class MasterEditorMenu extends MusicBeatState
 	}
 	#end
 }
+

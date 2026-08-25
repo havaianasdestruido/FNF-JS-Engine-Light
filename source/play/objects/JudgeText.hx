@@ -1,5 +1,8 @@
 package play.objects;
 
+import backend.ClientPrefs;
+import play.PlayState;
+
 typedef JudgeTextProperties =
 {
   combo:Float,

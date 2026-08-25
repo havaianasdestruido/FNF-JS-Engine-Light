@@ -1,10 +1,15 @@
-package options;
+﻿package options;
 
-import Controls;
+import backend.Controls;
 import flixel.graphics.FlxGraphic;
 import flixel.input.keyboard.FlxKey;
 import haxe.io.Path;
 import openfl.Lib;
+
+// REFACTOR: imports for relocated root classes
+import backend.ClientPrefs;
+import backend.Screenshot;
+import data.Song;
 #if hxnativefiledialog
 import hxnativefiledialog.NFD;
 import hxnativefiledialog.Types;
