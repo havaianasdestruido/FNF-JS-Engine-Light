@@ -36,6 +36,9 @@ import openfl.net.FileReference;
 import backend.Controls;
 import objects.Note;
 
+// REFACTOR: relocated helpers
+import editors.helpers.CharacterEditorHelpers;
+
 /**
 	*DEBUG MODE
  */
@@ -1110,137 +1113,35 @@ class CharacterEditorState extends MusicBeatState
 
 	function reloadCharacterImage()
 	{
-		var lastAnim:String = char.getAnimationName();
-		var anims:Array<AnimArray> = char.animationsArray.copy();
-
-		char.atlas = FlxDestroyUtil.destroy(char.atlas);
-		char.isAnimateAtlas = false;
-		char.color = FlxColor.WHITE;
-		char.alpha = 1;
-
-		if(Paths.fileExists('images/' + char.imageFile + '/Animation.json', TEXT))
-		{
-			char.atlas = new FlxAnimate();
-			char.atlas.showPivot = false;
-			try
-			{
-				Paths.loadAnimateAtlas(char.atlas, char.imageFile);
-			}
-			catch(e:Dynamic)
-			{
-				FlxG.log.warn('Could not load atlas ${char.imageFile}: $e');
-			}
-			char.isAnimateAtlas = true;
-		}
-		else if (Paths.fileExists('images/' + char.imageFile + '.png', IMAGE))
-		{
-			var split:Array<String> = char.imageFile.split(',');
-			var charFrames:FlxAtlasFrames = Paths.getAtlas(split[0].trim());
-
-			if(split.length > 1)
-			{
-				var original:FlxAtlasFrames = charFrames;
-				charFrames = new FlxAtlasFrames(charFrames.parent);
-				charFrames.addAtlas(original, true);
-				for (i in 1...split.length)
-				{
-					var extraFrames:FlxAtlasFrames = Paths.getAtlas(split[i].trim());
-					if(extraFrames != null)
-						charFrames.addAtlas(extraFrames, true);
-				}
-			}
-			char.frames = charFrames;
-		} else {
-			trace ("The png file the game looked for wasn't found!");
-			CoolUtil.coolError("The image/XML/Atlas files you tried to load couldn't be found!\nEither it doesn't exist, or the name doesn't match with the one you're putting?", "JS Engine Anti-Crash Tool");
-		}
-
-		for (anim in anims) {
-			var animAnim:String = '' + anim.anim;
-			var animName:String = '' + anim.name;
-			var animFps:Int = anim.fps;
-			var animLoop:Bool = !!anim.loop; //Bruh
-			var animIndices:Array<Int> = anim.indices;
-			addAnimation(animAnim, animName, animFps, animLoop, animIndices);
-		}
-
-		if(anims.length > 0)
-		{
-			if(lastAnim != '') char.playAnim(lastAnim, true);
-			else char.dance();
-		}
+		CharacterEditorHelpers.reloadCharacterImage(this);
 	}
 
 	function updatePointerPos() {
-		if(char == null || cameraFollowPointer == null) return;
-
-		var offX:Float = 0;
-		var offY:Float = 0;
-		if(!char.isPlayer)
-		{
-			offX = char.getMidpoint().x + 150 + char.cameraPosition[0];
-			offY = char.getMidpoint().y - 100 + char.cameraPosition[1];
-		}
-		else
-		{
-			offX = char.getMidpoint().x - 100 - char.cameraPosition[0];
-			offY = char.getMidpoint().y - 100 + char.cameraPosition[1];
-		}
-		cameraFollowPointer.setPosition(offX, offY);
+		CharacterEditorHelpers.updatePointerPos(this);
 	}
 
 	function findAnimationByName(name:String):AnimArray {
-		for (anim in char.animationsArray) {
-			if(anim.anim == name) {
-				return anim;
-			}
-		}
-		return null;
+		return CharacterEditorHelpers.findAnimationByName(this, name);
 	}
 
 	inline function updateCharacterPositions()
 	{
-		char.setPosition(char.positionArray[0] + OFFSET_X + 100, char.positionArray[1]);
-		updatePointerPos();
+		CharacterEditorHelpers.updateCharacterPositions(this);
 	}
 
 	inline function predictCharacterIsNotPlayer(name:String)
 	{
-		return (name != 'bf' && !name.startsWith('bf-') && !name.endsWith('-player') && !name.endsWith('-playable') && !name.endsWith('-dead')) ||
-				name.endsWith('-opponent') || name.startsWith('gf-') || name.endsWith('-gf') || name == 'gf';
+		return CharacterEditorHelpers.predictCharacterIsNotPlayer(this, name);
 	}
 
 	function addAnimation(anim:String, name:String, fps:Float, loop:Bool, indices:Array<Int>)
 	{
-		if(!char.isAnimateAtlas)
-		{
-			if(indices != null && indices.length > 0)
-				char.animation.addByIndices(anim, name, indices, "", fps, loop);
-			else
-				char.animation.addByPrefix(anim, name, fps, loop);
-		}
-		else
-		{
-			if(indices != null && indices.length > 0)
-				char.atlas.anim.addBySymbolIndices(anim, name, indices, fps, loop);
-			else
-				char.atlas.anim.addBySymbol(anim, name, fps, loop);
-		}
-
-		if(!char.animOffsets.exists(anim))
-			char.addOffset(anim, 0, 0);
+		CharacterEditorHelpers.addAnimation(this, anim, name, fps, loop, indices);
 	}
 
 	inline function newAnim(anim:String, name:String):AnimArray
 	{
-		return {
-			offsets: [0, 0],
-			loop: false,
-			fps: 24,
-			anim: anim,
-			indices: [],
-			name: name
-		};
+		return CharacterEditorHelpers.newAnim(this, anim, name);
 	}
 
 	function reloadCharacterOptions() {
@@ -1277,65 +1178,24 @@ class CharacterEditorState extends MusicBeatState
 
 	inline function updateText()
 	{
-		animsTxt.removeFormat(selectedFormat);
-
-		var intendText:String = '';
-		for (num => anim in animList)
-		{
-			if(num > 0) intendText += '\n';
-
-			if(num == curAnim)
-			{
-				var n:Int = intendText.length;
-				intendText += anim.anim + ": " + anim.offsets;
-				animsTxt.addFormat(selectedFormat, n, intendText.length);
-			}
-			else intendText += anim.anim + ": " + anim.offsets;
-		}
-		animsTxt.text = intendText;
+		CharacterEditorHelpers.updateText(this);
 	}
 
 	inline function reloadAnimList()
 	{
-		animList = char.animationsArray;
-		if(animList.length > 0) char.playAnim(animList[0].anim, true);
-		curAnim = 0;
-
-		updateText();
-		if(animationDropDown != null) reloadAnimationDropDown();
+		CharacterEditorHelpers.reloadAnimList(this);
 	}
 
 	function reloadAnimationDropDown() {
-		var animationList:Array<String> = [];
-		for (anim in animList) animationList.push(anim.anim);
-		if(animationList.length < 1) animationList.push('NO ANIMATIONS'); //Prevents crash
-
-		animationDropDown.setData(FlxUIDropDownMenuCustom.makeStrIdLabelArray(animationList, true));
+		CharacterEditorHelpers.reloadAnimationDropDown(this);
 	}
 
 	function reloadCharacterDropDown() {
-		characterList = Mods.mergeAllTextsNamed('data/characterList.txt', Paths.getSharedPath());
-		var foldersToCheck:Array<String> = Mods.directoriesWithFile(Paths.getSharedPath(), 'characters/');
-		for (folder in foldersToCheck)
-			for (file in FileSystem.readDirectory(folder))
-				if(file.toLowerCase().endsWith('.json'))
-				{
-					var charToCheck:String = file.substr(0, file.length - 5);
-					if(!characterList.contains(charToCheck))
-						characterList.push(charToCheck);
-				}
-
-		if(characterList.length < 1) characterList.push('');
-		charDropDown.setData(FlxUIDropDownMenuCustom.makeStrIdLabelArray(characterList, true));
-		charDropDown.selectedLabel = _char;
+		CharacterEditorHelpers.reloadCharacterDropDown(this);
 	}
 
 	function resetHealthBarColor() {
-		healthColorStepperR.value = char.healthColorArray[0];
-		healthColorStepperG.value = char.healthColorArray[1];
-		healthColorStepperB.value = char.healthColorArray[2];
-
-		healthBarBG.color = FlxColor.fromRGB(char.healthColorArray[0], char.healthColorArray[1], char.healthColorArray[2]);
+		CharacterEditorHelpers.resetHealthBarColor(this);
 	}
 
 	function updatePresence() {

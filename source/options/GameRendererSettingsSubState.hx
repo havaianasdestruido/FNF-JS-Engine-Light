@@ -6,7 +6,6 @@ import flixel.input.keyboard.FlxKey;
 import haxe.io.Path;
 import openfl.Lib;
 
-// REFACTOR: imports for relocated root classes
 import backend.ClientPrefs;
 import backend.Screenshot;
 import data.Song;

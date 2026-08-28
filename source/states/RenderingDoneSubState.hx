@@ -10,7 +10,6 @@ import flixel.util.FlxAxes;
 import openfl.display.BlendMode;
 import play.PlayState;
 
-// REFACTOR: imports for relocated root classes
 import backend.Controls;
 import data.Song;
 

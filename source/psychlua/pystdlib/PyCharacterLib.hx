@@ -4,7 +4,6 @@ import psychlua.PythonScript;
 import play.PlayState;
 import psychlua.LuaUtils;
 
-// REFACTOR: imports for relocated root classes
 import objects.Character;
 
 // REFACTOR: extracted from psychlua.PythonScript (character API)

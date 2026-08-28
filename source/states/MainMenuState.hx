@@ -13,7 +13,6 @@ import flixel.effects.FlxFlicker;
 import flixel.input.keyboard.FlxKey;
 import lime.app.Application;
 
-// REFACTOR: imports for relocated root classes
 import backend.Controls;
 import objects.MenuItem;
 #if FUNNY_ALLOWED

@@ -1,6 +1,5 @@
 ﻿package psychlua.callbacks;
 
-// REFACTOR: explicit imports for shader subtypes
 import shaders.ErrorHandledShader.ErrorHandledRuntimeShader;
 
 import backend.ClientPrefs;

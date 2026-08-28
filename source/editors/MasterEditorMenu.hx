@@ -8,7 +8,6 @@ import states.LoadingState;
 import states.MainMenuState;
 import objects.Alphabet;
 
-// REFACTOR: imports for relocated root classes
 import backend.Controls;
 import objects.Character;
 import objects.Note;

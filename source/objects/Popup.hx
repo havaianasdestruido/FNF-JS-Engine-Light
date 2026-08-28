@@ -5,7 +5,6 @@ import backend.Conductor;
 import backend.ClientPrefs;
 import play.PlayState;
 
-// REFACTOR: imports for relocated root classes
 import data.Song;
 
 //A helper class for popups.

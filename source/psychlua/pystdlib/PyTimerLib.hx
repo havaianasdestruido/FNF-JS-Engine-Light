@@ -1,6 +1,5 @@
 package psychlua.pystdlib;
 
-// REFACTOR: restored imports
 import flixel.util.FlxTimer;
 import psychlua.PythonScript;
 import play.PlayState;

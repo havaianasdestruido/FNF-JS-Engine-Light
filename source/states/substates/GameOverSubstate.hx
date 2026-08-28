@@ -11,7 +11,6 @@ import play.PlayState;
 import states.FreeplayState;
 import states.StoryMenuState;
 
-// REFACTOR: imports for relocated root classes
 import backend.Controls;
 
 class GameOverSubstate extends MusicBeatSubstate

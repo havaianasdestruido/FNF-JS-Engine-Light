@@ -11,6 +11,7 @@ import objects.Alphabet;
 import objects.AttachedText;
 import objects.CheckboxThingie;
 import play.PlayState;
+import states.helpers.GameplayChangersHelpers;
 
 class GameplayChangersSubstate extends MusicBeatSubstate
 {
@@ -26,163 +27,12 @@ class GameplayChangersSubstate extends MusicBeatSubstate
 
 	function getOptions()
 	{
-		var skip:Bool = inThePauseMenu;
-
-		var goption:GameplayOption = new GameplayOption('Scroll Type', 'scrolltype', 'string', 'multiplicative', ["multiplicative", "constant"]);
-		optionsArray.push(goption);
-
-		var option:GameplayOption = new GameplayOption('Scroll Speed', 'scrollspeed', 'float', 1);
-		option.scrollSpeed = 2.0;
-		option.minValue = 0.35;
-		option.changeValue = 0.05;
-		option.slowChangeVal = 0.01;
-		option.decimals = 2;
-		if (goption.getValue() != "constant")
-		{
-			option.displayFormat = '%vX';
-			option.maxValue = 128;
-		}
-		else
-		{
-			option.displayFormat = "%v";
-			option.maxValue = 1024;
-		}
-		optionsArray.push(option);
-
-		#if !html5
-		var option:GameplayOption = new GameplayOption('Playback Rate', 'songspeed', 'float', 1);
-		option.scrollSpeed = 3;
-		option.minValue = 0.01;
-		option.maxValue = 100;
-		option.changeValue = 0.05;
-		option.slowChangeVal = 0.01;
-		option.displayFormat = '%vX';
-		option.decimals = 2;
-		optionsArray.push(option);
-		#end
-
-		var option:GameplayOption = new GameplayOption('Health Gain Multiplier', 'healthgain', 'float', 1);
-		option.scrollSpeed = 5;
-		option.minValue = -1;
-		option.maxValue = 50;
-		option.changeValue = 0.1;
-		option.slowChangeVal = 0.01;
-		option.decimals = 3;
-		option.displayFormat = '%vX';
-		optionsArray.push(option);
-
-		var option:GameplayOption = new GameplayOption('Health Loss Multiplier', 'healthloss', 'float', 1);
-		option.scrollSpeed = 2.5;
-		option.minValue = -1;
-		option.maxValue = 50;
-		option.changeValue = 0.1;
-		option.slowChangeVal = 0.01;
-		option.decimals = 3;
-		option.displayFormat = '%vX';
-		optionsArray.push(option);
-
-		var option:GameplayOption = new GameplayOption('Instakill on Miss', 'instakill', 'bool', false);
-		optionsArray.push(option);
-
-		var option:GameplayOption = new GameplayOption('Sicks Only', 'onlySicks', 'bool', false);
-		optionsArray.push(option);
-
-		var option:GameplayOption = new GameplayOption('Practice Mode', 'practice', 'bool', false);
-		optionsArray.push(option);
-		option.onChange = onChangeCheat;
-
-		var option:GameplayOption = new GameplayOption('Botplay', 'botplay', 'bool', false);
-		optionsArray.push(option);
-		option.onChange = onChangeCheat;
-
-		var option:GameplayOption = new GameplayOption('Play as Opponent', 'opponentplay', 'bool', false);
-		option.onChange = onChangeChartOption;
-		optionsArray.push(option);
-
-		var option:GameplayOption = new GameplayOption('Play Both Sides', 'bothsides', 'bool', false);
-		option.onChange = onChangeChartOption;
-		optionsArray.push(option);
-
-		var option:GameplayOption = new GameplayOption('Opponent Health Drain', 'opponentdrain', 'bool', false);
-		optionsArray.push(option);
-
-		var option:GameplayOption = new GameplayOption('Health Drain Level: ', 'drainlevel', 'float', 1);
-		option.scrollSpeed = 2;
-		option.minValue = -1;
-		option.maxValue = 10;
-		option.changeValue = 0.1;
-		option.slowChangeVal = 0.01;
-		option.displayFormat = '%vX';
-		optionsArray.push(option);
-
-		var option:GameplayOption = new GameplayOption('Random Mode', 'randommode', 'bool', false);
-		option.onChange = onChangeChartOption;
-		optionsArray.push(option);
-
-		var option:GameplayOption = new GameplayOption('Stair Mode', 'stairmode', 'bool', false);
-		option.onChange = onChangeChartOption;
-		optionsArray.push(option);
-
-		var option:GameplayOption = new GameplayOption('Wave Mode', 'wavemode', 'bool', false);
-		option.onChange = onChangeChartOption;
-		optionsArray.push(option);
-
-		var option:GameplayOption = new GameplayOption('Flip Mode', 'flip', 'bool', false);
-		option.onChange = onChangeChartOption;
-		optionsArray.push(option);
-
-		var option:GameplayOption = new GameplayOption('One Key', 'onekey', 'bool', false);
-		option.onChange = onChangeChartOption;
-		optionsArray.push(option);
-
-		var option:GameplayOption = new GameplayOption('Jack Amount: ', 'jacks', 'int', 0);
-		option.onChange = onChangeChartOption;
-		option.scrollSpeed = 6;
-		option.minValue = 0;
-		option.maxValue = 100;
-		option.changeValue = 1;
-		option.slowChangeVal = 1;
-		option.displayFormat = '%v';
-		optionsArray.push(option);
-
-		var option:GameplayOption = new GameplayOption('Random Playback Rate', 'randomspeed', 'bool', false);
-		option.onChange = onChangeChartOption;
-		optionsArray.push(option);
-
-		var option:GameplayOption = new GameplayOption('Minimum Speed', 'randomspeedmin', 'float', 0.5);
-		option.scrollSpeed = 0.5;
-		option.minValue = 0.1;
-		option.maxValue = 1;
-		option.changeValue = 0.05;
-		option.slowChangeVal = 0.01;
-		option.displayFormat = '%v';
-		option.decimals = 2;
-		optionsArray.push(option);
-
-		var option:GameplayOption = new GameplayOption('Max Speed', 'randomspeedmax', 'float', 2);
-		option.scrollSpeed = 0.5;
-		option.minValue = 1;
-		option.maxValue = 10;
-		option.changeValue = 0.05;
-		option.slowChangeVal = 0.01;
-		option.displayFormat = '%v';
-		option.decimals = 2;
-		optionsArray.push(option);
-
-		var option:GameplayOption = new GameplayOption('Troll Mode', 'thetrollingever', 'bool', false);
-		option.onChange = onChangeChartOption;
-		optionsArray.push(option);
+		GameplayChangersHelpers.getOptions(this);
 	}
 
 	public function getOptionByName(name:String)
 	{
-		for(i in optionsArray)
-		{
-			var opt:GameplayOption = i;
-			if (opt.name == name)
-				return opt;
-		}
-		return null;
+		return GameplayChangersHelpers.getOptionByName(this, name);
 	}
 
 	public function new(?pause:MusicBeatSubstate = null)
@@ -456,71 +306,30 @@ class GameplayChangersSubstate extends MusicBeatSubstate
 	}
 
 	function updateTextFrom(option:GameplayOption) {
-		var text:String = option.displayFormat;
-		var val:Dynamic = option.getValue();
-		if(option.type == 'percent') val *= 100;
-		var def:Dynamic = option.defaultValue;
-		option.text = text.replace('%v', val).replace('%d', def);
+		GameplayChangersHelpers.updateTextFrom(option);
 	}
 
 	function clearHold()
 	{
-		if(holdTime > 0.5) {
-			FlxG.sound.play(Paths.sound('scrollMenu'));
-		}
-		holdTime = 0;
+		GameplayChangersHelpers.clearHold(this);
 	}
 
 	function onChangeChartOption()
 	{
-		if(inThePauseMenu)
-		{
-			trace ("HEY! You changed an option that requires a chart restart!");
-			PauseSubState.requireRestart = true;
-		}
+		GameplayChangersHelpers.onChangeChartOption(this);
 	}
 	function onChangeCheat()
 	{
-		if(inThePauseMenu)
-		{
-			trace ("you really thought you would get away with it, invalidated your score");
-			PlayState.playerIsCheating = true;
-		}
+		GameplayChangersHelpers.onChangeCheat(this);
 	}
 
 	function changeSelection(change:Int = 0)
 	{
-		curSelected += change;
-		if (curSelected < 0)
-			curSelected = optionsArray.length - 1;
-		if (curSelected >= optionsArray.length)
-			curSelected = 0;
-
-		var bullShit:Int = 0;
-
-		for (item in grpOptions.members) {
-			item.targetY = bullShit - curSelected;
-			bullShit++;
-
-			item.alpha = 0.6;
-			if (item.targetY == 0) {
-				item.alpha = 1;
-			}
-		}
-		for (text in grpTexts) {
-			text.alpha = 0.6;
-			if(text.ID == curSelected) {
-				text.alpha = 1;
-			}
-		}
-		curOption = optionsArray[curSelected]; //shorter lol
-		FlxG.sound.play(Paths.sound('scrollMenu'));
+		GameplayChangersHelpers.changeSelection(this, change);
 	}
 
 	function reloadCheckboxes() {
-		for (checkbox in checkboxGroup) {
-			checkbox.daValue = (optionsArray[checkbox.ID].getValue() == true);
-		}
+		GameplayChangersHelpers.reloadCheckboxes(this);
 	}
 }
 

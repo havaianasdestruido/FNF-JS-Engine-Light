@@ -8,7 +8,6 @@ import backend.PsychCamera;
 import flixel.addons.ui.FlxUIState;
 import lime.app.Application;
 
-// REFACTOR: imports for relocated root classes
 import data.Section;
 
 class MusicBeatState extends FlxUIState

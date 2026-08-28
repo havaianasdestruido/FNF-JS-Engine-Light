@@ -4,7 +4,6 @@ import backend.ClientPrefs;
 import backend.MusicBeatState;
 import backend.Paths;
 
-// REFACTOR: imports for relocated root classes
 import backend.Controls;
 
 class ErrorState extends MusicBeatState

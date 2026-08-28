@@ -4,7 +4,7 @@ package editors.charting;
 import backend.Conductor;
 import backend.Paths;
 import editors.ChartingState;
-import editors.ChartingState.AttachedFlxText;
+import editors.charting.AttachedFlxText;
 import flixel.ui.FlxButton;
 import objects.Note;
 

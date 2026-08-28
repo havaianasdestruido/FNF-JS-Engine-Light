@@ -4,7 +4,6 @@ import backend.Controls;
 import flixel.graphics.FlxGraphic;
 import flixel.input.keyboard.FlxKey;
 
-// REFACTOR: imports for relocated root classes
 import backend.ClientPrefs;
 import objects.Alphabet;
 

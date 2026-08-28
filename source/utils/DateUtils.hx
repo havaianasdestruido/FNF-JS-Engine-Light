@@ -1,6 +1,5 @@
 ﻿package utils;
 
-// REFACTOR: imports for relocated root classes
 import backend.ClientPrefs;
 import backend.CoolUtil;
 

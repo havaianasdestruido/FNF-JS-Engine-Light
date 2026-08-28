@@ -3,7 +3,6 @@
 #if FLX_MOUSE
 import flixel.util.FlxSpriteUtil;
 
-// REFACTOR: imports for relocated root classes
 import backend.Controls;
 
 /**

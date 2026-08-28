@@ -1,6 +1,5 @@
 package psychlua.pystdlib;
 
-// REFACTOR: restored imports
 import flixel.FlxObject;
 import flixel.FlxSprite;
 import flixel.group.FlxGroup.FlxTypedGroup;

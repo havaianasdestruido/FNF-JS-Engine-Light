@@ -6,7 +6,6 @@ import openfl.errors.Error;
 import openfl.events.KeyboardEvent;
 import openfl.geom.Rectangle;
 
-// REFACTOR: imports for relocated root classes
 import objects.Character;
 
 /**

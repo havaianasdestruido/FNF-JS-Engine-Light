@@ -17,7 +17,6 @@ import objects.ColorSwap;
 import openfl.Assets;
 import openfl.display.BitmapData;
 
-// REFACTOR: imports for relocated root classes
 import backend.Controls;
 
 typedef TitleData =

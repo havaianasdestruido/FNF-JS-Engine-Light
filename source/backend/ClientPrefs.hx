@@ -5,7 +5,6 @@ import Main;
 import states.TitleState;
 import flixel.input.keyboard.FlxKey;
 
-// REFACTOR: imports for relocated root classes
 import objects.Note;
 
 class ClientPrefs { //default settings if it can't find a save file containing your current settings

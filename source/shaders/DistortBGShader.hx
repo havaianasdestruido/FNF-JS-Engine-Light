@@ -3,7 +3,6 @@
 
 import flixel.system.FlxAssets.FlxShader;
 
-// REFACTOR: imports for relocated root classes
 import objects.Character;
 
 class DistortBGShader extends FlxShader

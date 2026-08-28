@@ -1,9 +1,11 @@
 package psychlua;
 
 import flixel.FlxCamera;
+import flixel.FlxSprite;
 import flixel.tweens.FlxEase;
 import flixel.util.FlxColor;
 import play.PlayState;
+import states.substates.GameOverSubstate;
 
 import openfl.display.BlendMode;
 
@@ -196,5 +198,177 @@ class LuaUtils {
 		#else
 		return false;
 		#end
+	}
+
+	// REFACTOR: moved from FunkinLua; pure/stateless helpers
+	public static function typeToString(type:Int):String
+	{
+		#if LUA_ALLOWED
+		switch (type)
+		{
+			case type if (type == Lua.TBOOLEAN):
+				return "boolean";
+			case type if (type == Lua.TNUMBER):
+				return "number";
+			case type if (type == Lua.TSTRING):
+				return "string";
+			case type if (type == Lua.TTABLE):
+				return "table";
+			case type if (type == Lua.TFUNCTION):
+				return "function";
+			case type if (type <= Lua.TNIL):
+				return "nil";
+		}
+		#end
+		return "unknown";
+	}
+
+	public static inline function getInstance()
+	{
+		return PlayState.instance.isDead ? GameOverSubstate.instance : PlayState.instance;
+	}
+
+	public static function setVarInArray(instance:Dynamic, variable:String, value:Dynamic):Any
+	{
+		if(variable.indexOf('[') == -1)
+		{
+			if(PlayState.instance.variables.exists(variable))
+			{
+				PlayState.instance.variables.set(variable, value);
+				return true;
+			}
+
+			Reflect.setProperty(instance, variable, value);
+			return true;
+		}
+
+		var shit:Array<String> = variable.split('[');
+		if(shit.length > 1)
+		{
+			var blah:Dynamic = null;
+			if(PlayState.instance.variables.exists(shit[0]))
+			{
+				var retVal:Dynamic = PlayState.instance.variables.get(shit[0]);
+				if(retVal != null)
+					blah = retVal;
+			}
+			else
+				blah = Reflect.getProperty(instance, shit[0]);
+
+			for (i in 1...shit.length)
+			{
+				var leNum:Dynamic = shit[i].substr(0, shit[i].length - 1);
+				if(i >= shit.length-1) //Last array
+					blah[leNum] = value;
+				else //Anything else
+					blah = blah[leNum];
+			}
+			return blah;
+		}
+		/*if(Std.isOfType(instance, Map))
+			instance.set(variable,value);
+		else*/
+
+		if(PlayState.instance.variables.exists(variable))
+		{
+			PlayState.instance.variables.set(variable, value);
+			return true;
+		}
+
+		Reflect.setProperty(instance, variable, value);
+		return true;
+	}
+	public static function getVarInArray(instance:Dynamic, variable:String):Any
+	{
+		if(variable.indexOf('[') == -1)
+		{
+			if(PlayState.instance.variables.exists(variable))
+			{
+				var retVal:Dynamic = PlayState.instance.variables.get(variable);
+				if(retVal != null)
+					return retVal;
+			}
+
+			return Reflect.getProperty(instance, variable);
+		}
+
+		var shit:Array<String> = variable.split('[');
+		if(shit.length > 1)
+		{
+			var blah:Dynamic = null;
+			if(PlayState.instance.variables.exists(shit[0]))
+			{
+				var retVal:Dynamic = PlayState.instance.variables.get(shit[0]);
+				if(retVal != null)
+					blah = retVal;
+			}
+			else
+				blah = Reflect.getProperty(instance, shit[0]);
+
+			for (i in 1...shit.length)
+			{
+				var leNum:Dynamic = shit[i].substr(0, shit[i].length - 1);
+				blah = blah[leNum];
+			}
+			return blah;
+		}
+
+		if(PlayState.instance.variables.exists(variable))
+		{
+			var retVal:Dynamic = PlayState.instance.variables.get(variable);
+			if(retVal != null)
+				return retVal;
+		}
+
+		return Reflect.getProperty(instance, variable);
+	}
+
+	public static function getObjectDirectly(objectName:String, ?checkForTextsToo:Bool = true):Dynamic
+	{
+		var coverMeInPiss:Dynamic = PlayState.instance.getLuaObject(objectName, checkForTextsToo);
+		if(coverMeInPiss==null)
+			coverMeInPiss = getVarInArray(getInstance(), objectName);
+
+		return coverMeInPiss;
+	}
+
+	public static function getPropertyLoopThingWhatever(killMe:Array<String>, ?checkForTextsToo:Bool = true, ?getProperty:Bool=true):Dynamic
+	{
+		var coverMeInPiss:Dynamic = getObjectDirectly(killMe[0], checkForTextsToo);
+		var end = killMe.length;
+		if(getProperty)end=killMe.length-1;
+
+		for (i in 1...end) {
+			coverMeInPiss = getVarInArray(coverMeInPiss, killMe[i]);
+		}
+		return coverMeInPiss;
+	}
+
+	public static function addAnimByIndices(obj:String, name:String, prefix:String, indices:String, framerate:Int = 24, loop:Bool = false)
+	{
+		var strIndices:Array<String> = indices.trim().split(',');
+		var die:Array<Int> = [];
+		for (i in 0...strIndices.length) {
+			die.push(Std.parseInt(strIndices[i]));
+		}
+
+		if(PlayState.instance.getLuaObject(obj, false)!=null) {
+			var pussy:FlxSprite = PlayState.instance.getLuaObject(obj, false);
+			pussy.animation.addByIndices(name, prefix, die, '', framerate, loop);
+			if(pussy.animation.curAnim == null) {
+				pussy.animation.play(name, true);
+			}
+			return true;
+		}
+
+		var pussy:FlxSprite = Reflect.getProperty(getInstance(), obj);
+		if(pussy != null) {
+			pussy.animation.addByIndices(name, prefix, die, '', framerate, loop);
+			if(pussy.animation.curAnim == null) {
+				pussy.animation.play(name, true);
+			}
+			return true;
+		}
+		return false;
 	}
 }

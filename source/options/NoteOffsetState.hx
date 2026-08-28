@@ -2,7 +2,6 @@
 
 import flixel.ui.FlxBar;
 
-// REFACTOR: imports for relocated root classes
 import backend.ClientPrefs;
 import backend.Conductor;
 import backend.Controls;

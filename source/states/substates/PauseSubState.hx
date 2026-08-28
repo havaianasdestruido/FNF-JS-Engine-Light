@@ -16,7 +16,6 @@ import states.FreeplayState;
 import states.MainMenuState;
 import states.StoryMenuState;
 
-// REFACTOR: imports for relocated root classes
 import backend.Controls;
 import backend.MusicBeatState;
 

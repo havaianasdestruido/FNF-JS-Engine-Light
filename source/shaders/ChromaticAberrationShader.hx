@@ -1,6 +1,5 @@
 ﻿package shaders;
 
-// REFACTOR: import for FlxShader
 import flixel.system.FlxAssets.FlxShader;
 
 

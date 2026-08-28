@@ -7,7 +7,6 @@ import backend.Paths;
 import objects.Alphabet;
 import objects.AttachedSprite;
 
-// REFACTOR: imports for relocated root classes
 import backend.Controls;
 import objects.Note;
 import shaders.CrossFade;

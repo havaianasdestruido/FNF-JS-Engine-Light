@@ -1,6 +1,5 @@
 package psychlua.pystdlib;
 
-// REFACTOR: restored imports
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import psychlua.PythonScript;

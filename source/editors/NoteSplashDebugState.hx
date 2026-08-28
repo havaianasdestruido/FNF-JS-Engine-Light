@@ -9,7 +9,6 @@ import objects.StrumNote;
 import flixel.addons.ui.FlxInputText;
 import flixel.addons.ui.FlxUINumericStepper;
 
-// REFACTOR: imports for relocated root classes
 import backend.Controls;
 
 class NoteSplashDebugState extends MusicBeatState

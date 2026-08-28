@@ -5,7 +5,6 @@ import psychlua.FunkinLua;
 import psychlua.LuaUtils;
 import psychlua.ModchartSprite;
 
-// REFACTOR: imports for relocated root classes
 import objects.Character;
 
 // REFACTOR: extracted from psychlua.FunkinLua (deprecated backward-compat functions)

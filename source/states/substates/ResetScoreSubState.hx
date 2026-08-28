@@ -9,7 +9,6 @@ import flixel.FlxG;
 import objects.Alphabet;
 import objects.HealthIcon;
 
-// REFACTOR: imports for relocated root classes
 import backend.Controls;
 import data.Song;
 import objects.Character;

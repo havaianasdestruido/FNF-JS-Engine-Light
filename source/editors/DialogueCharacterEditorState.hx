@@ -18,12 +18,12 @@ import flixel.addons.ui.FlxUINumericStepper;
 import flixel.addons.ui.FlxUITabMenu;
 import flixel.ui.FlxButton;
 import lime.system.Clipboard;
-import openfl.events.Event;
-import openfl.events.IOErrorEvent;
 import openfl.net.FileReference;
 
 // REFACTOR: imports for relocated root classes
 import objects.Character;
+// REFACTOR: dialogue load/save plumbing moved to helpers
+import editors.helpers.DialogueEditorHelpers;
 
 class DialogueCharacterEditorState extends MusicBeatState
 {
@@ -695,52 +695,13 @@ class DialogueCharacterEditorState extends MusicBeatState
 
 	var _file:FileReference = null;
 	function loadCharacter() {
-		var jsonFilter:FileFilter = new FileFilter('JSON', 'json');
 		_file = new FileReference();
-		_file.addEventListener(Event.SELECT, onLoadComplete);
-		_file.addEventListener(Event.CANCEL, onLoadCancel);
-		_file.addEventListener(IOErrorEvent.IO_ERROR, onLoadError);
-		_file.browse([jsonFilter]);
+		DialogueEditorHelpers.browseForJsonFile(_file, onLoadComplete, onLoadCancel, onLoadError);
 	}
 
 	function onLoadComplete(_):Void
 	{
-		_file.removeEventListener(Event.SELECT, onLoadComplete);
-		_file.removeEventListener(Event.CANCEL, onLoadCancel);
-		_file.removeEventListener(IOErrorEvent.IO_ERROR, onLoadError);
-
-		#if sys
-		var fullPath:String = null;
-		@:privateAccess
-		if(_file.__path != null) fullPath = _file.__path;
-
-		if(fullPath != null) {
-			var rawJson:String = File.getContent(fullPath);
-			if(rawJson != null) {
-				var loadedChar:DialogueCharacterFile = cast Json.parse(rawJson);
-				if(loadedChar.dialogue_pos != null) //Make sure it's really a dialogue character
-				{
-					var cutName:String = _file.name.substr(0, _file.name.length - 5);
-					trace("Successfully loaded file: " + cutName);
-					character.jsonFile = loadedChar;
-					reloadCharacter();
-					reloadAnimationsDropDown();
-					updateCharTypeBox();
-					updateTextBox();
-					daText.resetDialogue();
-					imageInputText.text = character.jsonFile.image;
-					scaleStepper.value = character.jsonFile.scale;
-					xStepper.value = character.jsonFile.position[0];
-					yStepper.value = character.jsonFile.position[1];
-					_file = null;
-					return;
-				}
-			}
-		}
-		_file = null;
-		#else
-		trace("File couldn't be loaded! You aren't on Desktop, are you?");
-		#end
+		DialogueEditorHelpers.onLoadCompleteCharacter(this);
 	}
 
 	/**
@@ -748,11 +709,8 @@ class DialogueCharacterEditorState extends MusicBeatState
 		*/
 	function onLoadCancel(_):Void
 	{
-		_file.removeEventListener(Event.SELECT, onLoadComplete);
-		_file.removeEventListener(Event.CANCEL, onLoadCancel);
-		_file.removeEventListener(IOErrorEvent.IO_ERROR, onLoadError);
+		DialogueEditorHelpers.cancelLoadFile(_file, onLoadComplete, onLoadCancel, onLoadError);
 		_file = null;
-		trace("Cancelled file loading.");
 	}
 
 	/**
@@ -760,35 +718,26 @@ class DialogueCharacterEditorState extends MusicBeatState
 		*/
 	function onLoadError(_):Void
 	{
-		_file.removeEventListener(Event.SELECT, onLoadComplete);
-		_file.removeEventListener(Event.CANCEL, onLoadCancel);
-		_file.removeEventListener(IOErrorEvent.IO_ERROR, onLoadError);
+		DialogueEditorHelpers.failLoadFile(_file, onLoadComplete, onLoadCancel, onLoadError);
 		_file = null;
-		trace("Problem loading file");
 	}
 
 	function saveCharacter() {
-		var data:String = Json.stringify(character.jsonFile, "\t");
+		var data:String = DialogueEditorHelpers.jsonStringify(character.jsonFile);
 		if (data.length > 0)
 		{
 			var splittedImage:Array<String> = imageInputText.text.trim().split('_');
 			var characterName:String = splittedImage[0].toLowerCase().replace(' ', '');
 
 			_file = new FileReference();
-			_file.addEventListener(Event.COMPLETE, onSaveComplete);
-			_file.addEventListener(Event.CANCEL, onSaveCancel);
-			_file.addEventListener(IOErrorEvent.IO_ERROR, onSaveError);
-			_file.save(data, characterName + ".json");
+			DialogueEditorHelpers.saveJsonFile(_file, data, characterName + ".json", onSaveComplete, onSaveCancel, onSaveError);
 		}
 	}
 
 	function onSaveComplete(_):Void
 	{
-		_file.removeEventListener(Event.COMPLETE, onSaveComplete);
-		_file.removeEventListener(Event.CANCEL, onSaveCancel);
-		_file.removeEventListener(IOErrorEvent.IO_ERROR, onSaveError);
+		DialogueEditorHelpers.completeSaveFile(_file, onSaveComplete, onSaveCancel, onSaveError);
 		_file = null;
-		FlxG.log.notice("Successfully saved file.");
 	}
 
 	/**
@@ -796,9 +745,7 @@ class DialogueCharacterEditorState extends MusicBeatState
 		*/
 	function onSaveCancel(_):Void
 	{
-		_file.removeEventListener(Event.COMPLETE, onSaveComplete);
-		_file.removeEventListener(Event.CANCEL, onSaveCancel);
-		_file.removeEventListener(IOErrorEvent.IO_ERROR, onSaveError);
+		DialogueEditorHelpers.cancelSaveFile(_file, onSaveComplete, onSaveCancel, onSaveError);
 		_file = null;
 	}
 
@@ -807,11 +754,8 @@ class DialogueCharacterEditorState extends MusicBeatState
 		*/
 	function onSaveError(_):Void
 	{
-		_file.removeEventListener(Event.COMPLETE, onSaveComplete);
-		_file.removeEventListener(Event.CANCEL, onSaveCancel);
-		_file.removeEventListener(IOErrorEvent.IO_ERROR, onSaveError);
+		DialogueEditorHelpers.failSaveFile(_file, onSaveComplete, onSaveCancel, onSaveError);
 		_file = null;
-		FlxG.log.error("Problem saving file");
 	}
 
 	function ClipboardAdd(prefix:String = ''):String {

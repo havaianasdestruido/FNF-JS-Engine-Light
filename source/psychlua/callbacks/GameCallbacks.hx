@@ -14,7 +14,6 @@ import states.substates.PauseSubState;
 import objects.DialogueBoxPsych;
 import objects.DialogueBoxPsych.DialogueFile;
 
-// REFACTOR: imports for relocated root classes
 import objects.Character;
 
 // REFACTOR: extracted from psychlua.FunkinLua (song flow / score / characters / gameplay events)

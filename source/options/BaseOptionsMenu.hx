@@ -14,6 +14,7 @@ import objects.Alphabet;
 import objects.AttachedText;
 import objects.Character;
 import objects.CheckboxThingie;
+import options.helpers.OptionsMenuHelpers;
 
 class BaseOptionsMenu extends MusicBeatSubstate
 {
@@ -78,39 +79,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		descText.borderSize = 2.4;
 		add(descText);
 
-		for (i in 0...optionsArray.length)
-		{
-			var optionText:Alphabet = new Alphabet(290, 260, optionsArray[i].name, false);
-			optionText.isMenuItem = true;
-			/*optionText.forceX = 300;
-			optionText.yMult = 90;*/
-			optionText.targetY = i;
-			grpOptions.add(optionText);
-
-			if(optionsArray[i].type == 'bool') {
-				var checkbox:CheckboxThingie = new CheckboxThingie(optionText.x - 105, optionText.y, optionsArray[i].getValue() == true);
-				checkbox.sprTracker = optionText;
-				checkbox.ID = i;
-				checkboxGroup.add(checkbox);
-			} else if (optionsArray[i].type != 'link') {
-				optionText.x -= 80;
-				optionText.startPosition.x -= 80;
-				//optionText.xAdd -= 80;
-				var valueText:AttachedText = new AttachedText('' + optionsArray[i].getValue(), optionText.width + 80);
-				valueText.sprTracker = optionText;
-				valueText.copyAlpha = true;
-				valueText.ID = i;
-				grpTexts.add(valueText);
-				optionsArray[i].setChild(valueText);
-			}
-			//optionText.snapToPosition(); //Don't ignore me when i ask for not making a fucking pull request to uncomment this line ok
-
-			if(optionsArray[i].showBoyfriend && boyfriend == null)
-			{
-				reloadBoyfriend();
-			}
-			updateTextFrom(optionsArray[i]);
-		}
+		OptionsMenuHelpers.createOptionRow(this, optionsArray);
 
 		changeSelection();
 		reloadCheckboxes();
@@ -201,39 +170,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 			grpTexts.clear();
 			checkboxGroup.clear();
 
-		for (i in 0...optionsArray.length)
-		{
-			var optionText:Alphabet = new Alphabet(290, 260, optionsArray[i].name, false);
-			optionText.isMenuItem = true;
-			/*optionText.forceX = 300;
-			optionText.yMult = 90;*/
-			optionText.targetY = i;
-			grpOptions.add(optionText);
-
-			if(optionsArray[i].type == 'bool') {
-				var checkbox:CheckboxThingie = new CheckboxThingie(optionText.x - 105, optionText.y, optionsArray[i].getValue() == true);
-				checkbox.sprTracker = optionText;
-				checkbox.ID = i;
-				checkboxGroup.add(checkbox);
-			} else if (optionsArray[i].type != 'link') {
-				optionText.x -= 80;
-				optionText.startPosition.x -= 80;
-				//optionText.xAdd -= 80;
-				var valueText:AttachedText = new AttachedText('' + optionsArray[i].getValue(), optionText.width + 80);
-				valueText.sprTracker = optionText;
-				valueText.copyAlpha = true;
-				valueText.ID = i;
-				grpTexts.add(valueText);
-				optionsArray[i].setChild(valueText);
-			}
-			//optionText.snapToPosition(); //Don't ignore me when i ask for not making a fucking pull request to uncomment this line ok
-
-			if(optionsArray[i].showBoyfriend && boyfriend == null)
-			{
-				reloadBoyfriend();
-			}
-			updateTextFrom(optionsArray[i]);
-		}
+		OptionsMenuHelpers.createOptionRow(this, optionsArray);
 
 		changeSelection();
 		reloadCheckboxes();

@@ -36,7 +36,6 @@ import psychlua.pystdlib.PyTimerLib;
 import psychlua.pystdlib.PyTweenLib;
 import Type.ValueType;
 
-// REFACTOR: imports for relocated root classes
 import objects.Character;
 
 #if DISCORD_ALLOWED

@@ -1,6 +1,5 @@
 ﻿package backend;
 
-// REFACTOR: explicit imports for shader subtypes
 import shaders.RGBPalette.RGBShaderReference;
 
 import Main;
@@ -12,7 +11,6 @@ import haxe.io.Bytes;
 import haxe.io.Path;
 import lime.app.Application;
 
-// REFACTOR: imports for relocated root classes
 import data.Section;
 
 class CoolUtil

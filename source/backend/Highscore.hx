@@ -1,6 +1,5 @@
 ﻿package backend;
 
-// REFACTOR: imports for relocated root classes
 import data.Song;
 
 class Highscore

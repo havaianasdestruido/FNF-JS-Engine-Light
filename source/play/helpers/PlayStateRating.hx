@@ -1,10 +1,13 @@
 package play.helpers;
 
 import flixel.util.FlxSort;
+import backend.Achievements;
 import backend.ClientPrefs;
 import backend.Conductor;
+import backend.CoolUtil;
 import backend.Highscore;
 import backend.Mods;
+import backend.WeekData;
 
 import objects.Note;
 import objects.Popup;
@@ -382,7 +385,58 @@ class PlayStateRating
 				state.maxNPS = state.nps;
 			}
 
-			if (state.scoreTxtUpdateFrame <= 8 && state.scoreTxt != null) state.updateScore();
+if (state.scoreTxtUpdateFrame <= 8 && state.scoreTxt != null) state.updateScore();
 		}
 	}
+
+	#if ACHIEVEMENTS_ALLOWED
+	// REFACTOR: achievement checking extracted from play.PlayState
+	public static function checkForAchievement(state:PlayState, achievesToCheck:Array<String> = null)
+	{
+		if(PlayState.chartingMode || state.trollingMode) return;
+
+		var usedPractice:Bool = (state.practiceMode || state.cpuControlled);
+		if(state.cpuControlled) return;
+
+		for (name in achievesToCheck) {
+			if(!Achievements.exists(name)) continue;
+
+			var unlock:Bool = false;
+			if (name != WeekData.getWeekFileName() + '_nomiss') // common achievements
+			{
+				switch(name)
+				{
+					case 'ur_bad':
+						unlock = (state.ratingPercent < 0.2 && !state.practiceMode);
+
+					case 'ur_good':
+						unlock = (state.ratingPercent >= 1 && !usedPractice);
+
+					case 'oversinging':
+						unlock = (state.boyfriend.holdTimer >= 10 && !usedPractice);
+
+					case 'hype':
+						unlock = (!state.boyfriendIdled && !usedPractice);
+
+					case 'two_keys':
+						unlock = (!usedPractice && state.keysPressed.length <= 2);
+
+					case 'toastie':
+						unlock = (!ClientPrefs.cacheOnGPU && !ClientPrefs.shaders && ClientPrefs.lowQuality && !ClientPrefs.globalAntialiasing);
+
+					case 'debugger':
+						unlock = (state.songName == 'test' && !usedPractice);
+				}
+			}
+			else // any FC achievements, name should be "weekFileName_nomiss", e.g: "week3_nomiss";
+			{
+				if(PlayState.isStoryMode && PlayState.campaignMisses + state.songMisses < 1 && CoolUtil.currentDifficulty.toUpperCase() == 'HARD'
+					&& PlayState.storyPlaylist.length <= 1 && !PlayState.changedDifficulty && !usedPractice)
+					unlock = true;
+			}
+
+			if(unlock) Achievements.unlock(name);
+		}
+	}
+	#end
 }

@@ -2,7 +2,6 @@
 
 import flixel.input.keyboard.FlxKey;
 
-// REFACTOR: imports for relocated root classes
 import backend.ClientPrefs;
 import backend.Controls;
 import backend.InputFormatter;

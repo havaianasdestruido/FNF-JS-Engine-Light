@@ -6,6 +6,7 @@ import shaders.RainShader.Light;
 
 import backend.Controls;
 import objects.Note;
+import objects.NoteHelpers;
 import objects.StrumNote;
 import flixel.graphics.FlxGraphic;
 import flixel.input.keyboard.FlxKey;
@@ -475,7 +476,7 @@ class VisualsUISubState extends BaseOptionsMenu
 	function changeNoteSkin(note:StrumNote)
 	{
 		var skin:String = Note.defaultNoteSkin;
-		var customSkin:String = skin + Note.getNoteSkinPostfix();
+		var customSkin:String = skin + NoteHelpers.getNoteSkinPostfix();
 		if(Paths.fileExists('images/$customSkin.png', IMAGE)) skin = customSkin;
 
 		note.texture = skin; //Load texture and anims

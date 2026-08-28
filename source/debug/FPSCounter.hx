@@ -7,7 +7,6 @@ import openfl.text.TextField;
 import openfl.text.TextFormat;
 import openfl.text.TextFormatAlign;
 
-// REFACTOR: imports for relocated root classes
 import backend.ClientPrefs;
 import play.PlayState;
 import states.MainMenuState;

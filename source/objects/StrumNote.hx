@@ -24,7 +24,7 @@ class StrumNote extends FlxSprite
 	public var texture(default, set):String = null;
 	private function set_texture(value:String):String {
 		if(texture != value) {
-			texture = (value != null ? value : "noteskins/NOTE_assets" + Note.getNoteSkinPostfix());
+			texture = (value != null ? value : "noteskins/NOTE_assets" + NoteHelpers.getNoteSkinPostfix());
 			reloadNote();
 		}
 		return value;
@@ -36,7 +36,7 @@ class StrumNote extends FlxSprite
 	}
 
 	public function new(x:Float, y:Float, leData:Int, player:Int, ?inEditor:Bool = false) {
-		rgbShader = new RGBShaderReference(this, Note.initializeGlobalRGBShader(leData));
+		rgbShader = new RGBShaderReference(this, NoteHelpers.initializeGlobalRGBShader(leData));
 		rgbShader.enabled = false;
 		if(PlayState.SONG != null && PlayState.SONG.disableNoteRGB || !ClientPrefs.enableColorShader) useRGBShader = false;
 
@@ -60,7 +60,7 @@ class StrumNote extends FlxSprite
 		if(PlayState.SONG != null && PlayState.SONG.arrowSkin != null && PlayState.SONG.arrowSkin.length > 1) skin = PlayState.SONG.arrowSkin;
 		else skin = Note.defaultNoteSkin;
 
-		var customSkin:String = skin + Note.getNoteSkinPostfix();
+		var customSkin:String = skin + NoteHelpers.getNoteSkinPostfix();
 		if(Paths.fileExists('images/$customSkin.png', IMAGE)) skin = customSkin;
 
 		texture = skin; //Load texture and anims
@@ -183,7 +183,7 @@ class StrumNote extends FlxSprite
 	public function updateNoteSkin(noteskin:String) {
 			if (texture == "noteskins/" + noteskin || noteskin == ogNoteskin || texture == noteskin) return; //if the noteskin to change to is the same as before then don't update it
 			if (noteskin != null && noteskin.length > 0) texture = "noteskins/" + noteskin;
-			else texture = "noteskins/NOTE_assets" + Note.getNoteSkinPostfix();
+			else texture = "noteskins/NOTE_assets" + NoteHelpers.getNoteSkinPostfix();
 	}
 
 	public function updateRGBColors(?r:FlxColor, ?g:FlxColor, ?b:FlxColor) {

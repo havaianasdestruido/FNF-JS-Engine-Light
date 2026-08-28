@@ -12,7 +12,6 @@ import openfl.filters.ShaderFilter;
 import shaders.RainShader;
 import stages.objects.*;
 
-// REFACTOR: imports for relocated root classes
 import objects.Character;
 
 class PhillyBlazin extends BaseStage

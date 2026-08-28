@@ -5,7 +5,6 @@ import flixel.graphics.FlxGraphic;
 import flixel.input.keyboard.FlxKey;
 import haxe.Exception;
 
-// REFACTOR: imports for relocated root classes
 import backend.ClientPrefs;
 import objects.Prompt;
 import states.MainMenuState;

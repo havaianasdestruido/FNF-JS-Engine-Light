@@ -2,7 +2,6 @@
 
 import flixel.FlxCamera;
 
-// REFACTOR: imports for relocated root classes
 import data.Song;
 import objects.Note;
 

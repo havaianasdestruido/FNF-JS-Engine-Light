@@ -265,7 +265,7 @@ class Note extends FlxSprite
 
 			if (ClientPrefs.enableColorShader)
 			{
-				try{ rgbShader = new RGBShaderReference(this, initializeGlobalRGBShader(noteData, this)); }
+				try{ rgbShader = new RGBShaderReference(this, NoteHelpers.initializeGlobalRGBShader(noteData, this)); }
 				catch(e) {};
 				if(PlayState.SONG != null && PlayState.SONG.disableNoteRGB) useRGBShader = false;
 			}
@@ -273,73 +273,7 @@ class Note extends FlxSprite
 		}
 	}
 
-	public static function initializeGlobalRGBShader(noteData:Int = 0, ?note:Note = null)
-	{
-		if (note == null)
-		{
-			if(globalRgbShaders[noteData] == null)
-			{
-				var newRGB:RGBPalette = new RGBPalette();
-				globalRgbShaders[noteData] = newRGB;
-
-				var arr:Array<FlxColor> = ClientPrefs.noteColorStyle != 'Quant-Based' ? (!PlayState.isPixelStage) ? ClientPrefs.arrowRGB[noteData] : ClientPrefs.arrowRGBPixel[noteData] : ClientPrefs.quantRGB[noteData];
-				if (arr != null && noteData > -1 && noteData <= arr.length)
-				{
-					newRGB.r = arr[0];
-					newRGB.g = arr[1];
-					newRGB.b = arr[2];
-				}
-			}
-			return globalRgbShaders[noteData];
-		}
-		else switch(ClientPrefs.noteColorStyle)
-		{
-			case 'Quant-Based':
-			if(globalRgbShaders[0] == null)
-			{
-				var newRGB:RGBPalette = new RGBPalette();
-				globalRgbShaders[0] = newRGB;
-
-				var arr:Array<FlxColor> = (!note.pixelNote) ? ClientPrefs.arrowRGB[3] : ClientPrefs.arrowRGBPixel[3];
-				if (noteData > -1)
-				{
-					newRGB.r = arr[0];
-					newRGB.g = arr[1];
-					newRGB.b = arr[2];
-				}
-			}
-			return globalRgbShaders[0];
-			case 'Grayscale', 'Rainbow', 'Char-Based':
-			if(globalRgbShaders[0] == null)
-			{
-				var newRGB:RGBPalette = new RGBPalette();
-				globalRgbShaders[0] = newRGB;
-
-				if (noteData > -1)
-				{
-					newRGB.r = 0xFFA0A0A0;
-					newRGB.g = FlxColor.WHITE;
-					newRGB.b = 0xFF424242;
-				}
-			}
-			return globalRgbShaders[0];
-			default:
-			if(globalRgbShaders[noteData] == null)
-			{
-				var newRGB:RGBPalette = new RGBPalette();
-				globalRgbShaders[noteData] = newRGB;
-
-				var arr:Array<FlxColor> = (!note.pixelNote) ? ClientPrefs.arrowRGB[noteData] : ClientPrefs.arrowRGBPixel[noteData];
-				if (noteData > -1 && noteData <= arr.length)
-				{
-					newRGB.r = arr[0];
-					newRGB.g = arr[1];
-					newRGB.b = arr[2];
-				}
-			}
-			return globalRgbShaders[noteData];
-		}
-	}
+	// REFACTOR: initializeGlobalRGBShader moved to objects.NoteHelpers
 
 	var _lastNoteOffX:Float = 0;
 	static var _lastValidChecked:String; //optimization
@@ -362,7 +296,7 @@ class Note extends FlxSprite
 
 		var skinPixel:String = skin;
 		var lastScaleY:Float = scale.y;
-		var skinPostfix:String = getNoteSkinPostfix();
+		var skinPostfix:String = NoteHelpers.getNoteSkinPostfix();
 		var customSkin:String = skin + skinPostfix;
 		var path:String = pixelNote ? 'pixelUI/' : '';
 		if(customSkin == _lastValidChecked || Paths.fileExists('images/' + path + customSkin + '.png', IMAGE))
@@ -425,13 +359,7 @@ class Note extends FlxSprite
 		}
 	}
 
-	public static function getNoteSkinPostfix()
-	{
-		var skin:String = '';
-		if(ClientPrefs.noteSkin != 'Default')
-			skin = '-' + ClientPrefs.noteSkin.trim().toLowerCase().replace(' ', '_');
-		return skin;
-	}
+	// REFACTOR: getNoteSkinPostfix moved to objects.NoteHelpers
 
 	override function update(elapsed:Float)
 	{
@@ -577,7 +505,7 @@ class Note extends FlxSprite
 	{
 		if (!useRGBShader) return;
 
-		if (rgbShader == null) rgbShader = new RGBShaderReference(this, initializeGlobalRGBShader(noteData, this));
+			if (rgbShader == null) rgbShader = new RGBShaderReference(this, NoteHelpers.initializeGlobalRGBShader(noteData, this));
 		else switch(ClientPrefs.noteColorStyle)
 		{
 			case 'Rainbow':
@@ -683,7 +611,7 @@ class Note extends FlxSprite
 
 		if (ClientPrefs.enableColorShader && useRGBShader)
 		{
-			if (rgbShader == null) rgbShader = new RGBShaderReference(this, initializeGlobalRGBShader(noteData, this));
+		if (rgbShader == null) rgbShader = new RGBShaderReference(this, NoteHelpers.initializeGlobalRGBShader(noteData, this));
 			updateRGBColors();
 		}
 

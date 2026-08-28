@@ -12,7 +12,6 @@ import flixel.util.FlxSort;
 import objects.Alphabet;
 import objects.AttachedSprite;
 
-// REFACTOR: imports for relocated root classes
 import backend.Controls;
 
 #if ACHIEVEMENTS_ALLOWED

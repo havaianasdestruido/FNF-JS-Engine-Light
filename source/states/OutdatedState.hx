@@ -10,7 +10,6 @@ import flixel.util.FlxAxes;
 import lime.app.Application;
 import openfl.display.BlendMode;
 
-// REFACTOR: imports for relocated root classes
 import backend.Controls;
 
 class OutdatedState extends MusicBeatState

@@ -7,7 +7,6 @@ import play.PlayState;
 import flixel.graphics.frames.FlxFrame.FlxFrameAngle;
 import shaders.RGBPalette;
 
-// REFACTOR: imports for relocated root classes
 import backend.Conductor;
 
 typedef NoteSplashConfig = {

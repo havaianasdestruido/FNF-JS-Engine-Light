@@ -3,7 +3,6 @@
 // REFACTOR: explicit imports for shader subtypes
 import shaders.ErrorHandledShader.ErrorHandledRuntimeShader;
 
-import backend.Achievements;
 import backend.ClientPrefs;
 import backend.Conductor;
 import backend.Conductor.Rating;
@@ -47,6 +46,7 @@ import play.helpers.PlayStateNoteHelpers;
 import play.helpers.PlayStateNotes;
 import play.helpers.PlayStatePlayback;
 import play.helpers.PlayStateRating;
+import play.helpers.PlayStateRender;
 import play.helpers.PlayStateScripts;
 
 import shaders.CrossFade;
@@ -3114,138 +3114,15 @@ class PlayState extends MusicBeatState
 	public var ratingPercent:Float;
 	public var ratingFC:String;
 	public function RecalculateRating(badHit:Bool = false) {
-		setOnLuas('score', songScore);
-		setOnLuas('misses', songMisses);
-		setOnLuas('hits', songHits);
-		setOnLuas('combo', combo);
-		if (badHit) missRecalcsPerFrame += 1;
-
-		var ret:Dynamic = callOnLuas('onRecalculateRating');
-		if(ret != FunkinLua.Function_Stop)
-		{
-			if(totalPlayed < 1) //Prevent divide by 0
-				ratingName = '?';
-			else
-			{
-				// Rating Percent
-				ratingPercent = Math.min(1, Math.max(0, totalNotesHit / totalPlayed));
-
-			if (Math.isNaN(ratingPercent))
-				ratingString = '?';
-
-				// Rating Name
-
-				if (ratingStuff.length <= 0) {
-					ratingName = 'Error!';
-				}
-				else {
-					if(ratingPercent >= 1)
-					{
-						ratingName = ratingStuff[ratingStuff.length-1][0]; //Uses last string
-					}
-					else
-					{
-						for (i in 0...ratingStuff.length-1)
-						{
-							if(ratingPercent < ratingStuff[i][1])
-							{
-								ratingName = ratingStuff[i][0];
-								break;
-							}
-						}
-					}
-				}
-			}
-
-			/**
-			 * - Rating FC and other stuff -
-			 *
-			 * > Now with better evaluation instead of using regular spaghetti code
-			 *
-			 * # @Equinoxtic was here, hi :3
-			 */
-
-			final fcConditions:Array<Bool> = [
-				(totalPlayed == 0), // 'No Play'
-				(perfects > 0), // 'PFC'
-				(sicks > 0), // 'SFC'
-				(goods > 0), // 'GFC'
-				(bads > 0), // 'BFC'
-				(shits > 0), // 'FC'
-				(songMisses > 0 && songMisses < 10), // 'SDCB'
-				(songMisses >= 10), // 'Clear'
-				(songMisses >= 100), // 'TDCB'
-				(songMisses >= 1000) // 'QDCB'
-			];
-
-			var cond:Int = fcConditions.length - 1;
-			ratingFC = "";
-			while (cond >= 0)
-			{
-				if (fcConditions[cond]) {
-					ratingFC = fcStrings[cond];
-					break;
-				}
-				cond--;
-			}
-
-			// basically same stuff, doesn't update every frame but it also means no memory leaks during botplay
-			if (scoreTxt != null)
-				updateScore(badHit);
-		}
-
-		setOnLuas('rating', ratingPercent);
-		setOnLuas('ratingName', ratingName);
-		setOnLuas('ratingFC', ratingFC);
+		// REFACTOR: delegated to play.helpers
+		PlayStateRating.RecalculateRating(this, badHit);
 	}
 
 	#if ACHIEVEMENTS_ALLOWED
 	private function checkForAchievement(achievesToCheck:Array<String> = null)
 	{
-		if(chartingMode || trollingMode) return;
-
-		var usedPractice:Bool = (practiceMode || cpuControlled);
-		if(cpuControlled) return;
-
-		for (name in achievesToCheck) {
-			if(!Achievements.exists(name)) continue;
-
-			var unlock:Bool = false;
-			if (name != WeekData.getWeekFileName() + '_nomiss') // common achievements
-			{
-				switch(name)
-				{
-					case 'ur_bad':
-						unlock = (ratingPercent < 0.2 && !practiceMode);
-
-					case 'ur_good':
-						unlock = (ratingPercent >= 1 && !usedPractice);
-
-					case 'oversinging':
-						unlock = (boyfriend.holdTimer >= 10 && !usedPractice);
-
-					case 'hype':
-						unlock = (!boyfriendIdled && !usedPractice);
-
-					case 'two_keys':
-						unlock = (!usedPractice && keysPressed.length <= 2);
-
-					case 'toastie':
-						unlock = (!ClientPrefs.cacheOnGPU && !ClientPrefs.shaders && ClientPrefs.lowQuality && !ClientPrefs.globalAntialiasing);
-
-					case 'debugger':
-						unlock = (songName == 'test' && !usedPractice);
-				}
-			}
-			else // any FC achievements, name should be "weekFileName_nomiss", e.g: "week3_nomiss";
-			{
-				if(isStoryMode && campaignMisses + songMisses < 1 && CoolUtil.currentDifficulty.toUpperCase() == 'HARD'
-					&& storyPlaylist.length <= 1 && !changedDifficulty && !usedPractice)
-					unlock = true;
-			}
-
-			if(unlock) Achievements.unlock(name);
-		}
+		// REFACTOR: delegated to play.helpers
+		PlayStateRating.checkForAchievement(this, achievesToCheck);
 	}
 	#end
 
@@ -3257,72 +3134,22 @@ class PlayState extends MusicBeatState
 
 	private function initRender(renderPath:String = "assets/gameRenders/", ?prefixName:String = null):Void
 	{
-		#if windows
-		if (!FileSystem.exists('ffmpeg.exe'))
-		{
-			trace("\"FFmpeg\" not found! (Is it in the same folder as JSEngine?)");
-			return;
-		}
-		#end
-		// Maybe check if it isn't an directory?
-		if (prefixName == null)
-				prefixName = Paths.formatToSongPath(SONG.song);
-		else if (prefixName.startsWith('/'))
-				prefixName = prefixName.substr(1);
-
-		// TODO: make sure this *absolutely* checks if you input an proper path
-		if (!renderPath.endsWith('/'))
-				renderPath = haxe.io.Path.addTrailingSlash(renderPath);
-
-		if(!FileSystem.exists(renderPath)) { //In case you delete the render folder/it doesn't exist
-			trace ('$renderPath folder not found! Creating the $renderPath folder...');
-      FileSystem.createDirectory(renderPath);
-    }
-		else if (!FileSystem.isDirectory(renderPath)){
-				FileSystem.deleteFile(renderPath);
-				FileSystem.createDirectory(renderPath);
-		}
-
-		ffmpegExists = true;
-
-		var fileName = '$renderPath$prefixName';
-		if(FileSystem.exists(fileName + '.mp4')) {
-			trace ('Duplicate video found! Adding anti-dupe...');
-      fileName += '-' + DateUtils.cleanedDate;
-    }
-
-		try{
-			process = new Process('ffmpeg', ['-v', 'quiet', '-y', '-f', 'rawvideo', '-pix_fmt', 'rgba', '-s', lime.app.Application.current.window.width + 'x' + lime.app.Application.current.window.height, '-r', Std.string(targetFPS), '-i', '-', '-c:v', ClientPrefs.vidEncoder, '-b', Std.string(ClientPrefs.renderBitrate * 1000000), fileName + '.mp4']);
-			FlxG.autoPause = false;
-		}catch(e:Dynamic){
-			trace("Error initializing FFmpeg process: " + e);
-			process = null;
-		}
+		// REFACTOR: delegated to play.helpers
+		PlayStateRender.initRender(this, renderPath, prefixName);
 	}
 
 	var img = null;
 	var bytes = null;
 	private function pipeFrame():Void
 	{
-		if (!ffmpegExists || process == null)
-		return;
-
-		img = lime.app.Application.current.window.readPixels(new lime.math.Rectangle(FlxG.scaleMode.offset.x, FlxG.scaleMode.offset.y, FlxG.scaleMode.gameSize.x, FlxG.scaleMode.gameSize.y));
-		bytes = img.getPixels(new lime.math.Rectangle(0, 0, img.width, img.height));
-		process.stdin.writeBytes(bytes, 0, bytes.length);
+		// REFACTOR: delegated to play.helpers
+		PlayStateRender.pipeFrame(this);
 	}
 
 	public static function stopRender():Void
 	{
-		if (!ClientPrefs.ffmpegMode || process == null)
-			return;
-
-		process?.stdin?.close();
-
-		process?.close();
-		process?.kill();
-
-		FlxG.autoPause = ClientPrefs.autoPause;
+		// REFACTOR: delegated to play.helpers
+		PlayStateRender.stopRender();
 	}
 }
 

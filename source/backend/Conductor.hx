@@ -4,7 +4,6 @@ import data.Song.SwagSong;
 import objects.Note;
 import play.PlayState;
 
-// REFACTOR: imports for relocated root classes
 import data.Section;
 import objects.NoteSplash;
 

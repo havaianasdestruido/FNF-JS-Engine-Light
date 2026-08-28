@@ -4,7 +4,6 @@ import backend.Paths;
 import backend.ClientPrefs;
 import backend.CoolUtil;
 
-// REFACTOR: imports for relocated root classes
 import backend.WeekData;
 
 class MenuItem extends FlxSprite

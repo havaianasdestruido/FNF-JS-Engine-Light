@@ -4,7 +4,6 @@ import backend.Paths;
 import objects.BGSprite;
 import play.BaseStage;
 
-// REFACTOR: imports for relocated root classes
 import objects.Character;
 import objects.Note;
 

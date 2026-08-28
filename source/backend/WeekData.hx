@@ -3,7 +3,6 @@
 import play.PlayState;
 import tjson.TJSON as Json;
 
-// REFACTOR: imports for relocated root classes
 import states.LoadingState;
 
 typedef WeekFile =

@@ -1,6 +1,7 @@
 ﻿package backend;
 
 import objects.Note;
+import objects.NoteHelpers;
 import objects.NoteSplash;
 import play.PlayState;
 import flixel.animation.FlxAnimationController;
@@ -17,7 +18,6 @@ import openfl.media.Sound;
 import openfl.system.System;
 import openfl.utils.AssetType;
 
-// REFACTOR: imports for relocated root classes
 import data.Song;
 #if cpp
 import cpp.vm.Gc;
@@ -47,13 +47,13 @@ class Paths
   public static var splashConfigs:Map<String, objects.NoteSplash.NoteSplashConfig> = new Map();
   public static var splashAnimCountMap:Map<String, Int> = new Map();
 
-  public static var defaultSkin = 'noteskins/NOTE_assets' + Note.getNoteSkinPostfix();
+  public static var defaultSkin = 'noteskins/NOTE_assets' + NoteHelpers.getNoteSkinPostfix();
 
   // Function that initializes the first note. This way, we can recycle the notes
   public static function initDefaultSkin(?noteSkin:String, ?inEditor:Bool = false)
   {
     if (noteSkin.length > 0) defaultSkin = noteSkin;
-    else if (!PlayState.isPixelStage) defaultSkin = 'noteskins/NOTE_assets' + Note.getNoteSkinPostfix();
+    else if (!PlayState.isPixelStage) defaultSkin = 'noteskins/NOTE_assets' + NoteHelpers.getNoteSkinPostfix();
     else
       defaultSkin = 'noteskins/NOTE_assets';
     trace(defaultSkin);

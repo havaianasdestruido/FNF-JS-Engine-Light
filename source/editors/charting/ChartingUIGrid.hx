@@ -8,7 +8,7 @@ import backend.DiscordClient;
 import backend.Paths;
 import data.Section.SwagSection;
 import editors.ChartingState;
-import editors.ChartingState.AttachedFlxText;
+import editors.charting.AttachedFlxText;
 import objects.Note;
 import play.PlayState;
 

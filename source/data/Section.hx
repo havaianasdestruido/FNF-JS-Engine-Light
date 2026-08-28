@@ -1,6 +1,5 @@
 ﻿package data;
 
-// REFACTOR: imports for relocated root classes
 import shaders.CrossFade;
 
 typedef SwagSection =

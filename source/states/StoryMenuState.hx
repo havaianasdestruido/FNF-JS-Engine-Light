@@ -17,7 +17,6 @@ import play.PlayState;
 import states.substates.GameplayChangersSubstate;
 import states.substates.ResetScoreSubState;
 
-// REFACTOR: imports for relocated root classes
 import backend.Controls;
 import objects.BGSprite;
 

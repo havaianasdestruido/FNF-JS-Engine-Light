@@ -1,6 +1,5 @@
 ﻿package shaders;
 
-// REFACTOR: explicit imports for shader subtypes
 import shaders.WiggleEffect.WiggleEffectType;
 import shaders.WiggleEffect.WiggleShader;
 

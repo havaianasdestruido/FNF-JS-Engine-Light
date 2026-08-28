@@ -6,7 +6,6 @@ import backend.Paths;
 import backend.PlayerSettings;
 import flixel.FlxState;
 
-// REFACTOR: imports for relocated root classes
 import backend.Achievements;
 
 /**

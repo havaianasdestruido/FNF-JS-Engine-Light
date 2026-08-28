@@ -1,6 +1,5 @@
 package psychlua.pystdlib;
 
-// REFACTOR: restored imports
 import flixel.FlxG;
 import flixel.sound.FlxSound;
 import psychlua.PythonScript;

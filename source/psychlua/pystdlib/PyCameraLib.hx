@@ -1,6 +1,5 @@
 package psychlua.pystdlib;
 
-// REFACTOR: restored imports
 import flixel.FlxCamera;
 import flixel.FlxG;
 import psychlua.PythonScript;

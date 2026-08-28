@@ -1,6 +1,5 @@
 package backend;
 
-// REFACTOR: explicit imports for shader subtypes
 import shaders.RainShader.Light;
 
 

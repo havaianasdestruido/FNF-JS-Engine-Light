@@ -7,7 +7,6 @@ import backend.CoolUtil;
 import editors.ChartingState;
 import haxe.format.JsonParser;
 
-// REFACTOR: imports for relocated root classes
 import objects.Note;
 
 

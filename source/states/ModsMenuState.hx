@@ -19,6 +19,7 @@ import objects.Alphabet;
 
 // REFACTOR: imports for relocated root classes
 import backend.Controls;
+import states.helpers.ModsMenuHelpers;
 
 class ModsMenuState extends MusicBeatState
 {
@@ -541,241 +542,50 @@ class ModsMenuState extends MusicBeatState
 
 	function changeSelectedButton(add:Int = 0)
 	{
-		var max = buttons.length - 1;
-		
-		var button = getButton();
-		button.ignoreCheck = button.onFocus = false;
-
-		curSelectedButton += add;
-		if(curSelectedButton < -2)
-			curSelectedButton = -2;
-		else if(curSelectedButton > max)
-			curSelectedButton = max;
-
-		var button = getButton();
-		button.ignoreCheck = button.onFocus = true;
-
-		var curMod:ModItem = modsGroup.members[curSelectedMod];
-		if(curMod != null) curMod.selectBg.visible = false;
-		if(curSelectedButton < 0)
-		{
-			bgButtons.color = FlxColor.BLACK;
-			bgButtons.alpha = 0.2;
-		}
-		else
-		{
-			bgButtons.color = FlxColor.WHITE;
-			bgButtons.alpha = 0.8;
-		}
-
-		FlxG.sound.play(Paths.sound('scrollMenu'), 0.6);
+		ModsMenuHelpers.changeSelectedButton(this, add);
 	}
 
 	function getButton()
 	{
-		switch(curSelectedButton)
-		{
-			case -2: return buttonReload;
-			case -1: return buttonEnableAll.enabled ? buttonEnableAll : buttonDisableAll;
-		}
-
-		if(modsList.all.length < 1) return buttonReload; //prevent possible crash from my irresponsibility
-		return buttons[Std.int(Math.max(0, Math.min(buttons.length-1, curSelectedButton)))];
+		return ModsMenuHelpers.getButton(this);
 	}
 
 	function changeSelectedMod(add:Int = 0, isMouseWheel:Bool = false)
 	{
-		var max = modsList.all.length - 1;
-		if(max < 0) return;
-
-		if(hoveringOnMods)
-		{
-			var button = getButton();
-			button.ignoreCheck = button.onFocus = false;
-		}
-
-		var lastSelected = curSelectedMod;
-		curSelectedMod += add;
-
-		var limited:Bool = false;
-		if(curSelectedMod < 0)
-		{
-			curSelectedMod = 0;
-			limited = true;
-		}
-		else if(curSelectedMod > max)
-		{
-			curSelectedMod = max;
-			limited = true;
-		}
-		
-		if(!isMouseWheel && limited && Math.abs(add) == 1)
-		{
-			if(add < 0) // pressed up on first mod
-			{
-				curSelectedMod = lastSelected;
-				hoveringOnMods = false;
-				curSelectedButton = -1;
-				changeSelectedButton();
-				return;
-			}
-			else // pressed down on last mod
-			{
-				curSelectedMod = lastSelected;
-				hoveringOnMods = false;
-				curSelectedButton = -2;
-				changeSelectedButton();
-				return;
-			}
-		}
-		
-		holdingMod = false;
-		holdingElapsed = 0;
-		gottaClickAgain = true;
-		updateModDisplayData();
-		FlxG.sound.play(Paths.sound('scrollMenu'), 0.6);
-		
-		if(hoveringOnMods)
-		{
-			var curMod:ModItem = modsGroup.members[curSelectedMod];
-			if(curMod != null) curMod.selectBg.visible = true;
-			bgButtons.color = FlxColor.BLACK;
-			bgButtons.alpha = 0.2;
-		}
+		ModsMenuHelpers.changeSelectedMod(this, add, isMouseWheel);
 	}
 
 	var colorTween:FlxTween = null;
 	function updateModDisplayData()
 	{
-		var curMod:ModItem = modsGroup.members[curSelectedMod];
-		if(curMod == null) return;
-
-		if(colorTween != null)
-		{
-			colorTween.cancel();
-			colorTween.destroy();
-		}
-		colorTween = FlxTween.color(bg, 1, bg.color, curMod.bgColor, {onComplete: function(twn:FlxTween) colorTween = null});
-
-		if(Math.abs(centerMod - curSelectedMod) > 2)
-		{
-			if(centerMod < curSelectedMod)
-				centerMod = curSelectedMod - 2;
-			else centerMod = curSelectedMod + 2;
-		}
-		updateItemPositions();
-
-		icon.loadGraphic(curMod.icon.graphic, true, 150, 150);
-		icon.antialiasing = curMod.icon.antialiasing;
-
-		if(curMod.totalFrames > 0)
-		{
-			icon.animation.add("icon", [for (i in 0...curMod.totalFrames) i], curMod.iconFps);
-			icon.animation.play("icon");
-			icon.animation.curAnim.curFrame = curMod.icon.animation.curAnim.curFrame;
-		}
-
-		if(modName.scaleX != 0.8) modName.setScale(0.8);
-		modName.text = curMod.name;
-		var newScale = Math.min(620 / (modName.width / 0.8), 0.8);
-		modName.setScale(newScale, Math.min(newScale * 1.35, 0.8));
-		modName.y = modNameInitialY - (modName.height / 2);
-		modRestartText.visible = curMod.mustRestart;
-		modDesc.text = curMod.desc;
-
-		for (button in buttons) if(button.focusChangeCallback != null) button.focusChangeCallback(button.onFocus);
-		// settingsButton.enabled = (curMod.settings != null && curMod.settings.length > 0);
+		ModsMenuHelpers.updateModDisplayData(this);
 	}
 
 	var centerMod:Int = 2;
 	function updateItemPositions()
 	{
-		var maxVisible = Math.max(4, centerMod + 2);
-		var minVisible = Math.max(0, centerMod - 2);
-		for (i => mod in modsGroup.members)
-		{
-			if(mod == null)
-			{
-				trace('Mod #$i is null, maybe it was ' + modsList.all[i]);
-				continue;
-			}
-
-			mod.visible = (i >= minVisible && i <= maxVisible);
-			mod.x = bgList.x + 5;
-			mod.y = bgList.y + (86 * (i - centerMod + 2)) + 5;
-			
-			mod.alpha = 0.6;
-			if(i == curSelectedMod) mod.alpha = 1;
-			mod.selectBg.visible = (i == curSelectedMod && hoveringOnMods);
-		}
+		ModsMenuHelpers.updateItemPositions(this);
 	}
 
 	var waitingToRestart:Bool = false;
 	function moveModToPosition(?mod:String = null, position:Int = 0)
 	{
-		if(mod == null) mod = modsList.all[curSelectedMod];
-		if(position >= modsList.all.length) position = 0;
-		else if(position < 0) position = modsList.all.length-1;
-
-		trace('Moved mod $mod to position $position');
-		var id:Int = modsList.all.indexOf(mod);
-		if(position == id) return;
-
-		var curMod:ModItem = modsGroup.members[id];
-		if(curMod == null) return;
-
-		if(curMod.mustRestart || modsGroup.members[position].mustRestart) waitingToRestart = true;
-
-		modsGroup.remove(curMod, true);
-		modsList.all.remove(mod);
-		//if(position > id) position--;
-		modsGroup.insert(position, curMod);
-		modsList.all.insert(position, mod);
-
-		curSelectedMod = position;
-		updateModDisplayData();
-		updateItemPositions();
-		
-		if(!hoveringOnMods)
-		{
-			var curMod:ModItem = modsGroup.members[curSelectedMod];
-			if(curMod != null) curMod.selectBg.visible = false;
-		}
-		FlxG.sound.play(Paths.sound('scrollMenu'), 0.6);
+		ModsMenuHelpers.moveModToPosition(this, mod, position);
 	}
 
 	function checkToggleButtons()
 	{
-		buttonEnableAll.visible = buttonEnableAll.enabled = modsList.disabled.length > 0;
-		buttonDisableAll.visible = buttonDisableAll.enabled = !buttonEnableAll.visible;
+		ModsMenuHelpers.checkToggleButtons(this);
 	}
 
 	function reload()
 	{
-		saveTxt();
-		FlxG.autoPause = ClientPrefs.autoPause;
-		FlxTransitionableState.skipNextTransIn = true;
-		FlxTransitionableState.skipNextTransOut = true;
-		var curMod:ModItem = modsGroup.members[curSelectedMod];
-		LoadingState.loadAndSwitchState(() -> new ModsMenuState(curMod != null ? curMod.folder : null), false);
+		ModsMenuHelpers.reload(this);
 	}
 	
 	function saveTxt()
 	{
-		var fileStr:String = '';
-		for (mod in modsList.all)
-		{
-			if(mod.trim().length < 1) continue;
-
-			if(fileStr.length > 0) fileStr += '\n';
-
-			var on = '1';
-			if(modsList.disabled.contains(mod)) on = '0';
-			fileStr += '$mod|$on';
-		}
-
-		var path:String = 'modsList.txt';
-		File.saveContent(path, fileStr);
+		ModsMenuHelpers.saveTxt(this);
 	}
 }
 

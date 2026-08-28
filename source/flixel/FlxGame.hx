@@ -13,7 +13,6 @@ import openfl.events.Event;
 import openfl.filters.BitmapFilter;
 import lime.system.System;
 
-// REFACTOR: imports for relocated root classes
 import backend.ClientPrefs;
 import data.Section;
 import objects.Note;

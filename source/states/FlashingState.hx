@@ -6,7 +6,6 @@ import backend.Paths;
 import flixel.effects.FlxFlicker;
 import lime.app.Application;
 
-// REFACTOR: imports for relocated root classes
 import backend.Controls;
 
 class FlashingState extends MusicBeatState

@@ -1,9 +1,6 @@
 ﻿package shaders;
 
-// REFACTOR: explicit imports for shader subtypes
 import shaders.ErrorHandledShader.ErrorHandledRuntimeShader;
-
-// REFACTOR: subtypes of shaders.ErrorHandledShader need explicit imports
 
 class PulseShader extends ErrorHandledRuntimeShader
 {

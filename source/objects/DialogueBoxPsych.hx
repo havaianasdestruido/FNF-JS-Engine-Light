@@ -7,7 +7,6 @@ import flixel.addons.text.FlxTypeText;
 import flixel.input.FlxKeyManager;
 import haxe.format.JsonParser;
 
-// REFACTOR: imports for relocated root classes
 import data.Song;
 
 typedef DialogueCharacterFile = {

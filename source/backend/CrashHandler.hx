@@ -10,7 +10,6 @@ import openfl.errors.Error;
 import openfl.events.ErrorEvent;
 import openfl.events.UncaughtErrorEvent;
 
-// REFACTOR: imports for relocated root classes
 import objects.Note;
 
 /**

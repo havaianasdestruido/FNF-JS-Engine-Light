@@ -6,7 +6,6 @@ import flixel.input.keyboard.FlxKey;
 import openfl.Lib;
 import openfl.display.Stage;
 
-// REFACTOR: imports for relocated root classes
 import backend.ClientPrefs;
 import backend.CoolUtil;
 import objects.Note;
