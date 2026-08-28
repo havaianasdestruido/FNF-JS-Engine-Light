@@ -4,7 +4,7 @@ import flixel.FlxCamera;
 import flixel.FlxG;
 import psychlua.PythonScript;
 import play.PlayState;
-import psychlua.LuaUtils;
+import headers.PsychLua;
 
 // REFACTOR: extracted from psychlua.PythonScript (camera API)
 class PyCameraLib

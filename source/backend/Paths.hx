@@ -1,7 +1,7 @@
-﻿package backend;
+package backend;
 
 import objects.Note;
-import objects.NoteHelpers;
+import headers.Objects;
 import objects.NoteSplash;
 import play.PlayState;
 import flixel.animation.FlxAnimationController;

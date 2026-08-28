@@ -1,4 +1,4 @@
-﻿package psychlua;
+package psychlua;
 
 // REFACTOR: subtypes of shaders.ErrorHandledShader need explicit imports
 
@@ -38,7 +38,7 @@ import backend.CoolUtil;
 import data.Song;
 import objects.Character;
 import objects.Note;
-import objects.NoteHelpers;
+import headers.Objects;
 
 #if SHADERS_ALLOWED
 import flixel.addons.display.FlxRuntimeShader;

@@ -5,7 +5,7 @@ import flixel.sound.FlxSound;
 import psychlua.PythonScript;
 import play.PlayState;
 import backend.Paths;
-import psychlua.LuaUtils;
+import headers.PsychLua;
 
 // REFACTOR: extracted from psychlua.PythonScript (sound/music API)
 class PySoundLib

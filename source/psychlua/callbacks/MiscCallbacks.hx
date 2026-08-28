@@ -3,7 +3,7 @@ package psychlua.callbacks;
 import backend.Paths;
 import play.PlayState;
 import psychlua.FunkinLua;
-import psychlua.LuaUtils;
+import headers.PsychLua;
 #if DISCORD_ALLOWED
 import backend.DiscordClient;
 #end

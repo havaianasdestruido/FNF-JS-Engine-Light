@@ -1,4 +1,4 @@
-﻿package states;
+package states;
 
 import backend.ClientPrefs;
 import backend.CoolUtil;
@@ -20,7 +20,7 @@ import states.substates.GameplayChangersSubstate;
 import states.substates.ResetScoreSubState;
 
 // REFACTOR: helpers for relocated logic
-import states.helpers.FreeplayStateHelpers;
+import headers.States;
 
 // REFACTOR: imports for relocated root classes
 import backend.Controls;

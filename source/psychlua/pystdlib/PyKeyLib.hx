@@ -3,7 +3,7 @@ package psychlua.pystdlib;
 import flixel.FlxG;
 import psychlua.PythonScript;
 import play.PlayState;
-import psychlua.LuaUtils;
+import headers.PsychLua;
 
 // REFACTOR: extracted from psychlua.PythonScript (key/control API)
 class PyKeyLib

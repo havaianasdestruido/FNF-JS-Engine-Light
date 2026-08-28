@@ -11,7 +11,7 @@ import objects.Alphabet;
 import objects.AttachedText;
 import objects.CheckboxThingie;
 import play.PlayState;
-import states.helpers.GameplayChangersHelpers;
+import headers.States;
 
 class GameplayChangersSubstate extends MusicBeatSubstate
 {

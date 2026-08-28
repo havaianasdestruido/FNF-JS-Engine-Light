@@ -3,7 +3,7 @@ package psychlua.callbacks;
 import backend.ClientPrefs;
 import play.PlayState;
 import psychlua.FunkinLua;
-import psychlua.LuaUtils;
+import headers.PsychLua;
 import shaders.ChromaticAberrationEffect;
 import shaders.ScanlineEffect;
 import shaders.GrainEffect;

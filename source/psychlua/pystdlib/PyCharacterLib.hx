@@ -1,8 +1,8 @@
-﻿package psychlua.pystdlib;
+package psychlua.pystdlib;
 
 import psychlua.PythonScript;
 import play.PlayState;
-import psychlua.LuaUtils;
+import headers.PsychLua;
 
 import objects.Character;
 

@@ -5,7 +5,7 @@ import flixel.util.FlxColor;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import psychlua.FunkinLua;
 import psychlua.PythonScript;
-import psychlua.LuaUtils;
+import headers.PsychLua;
 import Type.ValueType;
 
 // REFACTOR: extracted from psychlua.PythonScript (getProperty / setProperty family)

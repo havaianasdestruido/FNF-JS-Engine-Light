@@ -6,7 +6,7 @@ import psychlua.PythonScript;
 import play.PlayState;
 import backend.Conductor;
 import backend.Paths;
-import psychlua.LuaUtils;
+import headers.PsychLua;
 import states.substates.PauseSubState;
 #if DISCORD_ALLOWED
 import backend.DiscordClient;

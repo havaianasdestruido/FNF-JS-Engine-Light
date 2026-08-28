@@ -1,4 +1,4 @@
-﻿package psychlua.callbacks;
+package psychlua.callbacks;
 
 import shaders.ErrorHandledShader.ErrorHandledRuntimeShader;
 
@@ -6,7 +6,7 @@ import backend.ClientPrefs;
 import backend.Paths;
 import play.PlayState;
 import psychlua.FunkinLua;
-import psychlua.LuaUtils;
+import headers.PsychLua;
 
 #if SHADERS_ALLOWED
 import flixel.addons.display.FlxRuntimeShader;

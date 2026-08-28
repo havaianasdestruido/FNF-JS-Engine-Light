@@ -1,4 +1,4 @@
-﻿package states;
+package states;
 
 import backend.ClientPrefs;
 import backend.CoolUtil;
@@ -19,7 +19,7 @@ import objects.Alphabet;
 
 // REFACTOR: imports for relocated root classes
 import backend.Controls;
-import states.helpers.ModsMenuHelpers;
+import headers.States;
 
 class ModsMenuState extends MusicBeatState
 {

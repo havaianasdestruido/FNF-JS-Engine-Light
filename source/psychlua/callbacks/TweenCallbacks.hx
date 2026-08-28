@@ -1,10 +1,10 @@
-﻿package psychlua.callbacks;
+package psychlua.callbacks;
 
 import backend.MusicBeatState;
 import objects.StrumNote;
 import play.PlayState;
 import psychlua.FunkinLua;
-import psychlua.LuaUtils;
+import headers.PsychLua;
 import psychlua.FunkinLua.LuaTweenOptions;
 
 // REFACTOR: extracted from psychlua.FunkinLua (tween/timer API)

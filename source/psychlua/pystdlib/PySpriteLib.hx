@@ -11,7 +11,7 @@ import backend.Paths;
 import flixel.util.FlxAxes;
 import objects.Character;
 import play.PlayState;
-import psychlua.LuaUtils;
+import headers.PsychLua;
 import psychlua.ModchartSprite;
 import states.substates.GameOverSubstate;
 

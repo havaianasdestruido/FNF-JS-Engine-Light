@@ -5,7 +5,7 @@ import flixel.util.FlxColor;
 import psychlua.PythonScript;
 import play.PlayState;
 import backend.Paths;
-import psychlua.LuaUtils;
+import headers.PsychLua;
 
 // REFACTOR: extracted from psychlua.PythonScript (text object API)
 class PyTextLib

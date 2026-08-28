@@ -1,10 +1,10 @@
-﻿package options;
+package options;
 
 // REFACTOR: explicit imports for shader subtypes
 import shaders.RGBPalette.RGBShaderReference;
 
 import objects.Note;
-import objects.NoteHelpers;
+import headers.Objects;
 import objects.StrumNote;
 import flixel.addons.display.FlxBackdrop;
 import flixel.addons.display.shapes.FlxShapeCircle;
@@ -22,7 +22,7 @@ import backend.DiscordClient;
 import backend.MusicBeatSubstate;
 import objects.Alphabet;
 import objects.AttachedText;
-import options.helpers.NotesSubStateHelpers;
+import headers.Options;
 import play.PlayState;
 
 class NotesSubState extends MusicBeatSubstate

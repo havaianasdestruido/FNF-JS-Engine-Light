@@ -1,4 +1,4 @@
-﻿package psychlua.callbacks;
+package psychlua.callbacks;
 
 import backend.Conductor;
 import backend.Highscore;
@@ -6,7 +6,7 @@ import backend.Paths;
 import data.Song;
 import play.PlayState;
 import psychlua.FunkinLua;
-import psychlua.LuaUtils;
+import headers.PsychLua;
 import states.LoadingState;
 import states.FreeplayState;
 import states.StoryMenuState;

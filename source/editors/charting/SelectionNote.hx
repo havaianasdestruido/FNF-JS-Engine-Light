@@ -5,7 +5,7 @@ import backend.ClientPrefs;
 import backend.Paths;
 import flixel.FlxSprite;
 import objects.Note;
-import objects.NoteHelpers;
+import headers.Objects;
 import play.PlayState;
 import shaders.RGBPalette.RGBShaderReference;
 

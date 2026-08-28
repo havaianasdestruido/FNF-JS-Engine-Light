@@ -8,7 +8,7 @@ import objects.Alphabet;
 import objects.Alphabet.Alignment;
 import objects.AttachedText;
 import objects.Note;
-import objects.NoteHelpers;
+import headers.Objects;
 import objects.StrumNote;
 import shaders.RGBPalette;
 import shaders.RGBPalette.RGBShaderReference;

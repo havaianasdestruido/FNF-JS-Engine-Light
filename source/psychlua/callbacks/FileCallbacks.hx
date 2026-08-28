@@ -2,7 +2,7 @@ package psychlua.callbacks;
 
 import backend.Paths;
 import psychlua.FunkinLua;
-import psychlua.LuaUtils;
+import headers.PsychLua;
 
 // REFACTOR: extracted from psychlua.FunkinLua (file IO API)
 class FileCallbacks

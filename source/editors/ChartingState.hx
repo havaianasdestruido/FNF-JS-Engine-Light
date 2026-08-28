@@ -21,7 +21,7 @@ import objects.AttachedSprite;
 import objects.HealthIcon;
 import objects.StrumNote;
 import objects.Note;
-import objects.NoteHelpers;
+import headers.Objects;
 import objects.FlxUIDropDownMenuCustom;
 import objects.Prompt;
 import data.Song;

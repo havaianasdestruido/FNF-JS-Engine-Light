@@ -4,7 +4,7 @@ import flixel.FlxBasic;
 import backend.Paths;
 import play.PlayState;
 import psychlua.FunkinLua;
-import psychlua.LuaUtils;
+import headers.PsychLua;
 import Type.ValueType;
 
 // REFACTOR: extracted from psychlua.FunkinLua (getProperty / setProperty family)

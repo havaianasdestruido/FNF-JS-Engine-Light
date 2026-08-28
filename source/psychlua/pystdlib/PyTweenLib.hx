@@ -5,7 +5,7 @@ import flixel.util.FlxColor;
 import psychlua.PythonScript;
 import play.PlayState;
 import objects.StrumNote;
-import psychlua.LuaUtils;
+import headers.PsychLua;
 
 // REFACTOR: extracted from psychlua.PythonScript (tween API)
 class PyTweenLib

@@ -1,8 +1,8 @@
-﻿package psychlua.callbacks;
+package psychlua.callbacks;
 
 import play.PlayState;
 import psychlua.FunkinLua;
-import psychlua.LuaUtils;
+import headers.PsychLua;
 import psychlua.ModchartSprite;
 
 import objects.Character;

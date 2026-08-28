@@ -1,4 +1,4 @@
-﻿package editors;
+package editors;
 import backend.Conductor;
 import backend.ClientPrefs;
 import backend.CoolUtil;
@@ -26,7 +26,7 @@ import backend.Controls;
 import objects.Character;
 
 // REFACTOR: helper for relocated static logic
-import editors.helpers.EditorPlayStateHelpers;
+import headers.Editors;
 
 class EditorPlayState extends MusicBeatState
 {

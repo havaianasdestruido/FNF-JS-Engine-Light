@@ -3,7 +3,7 @@ package psychlua.pystdlib;
 import psychlua.PythonScript;
 import play.PlayState;
 import backend.Highscore;
-import psychlua.LuaUtils;
+import headers.PsychLua;
 
 // REFACTOR: extracted from psychlua.PythonScript (score/health API)
 class PyScoreLib

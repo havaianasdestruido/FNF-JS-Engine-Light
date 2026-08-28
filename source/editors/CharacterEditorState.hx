@@ -1,4 +1,4 @@
-﻿package editors;
+package editors;
 import objects.Character;
 import backend.ClientPrefs;
 import backend.CoolUtil;
@@ -37,7 +37,7 @@ import backend.Controls;
 import objects.Note;
 
 // REFACTOR: relocated helpers
-import editors.helpers.CharacterEditorHelpers;
+import headers.Editors;
 
 /**
 	*DEBUG MODE

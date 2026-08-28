@@ -1,4 +1,4 @@
-﻿package options;
+package options;
 
 // REFACTOR: explicit imports for shader subtypes
 import shaders.RainShader.Light;
@@ -6,7 +6,7 @@ import shaders.RainShader.Light;
 
 import backend.Controls;
 import objects.Note;
-import objects.NoteHelpers;
+import headers.Objects;
 import objects.StrumNote;
 import flixel.graphics.FlxGraphic;
 import flixel.input.keyboard.FlxKey;

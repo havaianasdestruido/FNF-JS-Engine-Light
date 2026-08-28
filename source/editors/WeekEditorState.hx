@@ -1,4 +1,4 @@
-﻿package editors;
+package editors;
 import backend.ClientPrefs;
 import backend.DiscordClient;
 import backend.MusicBeatState;
@@ -29,7 +29,7 @@ import data.Song;
 import objects.BGSprite;
 
 // REFACTOR: helper delegation
-import editors.helpers.WeekEditorHelpers;
+import headers.Editors;
 
 class WeekEditorState extends MusicBeatState
 {

@@ -4,7 +4,7 @@ import flixel.FlxCamera;
 import flixel.util.FlxColor;
 import play.PlayState;
 import psychlua.FunkinLua;
-import psychlua.LuaUtils;
+import headers.PsychLua;
 
 // REFACTOR: extracted from psychlua.FunkinLua (createCamera/addCamera/removeCamera)
 class CameraCallbacks

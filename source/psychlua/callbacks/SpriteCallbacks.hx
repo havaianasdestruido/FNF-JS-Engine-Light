@@ -5,7 +5,7 @@ import backend.Paths;
 import objects.Character;
 import play.PlayState;
 import psychlua.FunkinLua;
-import psychlua.LuaUtils;
+import headers.PsychLua;
 import psychlua.ModchartSprite;
 import states.substates.GameOverSubstate;
 

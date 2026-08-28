@@ -1,4 +1,4 @@
-﻿package options;
+package options;
 
 import backend.Controls;
 import flixel.addons.ui.FlxUIInputText; // These are both for the search bars
@@ -14,7 +14,7 @@ import objects.Alphabet;
 import objects.AttachedText;
 import objects.Character;
 import objects.CheckboxThingie;
-import options.helpers.OptionsMenuHelpers;
+import headers.Options;
 
 class BaseOptionsMenu extends MusicBeatSubstate
 {

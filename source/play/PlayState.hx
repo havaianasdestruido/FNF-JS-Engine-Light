@@ -1,4 +1,4 @@
-﻿package play;
+package play;
 
 // REFACTOR: explicit imports for shader subtypes
 import shaders.ErrorHandledShader.ErrorHandledRuntimeShader;
@@ -35,19 +35,8 @@ import play.BaseStage.Countdown;
 // REFACTOR: import kept for safety against stale global `BaseStage.Countdown` in source\import.hx
 import play.CutsceneHandler;
 import play.objects.*;
-import play.helpers.PlayStateCamera;
-import play.helpers.PlayStateCharacters;
-import play.helpers.PlayStateChartLoader;
-import play.helpers.PlayStateCountdown;
-import play.helpers.PlayStateCutscenes;
-import play.helpers.PlayStateEvents;
-import play.helpers.PlayStateInput;
-import play.helpers.PlayStateNoteHelpers;
-import play.helpers.PlayStateNotes;
-import play.helpers.PlayStatePlayback;
-import play.helpers.PlayStateRating;
-import play.helpers.PlayStateRender;
-import play.helpers.PlayStateScripts;
+
+import headers.Play;
 
 import shaders.CrossFade;
 import shaders.PulseEffectAlt;

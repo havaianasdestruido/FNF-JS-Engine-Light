@@ -1,4 +1,4 @@
-﻿package editors;
+package editors;
 import backend.ClientPrefs;
 import backend.DiscordClient;
 import backend.MusicBeatState;
@@ -23,7 +23,7 @@ import openfl.net.FileReference;
 // REFACTOR: imports for relocated root classes
 import objects.Character;
 // REFACTOR: dialogue load/save plumbing moved to helpers
-import editors.helpers.DialogueEditorHelpers;
+import headers.Editors;
 
 class DialogueEditorState extends MusicBeatState
 {
