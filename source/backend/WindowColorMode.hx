@@ -1,4 +1,4 @@
-﻿package backend;
+package backend;
 
 // REFACTOR: explicit imports for shader subtypes
 import shaders.RainShader.Light;
@@ -35,7 +35,7 @@ class WindowColorMode
 	 */
 	public static function setWindowColorMode(isDark:Bool = true)
     {
-		#if cpp
+#if windows
         WindowBackend.setWindowColorMode(isDark);
 		isDarkMode = isDark;
 		#else
@@ -48,7 +48,7 @@ class WindowColorMode
 	 */
 	public static function setDarkMode()
     {
-		#if cpp
+#if windows
         WindowBackend.setWindowColorMode(true);
 		isDarkMode = true;
 		#else
@@ -61,7 +61,7 @@ class WindowColorMode
 	 */
 	public static function setLightMode()
     {
-		#if cpp
+#if windows
         WindowBackend.setWindowColorMode(false);
 		isDarkMode = false;
 		#else
@@ -78,7 +78,7 @@ class WindowColorMode
 	 */
 	public static function setWindowBorderColor(color:Array<Int>, setHeader:Bool = true, setBorder:Bool = true)
     {
-		#if cpp
+#if windows
         WindowBackend.setWindowBorderColor(((color != null) ? color : [255, 255, 255]), setHeader, setBorder);
 		if(setHeader) windowHeaderColor = ((color != null) ? color : [255, 255, 255]);
 		if(setBorder) windowBorderColor = ((color != null) ? color : [255, 255, 255]);
@@ -94,7 +94,7 @@ class WindowColorMode
 	 */
 	public static function setWindowTitleColor(color:Array<Int>)
     {
-		#if cpp
+#if windows
         WindowBackend.setWindowTitleColor(((color != null) ? color : [255, 255, 255]));
 		windowTitleColor = ((color != null) ? color : [255, 255, 255]);
 		#else
