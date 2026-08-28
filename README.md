@@ -1,3 +1,26 @@
+<h1 align="center">
+  <br>
+  <a href="https://github.com/havaianasdestruido/FNF-JS-Engine-Light"><img src="/art/iconOG.png" alt="JSengine" width="150"></a>
+  <br>
+  <b>JS Engine LIGHT</b>
+  <br>
+  <i>(Jordan Santiago Engine, with some tweaks)</i>
+  <br>
+</h1>
+<h3 align="center">
+  <b>JS Engine LIGHT is a enhanced fork of JSE, which in turn is a fork of Psych but with performance-related additions.</b>
+</h3>
+
+<b>IMPORTANT: if you want to clone the repo (for making a pull request or for building locally), use <code>git clone -b main --single-branch https://github.com/havaianasdestruido/FNF-JS-Engine-Light.git</code> so you only git clone _only the main branch_, the other ones are for experiments or are extremely old.</b>
+
+<p align="center">
+<img alt="GitHub repo size" src="https://img.shields.io/github/repo-size/havaianasdestruido/FNF-JS-Engine-Light">
+<img alt="GitHub commit activity" src="https://img.shields.io/github/commit-activity/w/havaianasdestruido/FNF-JS-Engine-Light">
+<img alt="GitHub contributors" src="https://img.shields.io/github/contributors/havaianasdestruido/FNF-JS-Engine-Light">
+</p>
+
+<details>
+  <summary><h2>OG FNF JS Engine README and Stuff</h2></summary>
 <!-- this is an secret -->
 <h1 align="center">
   <br>
@@ -12,15 +35,7 @@
   <b>JS Engine is a heavily modified Psych Engine fork, with lower-end devices and more customization in mind.</b>
 </h3>
 
-<p align="center">
-<img alt="GitHub repo size" src="https://img.shields.io/github/repo-size/havaianasdestruido/FNF-JS-Engine-Light">
-<img alt="GitHub commit activity" src="https://img.shields.io/github/commit-activity/w/havaianasdestruido/FNF-JS-Engine-Light">
-<img alt="GitHub contributors" src="https://img.shields.io/github/contributors/havaianasdestruido/FNF-JS-Engine-Light">
-</p>
-
 README.md revamped by [Nael2xd](https://youtube.com/@nael2xd?si=axwJrY_8jdlXUwSm)
-
-<b>IMPORTANT: if you want to clone the repo (for making a pull request or for building locally), use <code>git clone -b main --single-branch https://github.com/havaianasdestruido/FNF-JS-Engine-Light.git</code> so you only git clone _only the main branch_, the other ones are for experiments or are extremely old.</b>
 
 <!-- _If you're looking for the Mobile port, [go here](https://github.com/JordanSantiagoYT/FNF-JS-Engine/tree/mobile)._ -->
 
@@ -211,4 +226,3 @@ _____________________________________
 * Some stuff based on Week 7's changes has been put in (Background colors on Freeplay, Note splashes)
 * You can reset your Score on Freeplay/Story Mode by pressing Reset button.
 * You can listen to a song or adjust Scroll Speed/Damage taken/etc. on Freeplay by pressing Space.
-
