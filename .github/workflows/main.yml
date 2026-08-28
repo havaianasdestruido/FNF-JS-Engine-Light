@@ -154,7 +154,12 @@ jobs:
         env:
           HXCPP_COMPILE_THREADS: 4
         run: |
+          # The restored compile cache carries a PCH built against headers
+          # from a previous haxelib checkout; the restored haxelib headers
+          # may have different mtimes. clang then refuses the PCH and fails
+          # the build; drop it so it is regenerated against the real headers.
           rm -f assets/preload/gameRenders/renderlol.bat
+          find "$HXCPP_COMPILE_CACHE" -name '*.pch' -delete 2>/dev/null || true
           haxelib run lime build ${{ matrix.target }} ${{ matrix.target_args }} -D"${{ inputs.buildFlags || 'commit' }}" ${{ env.HXCPP_PERF_FLAGS }}
 
       - name: Compile (Windows)
@@ -163,6 +168,7 @@ jobs:
         env:
           HXCPP_COMPILE_THREADS: $env:NUMBER_OF_PROCESSORS
         run: |
+          if (Test-Path $env:HXCPP_COMPILE_CACHE) { Get-ChildItem $env:HXCPP_COMPILE_CACHE -Recurse -Filter *.pch | Remove-Item -Force }
           Remove-Item -Force assets/preload/gameRenders/renderlinux.sh
           haxelib run lime build windows -D"${{ inputs.buildFlags || 'commit' }}" ${{ env.HXCPP_PERF_FLAGS }}
 
