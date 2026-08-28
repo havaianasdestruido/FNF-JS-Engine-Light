@@ -73,19 +73,18 @@ class ShaderCallbacks
 
 		// camera shaders
 		FunkinLua.registerFunction("setCameraShader", function(cam:String, shader:String, ?index:String) {
-			final funk = PlayState.instance;
 			if (!ClientPrefs.shaders) return false;
 
 			if (index == null || index.length < 1)
 			    index = shader;
 
 			#if (MODS_ALLOWED && SHADERS_ALLOWED)
-			if (!funk.runtimeShaders.exists(shader) && !funk.initLuaShader(shader)) {
+			if (!game.runtimeShaders.exists(shader) && !game.initLuaShader(shader)) {
 			    LuaUtils.luaTrace(funk.lua, 'addShaderToCam | Shader $shader is missing! Make sure you\'ve initalized your shader first!', false, false, FlxColor.RED);
 			    return false;
 			}
 
-            var arr:Array<String> = funk.runtimeShaders.get(shader);
+            var arr:Array<String> = game.runtimeShaders.get(shader);
             var camera = LuaUtils.getCam(cam);
             @:privateAccess {
             if (camera.filters == null)

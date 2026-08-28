@@ -1,4 +1,4 @@
-﻿package play.helpers;
+package play.helpers;
 
 // REFACTOR: explicit imports for shader subtypes
 import shaders.ErrorHandledShader.ErrorHandledRuntimeShader;
@@ -11,6 +11,8 @@ import play.PlayState;
 #end
 
 // REFACTOR: script/shader plumbing extracted from play.PlayState
+@:access(play.PlayState)
+@:access(backend.MusicBeatState)
 class PlayStateScripts
 {
 	#if SHADERS_ALLOWED

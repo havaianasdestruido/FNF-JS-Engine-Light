@@ -5,8 +5,11 @@ import backend.Conductor;
 import backend.Paths;
 import editors.ChartingState;
 import editors.ChartingState.AttachedFlxText;
+import flixel.ui.FlxButton;
 import objects.Note;
 
+@:access(editors.ChartingState)
+@:access(backend.MusicBeatState)
 class ChartingEvents
 {
   public static function changeEventSelected(state:ChartingState, change:Int = 0)

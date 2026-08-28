@@ -1,4 +1,4 @@
-﻿package editors.charting;
+package editors.charting;
 
 // REFACTOR: extracted from editors.ChartingState (behavior-preserving)
 import backend.CoolUtil;
@@ -18,6 +18,8 @@ import play.PlayState;
 // REFACTOR: imports for relocated root classes
 import objects.Character;
 
+@:access(editors.ChartingState)
+@:access(backend.MusicBeatState)
 class ChartingSaveLoad
 {
   public static function songJsonPopup(state:ChartingState)
@@ -162,9 +164,9 @@ class ChartingSaveLoad
       if (!isAuto)
       {
         state._file = new FileReference();
-        state._file.addEventListener(Event.COMPLETE, onSaveComplete);
-        state._file.addEventListener(Event.CANCEL, onSaveCancel);
-        state._file.addEventListener(IOErrorEvent.IO_ERROR, onSaveError);
+        state._file.addEventListener(Event.COMPLETE, state.onSaveComplete);
+        state._file.addEventListener(Event.CANCEL, state.onSaveCancel);
+        state._file.addEventListener(IOErrorEvent.IO_ERROR, state.onSaveError);
 
         state._file.save(data.trim(), gamingName + ".json");
       } else
@@ -227,27 +229,27 @@ class ChartingSaveLoad
     if ((data != null) && (data.length > 0))
     {
       state._file = new FileReference();
-      state._file.addEventListener(Event.COMPLETE, onSaveComplete);
-      state._file.addEventListener(Event.CANCEL, onSaveCancel);
-      state._file.addEventListener(IOErrorEvent.IO_ERROR, onSaveError);
+      state._file.addEventListener(Event.COMPLETE, state.onSaveComplete);
+      state._file.addEventListener(Event.CANCEL, state.onSaveCancel);
+      state._file.addEventListener(IOErrorEvent.IO_ERROR, state.onSaveError);
       state._file.save(data.trim(), "events.json");
     }
   }
 
   public static function onSaveComplete(state:ChartingState, _):Void
   {
-    state._file.removeEventListener(Event.COMPLETE, onSaveComplete);
-    state._file.removeEventListener(Event.CANCEL, onSaveCancel);
-    state._file.removeEventListener(IOErrorEvent.IO_ERROR, onSaveError);
+    state._file.removeEventListener(Event.COMPLETE, state.onSaveComplete);
+    state._file.removeEventListener(Event.CANCEL, state.onSaveCancel);
+    state._file.removeEventListener(IOErrorEvent.IO_ERROR, state.onSaveError);
     state._file = null;
     FlxG.log.notice("Successfully saved LEVEL DATA.");
   }
 
   public static function onSaveCancel(state:ChartingState, _):Void
   {
-    state._file.removeEventListener(Event.COMPLETE, onSaveComplete);
-    state._file.removeEventListener(Event.CANCEL, onSaveCancel);
-    state._file.removeEventListener(IOErrorEvent.IO_ERROR, onSaveError);
+    state._file.removeEventListener(Event.COMPLETE, state.onSaveComplete);
+    state._file.removeEventListener(Event.CANCEL, state.onSaveCancel);
+    state._file.removeEventListener(IOErrorEvent.IO_ERROR, state.onSaveError);
     state._file = null;
   }
 
@@ -256,9 +258,9 @@ class ChartingSaveLoad
    */
   public static function onSaveError(state:ChartingState, _):Void
   {
-    state._file.removeEventListener(Event.COMPLETE, onSaveComplete);
-    state._file.removeEventListener(Event.CANCEL, onSaveCancel);
-    state._file.removeEventListener(IOErrorEvent.IO_ERROR, onSaveError);
+    state._file.removeEventListener(Event.COMPLETE, state.onSaveComplete);
+    state._file.removeEventListener(Event.CANCEL, state.onSaveCancel);
+    state._file.removeEventListener(IOErrorEvent.IO_ERROR, state.onSaveError);
     state._file = null;
     FlxG.log.error("Problem saving Level data");
   }

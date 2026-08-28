@@ -1,5 +1,10 @@
-﻿package psychlua.pystdlib;
+package psychlua.pystdlib;
 
+// REFACTOR: restored imports
+import flixel.FlxBasic;
+import flixel.util.FlxColor;
+import flixel.group.FlxGroup.FlxTypedGroup;
+import psychlua.FunkinLua;
 import psychlua.PythonScript;
 import psychlua.LuaUtils;
 import Type.ValueType;

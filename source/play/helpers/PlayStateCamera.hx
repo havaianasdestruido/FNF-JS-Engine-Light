@@ -9,7 +9,9 @@ import objects.Character;
 import play.PlayState;
 
 // REFACTOR: camera / icon / dance logic extracted from play.PlayState
-@:privateAccess class PlayStateCamera
+@:access(play.PlayState)
+@:access(backend.MusicBeatState)
+class PlayStateCamera
 {
 	public static function moveCameraSection(state:PlayState):Void {
 		if(PlayState.SONG.notes[state.curSection] == null) return;

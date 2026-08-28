@@ -1,4 +1,4 @@
-﻿package music;
+package music;
 
 import states.FreeplayState;
 import flixel.group.FlxGroup;
@@ -12,7 +12,7 @@ import data.Song;
 /**
  * Music player used for Freeplay
  */
-@:access(FreeplayState)
+@:access(states.FreeplayState)
 class MusicPlayer extends FlxGroup
 {
 	public var instance:FreeplayState;

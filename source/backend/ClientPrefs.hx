@@ -1,5 +1,6 @@
-﻿package backend;
+package backend;
 
+import backend.Controls.KeyboardScheme;
 import Main;
 import states.TitleState;
 import flixel.input.keyboard.FlxKey;

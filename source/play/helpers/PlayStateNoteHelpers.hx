@@ -12,7 +12,9 @@ import play.objects.SustainSplash;
 import play.PlayState;
 
 // REFACTOR: note group/splash helpers extracted from play.PlayState
-@:privateAccess class PlayStateNoteHelpers
+@:access(play.PlayState)
+@:access(backend.MusicBeatState)
+class PlayStateNoteHelpers
 {
 	public static function addBehindGF(state:PlayState, obj:FlxObject)
 	{

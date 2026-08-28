@@ -1,4 +1,4 @@
-﻿package editors.charting;
+package editors.charting;
 
 // REFACTOR: extracted from editors.ChartingState (behavior-preserving)
 import backend.ClientPrefs;
@@ -15,6 +15,8 @@ import play.PlayState;
 // REFACTOR: imports for relocated root classes
 import shaders.CrossFade;
 
+@:access(editors.ChartingState)
+@:access(backend.MusicBeatState)
 class ChartingUIGrid
 {
   public static function sectionStartTime(state:ChartingState, add:Int = 0):Float

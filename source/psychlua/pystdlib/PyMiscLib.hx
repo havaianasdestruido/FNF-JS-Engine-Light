@@ -1,5 +1,8 @@
 package psychlua.pystdlib;
 
+// REFACTOR: restored imports
+import flixel.FlxG;
+import flixel.math.FlxMath;
 import psychlua.PythonScript;
 import play.PlayState;
 import backend.Conductor;

@@ -1,4 +1,4 @@
-﻿package play.helpers;
+package play.helpers;
 
 import backend.ClientPrefs;
 import backend.Conductor;
@@ -29,7 +29,9 @@ import states.StoryMenuState;
 import objects.Note;
 
 // REFACTOR: song playback control extracted from play.PlayState
-@:privateAccess class PlayStatePlayback
+@:access(play.PlayState)
+@:access(backend.MusicBeatState)
+class PlayStatePlayback
 {
 	public static function setSongTime(state:PlayState, time:Float)
 	{
@@ -190,7 +192,7 @@ import objects.Note;
 
 		state.ogSongSpeed = state.songSpeed;
 
-		state.shouldDrainHealth = (state.opponentDrain || (PlayState.opponentChart ? state.boyfriend.healthDrain : state.dad.healthDrain));
+		PlayState.shouldDrainHealth = (state.opponentDrain || (PlayState.opponentChart ? state.boyfriend.healthDrain : state.dad.healthDrain));
 		if (!state.opponentDrain && !Math.isNaN((PlayState.opponentChart ? state.boyfriend : state.dad).drainAmount)) state.healthDrainAmount = PlayState.opponentChart ? state.boyfriend.drainAmount : state.dad.drainAmount;
 		if (!state.opponentDrain && !Math.isNaN((PlayState.opponentChart ? state.boyfriend : state.dad).drainFloor)) state.healthDrainFloor = PlayState.opponentChart ? state.boyfriend.drainFloor : state.dad.drainFloor;
 	}
@@ -413,7 +415,7 @@ import objects.Note;
 					if(!ClientPrefs.getGameplaySetting('practice', false) && !ClientPrefs.getGameplaySetting('botplay', false)) {
 						StoryMenuState.weekCompleted.set(WeekData.weeksList[PlayState.storyWeek], true);
 
-						Highscore.saveWeekScore(WeekData.getWeekFileName(), Std.int(state.campaignScore), PlayState.storyDifficulty);
+						Highscore.saveWeekScore(WeekData.getWeekFileName(), Std.int(PlayState.campaignScore), PlayState.storyDifficulty);
 
 						FlxG.save.data.weekCompleted = StoryMenuState.weekCompleted;
 						FlxG.save.flush();

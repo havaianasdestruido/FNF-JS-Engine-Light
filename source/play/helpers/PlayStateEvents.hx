@@ -1,5 +1,6 @@
-﻿package play.helpers;
+package play.helpers;
 
+import flixel.util.FlxSort;
 import backend.ClientPrefs;
 import backend.Conductor;
 
@@ -19,7 +20,9 @@ import data.Song;
 import objects.Note;
 
 // REFACTOR: event handling extracted from play.PlayState
-@:privateAccess class PlayStateEvents
+@:access(play.PlayState)
+@:access(backend.MusicBeatState)
+class PlayStateEvents
 {
 	// called only once per different event (Used for precaching)
 	public static function eventPushed(state:PlayState, event:EventNote) {
@@ -501,7 +504,7 @@ import objects.Note;
 							state.setOnLuas('gfName', state.gf.curCharacter);
 						}
 				}
-				state.shouldDrainHealth = (state.opponentDrain || (PlayState.opponentChart ? state.boyfriend.healthDrain : state.dad.healthDrain));
+				PlayState.shouldDrainHealth = (state.opponentDrain || (PlayState.opponentChart ? state.boyfriend.healthDrain : state.dad.healthDrain));
 				if (!state.opponentDrain && !Math.isNaN((PlayState.opponentChart ? state.boyfriend : state.dad).drainAmount)) state.healthDrainAmount = PlayState.opponentChart ? state.boyfriend.drainAmount : state.dad.drainAmount;
 				if (!state.opponentDrain && !Math.isNaN((PlayState.opponentChart ? state.boyfriend : state.dad).drainFloor)) state.healthDrainFloor = PlayState.opponentChart ? state.boyfriend.drainFloor : state.dad.drainFloor;
 				state.reloadHealthBarColors(state.dad.healthColorArray, state.boyfriend.healthColorArray);

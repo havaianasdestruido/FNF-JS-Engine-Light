@@ -1,5 +1,6 @@
 package play.helpers;
 
+import flixel.util.FlxSort;
 import backend.ClientPrefs;
 import backend.Conductor;
 
@@ -18,7 +19,9 @@ import play.helpers.PlayStateNoteHelpers;
 import play.helpers.PlayStateNotes;
 
 // REFACTOR: keyboard input logic extracted from play.PlayState
-@:privateAccess class PlayStateInput
+@:access(play.PlayState)
+@:access(backend.MusicBeatState)
+class PlayStateInput
 {
 	public static function onKeyPress(state:PlayState, event:KeyboardEvent):Void
 	{

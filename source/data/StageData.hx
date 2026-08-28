@@ -2,6 +2,8 @@ package data;
 
 import backend.Paths;
 
+import data.Song.SwagSong;
+
 typedef StageFile = {
 	var directory:String;
 	var defaultZoom:Float;

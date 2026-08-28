@@ -1,6 +1,7 @@
-﻿package editors;
+package editors;
 
 // REFACTOR: explicit imports for shader subtypes
+import editors.charting.ChartingUISections;
 import shaders.RGBPalette.RGBShaderReference;
 
 import objects.Character.CharacterFile;

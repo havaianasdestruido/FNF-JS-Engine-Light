@@ -1,5 +1,7 @@
 package psychlua.callbacks;
 
+import flixel.FlxCamera;
+import flixel.util.FlxColor;
 import play.PlayState;
 import psychlua.FunkinLua;
 import psychlua.LuaUtils;
@@ -57,7 +59,7 @@ class CameraCallbacks
 					fucker.set(cameraName, camera);
 				else if (safeName != cameraName) {
 					LuaUtils.luaTrace(
-						lua,
+						funk.lua,
 						'An object of $cameraName exists, renaming to $safeName to avoid conflict.',
 						false, false, FlxColor.RED
 					);

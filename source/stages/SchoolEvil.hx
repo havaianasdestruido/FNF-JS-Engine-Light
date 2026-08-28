@@ -1,4 +1,5 @@
 package stages;
+import objects.Note.EventNote;
 import backend.ClientPrefs;
 import backend.CoolUtil;
 import backend.Paths;
@@ -64,7 +65,7 @@ class SchoolEvil extends BaseStage
 				}
 		}
 	}
-	override function eventPushed(event:Note.EventNote)
+	override function eventPushed(event:EventNote)
 	{
 		// used for preloading assets used on events
 		switch(event.event)

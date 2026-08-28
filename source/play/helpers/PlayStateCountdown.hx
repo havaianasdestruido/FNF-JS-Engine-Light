@@ -1,4 +1,4 @@
-﻿package play.helpers;
+package play.helpers;
 
 import backend.ClientPrefs;
 import backend.Conductor;
@@ -18,7 +18,9 @@ import data.Song;
 import objects.Note;
 
 // REFACTOR: countdown logic extracted from play.PlayState
-@:privateAccess class PlayStateCountdown
+@:access(play.PlayState)
+@:access(backend.MusicBeatState)
+class PlayStateCountdown
 {
 	public static function cacheCountdown(state:PlayState)
 	{

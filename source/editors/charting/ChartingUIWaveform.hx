@@ -1,4 +1,4 @@
-﻿package editors.charting;
+package editors.charting;
 
 // REFACTOR: extracted from editors.ChartingState (behavior-preserving)
 import editors.ChartingState;
@@ -10,6 +10,8 @@ import backend.Conductor;
 @:access(flixel.sound.FlxSound._sound)
 @:access(openfl.media.Sound.__buffer)
 
+@:access(editors.ChartingState)
+@:access(backend.MusicBeatState)
 class ChartingUIWaveform
 {
   public static function updateWaveform(state:ChartingState)

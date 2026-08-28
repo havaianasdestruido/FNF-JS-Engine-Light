@@ -1,4 +1,4 @@
-﻿package;
+package;
 
 import backend.SSPlugin as ScreenShotPlugin;
 import debug.FPSCounter;
@@ -104,7 +104,7 @@ class Main extends Sprite
   public static var askedToUpdate:Bool = false;
 
   public static function isPlayState():Bool
-    return Type.getClassName(Type.getClass(FlxG.state)) == 'PlayState';
+    return Std.isOfType(FlxG.state, play.PlayState);
 
   private function setupGame():Void
   {

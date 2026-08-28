@@ -1,4 +1,4 @@
-﻿package editors.charting;
+package editors.charting;
 
 // REFACTOR: extracted from editors.ChartingState (behavior-preserving)
 import backend.ClientPrefs;
@@ -23,6 +23,8 @@ import data.Section;
 import objects.Character;
 import objects.Note;
 
+@:access(editors.ChartingState)
+@:access(backend.MusicBeatState)
 class ChartingUISections
 {
   public static function addSongUI(state:ChartingState):Void
@@ -78,7 +80,7 @@ class ChartingUISections
     });
 
     var saveEvents:FlxButton = new FlxButton(110, reloadSongJson.y, 'Save Events', function() {
-      saveEvents();
+      state.saveEvents();
     });
     var saveCompressed:FlxButton = new FlxButton(110, reloadSongJson.y + 30, 'Save Compressed', function() {
       state.saveLevel(true);

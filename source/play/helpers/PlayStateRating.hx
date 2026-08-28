@@ -1,5 +1,6 @@
 package play.helpers;
 
+import flixel.util.FlxSort;
 import backend.ClientPrefs;
 import backend.Conductor;
 import backend.Highscore;
@@ -15,7 +16,9 @@ import psychlua.EtternaFunctions; // REFACTOR: EtternaFunctions moved to psychlu
 import play.helpers.PlayStateNoteHelpers;
 
 // REFACTOR: scoring / rating popup logic extracted from play.PlayState
-@:privateAccess class PlayStateRating
+@:access(play.PlayState)
+@:access(backend.MusicBeatState)
+class PlayStateRating
 {
 	public static function cachePopUpScore(state:PlayState)
 	{

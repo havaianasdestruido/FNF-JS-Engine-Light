@@ -1,5 +1,6 @@
-﻿package psychlua.callbacks;
+package psychlua.callbacks;
 
+import flixel.FlxBasic;
 import backend.Paths;
 import play.PlayState;
 import psychlua.FunkinLua;

@@ -43,7 +43,7 @@ class MiscCallbacks
 			LuaUtils.luaTrace(funk.lua, '' + text1 + text2 + text3 + text4 + text5, true, false);
 		});
 
-		addLocalCallback("close", function() {
+		funk.addLocalCallback("close", function() {
 			funk.closed = true;
 			return funk.closed;
 		});

@@ -1,4 +1,5 @@
 package stages;
+import objects.Note.EventNote;
 import backend.ClientPrefs;
 import objects.BGSprite;
 import objects.Note;
@@ -38,7 +39,7 @@ class StageWeek1 extends BaseStage
 			add(stageCurtains);
 		}
 	}
-	override function eventPushed(event:Note.EventNote)
+	override function eventPushed(event:EventNote)
 	{
 		switch(event.event)
 		{

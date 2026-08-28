@@ -1,4 +1,4 @@
-﻿package play.helpers;
+package play.helpers;
 
 import objects.DialogueBoxPsych;
 import objects.DialogueBoxPsych.DialogueFile;
@@ -16,6 +16,8 @@ import play.helpers.PlayStateScripts;
 import data.Song;
 
 // REFACTOR: video / dialogue cutscene logic extracted from play.PlayState
+@:access(play.PlayState)
+@:access(backend.MusicBeatState)
 class PlayStateCutscenes
 {
 	public static function startVideo(state:PlayState, name:String, ?library:String = null, ?callback:Void->Void = null, forMidSong:Bool = false, canSkip:Bool = true, loop:Bool = false, playOnLoad:Bool = true)

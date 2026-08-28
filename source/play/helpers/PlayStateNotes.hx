@@ -18,7 +18,9 @@ import play.helpers.PlayStateRating;
 import shaders.CrossFade;
 
 // REFACTOR: note hit/miss/spawn logic extracted from play.PlayState
-@:privateAccess class PlayStateNotes
+@:access(play.PlayState)
+@:access(backend.MusicBeatState)
+class PlayStateNotes
 {
 	public static function noteMiss(state:PlayState, daNote:Note = null, daNoteAlt:PreloadedChartNote = null):Void { //You didn't hit the key and let it go offscreen, also used by Hurt Notes
 		if (daNote != null)
@@ -562,7 +564,7 @@ import shaders.CrossFade;
 				state.stagesFunc(function(stage:BaseStage) (!PlayState.opponentChart ? stage.opponentNoteHit(daNote) : stage.goodNoteHit(daNote)));
 			}
 
-			if (state.shouldDrainHealth && state.health > (state.healthDrainFloor * state.polyphonyOppo) && !state.practiceMode || state.opponentDrain && state.practiceMode)
+			if (PlayState.shouldDrainHealth && state.health > (state.healthDrainFloor * state.polyphonyOppo) && !state.practiceMode || state.opponentDrain && state.practiceMode)
 				state.health -= (state.opponentDrain ? daNote.hitHealth : state.healthDrainAmount) * state.hpDrainLevel * state.polyphonyOppo;
 
 			if (state.oppChar != null && state.oppChar.shakeScreen)
@@ -609,7 +611,7 @@ import shaders.CrossFade;
 
 				if (state.scoreTxtUpdateFrame <= 4) state.updateScore();
 
-				if (state.shouldDrainHealth && state.health > state.healthDrainFloor && !state.practiceMode || state.opponentDrain && state.practiceMode)
+				if (PlayState.shouldDrainHealth && state.health > state.healthDrainFloor && !state.practiceMode || state.opponentDrain && state.practiceMode)
 					state.health -= (state.opponentDrain ? noteAlt.hitHealth : state.healthDrainAmount) * state.hpDrainLevel * state.polyphonyOppo;
 			}
 			if ((!noteAlt.gfNote ? !PlayState.opponentChart ? state.dad : state.boyfriend : state.gf) != null && (!noteAlt.gfNote ? !PlayState.opponentChart ? state.dad : state.boyfriend : state.gf).shakeScreen)

@@ -1,4 +1,4 @@
-﻿package backend;
+package backend;
 
 // an fully working crash handler on ALL platforms
 import states.MainMenuState;
@@ -21,7 +21,7 @@ class CrashHandler
 {
 	public static var errorMessage:String = "";
 
-	static final __superCoolErrorMessagesArray:Array<String> = [
+	public static final __superCoolErrorMessagesArray:Array<String> = [
 		"A fatal error has occ- wait what?",
 		"missigno.",
 		"oopsie daisies!! you did a fucky wucky!!",

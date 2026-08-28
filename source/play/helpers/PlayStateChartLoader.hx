@@ -1,4 +1,4 @@
-﻿package play.helpers;
+package play.helpers;
 
 import backend.ClientPrefs;
 import backend.Conductor;
@@ -23,6 +23,8 @@ import play.PlayState;
 import backend.MusicBeatState;
 
 // REFACTOR: chart parsing extracted from play.PlayState.generateSong
+@:access(play.PlayState)
+@:access(backend.MusicBeatState)
 class PlayStateChartLoader
 {
 	public static function generateSong(state:PlayState, ?startingPoint:Float = 0):Void
