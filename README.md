@@ -19,6 +19,107 @@
 <img alt="GitHub contributors" src="https://img.shields.io/github/contributors/havaianasdestruido/FNF-JS-Engine-Light">
 </p>
 
+JSE-Light focuses on making both Hardmodding (Hardcoded mods) *AND* Softmodding (mods you place on `mods/` folder) easier.
+
+JSE-Light currently has those additions (and more!) that vanilla JSE (Jordan Santiago Engine) doesn't:
+
+## **Major Categories of Changes:**
+
+### **1. Performance Optimizations**
+- **HScript AST Caching**: Cache parsed AST to avoid re-parsing (bottleneck)
+- **FunkinLua Optimization**: Cache missing calls and fast-path variable splitting
+- **Convert Function**: Direct-call bridge for 0-8 args
+- **PlayState Note Iteration**: Batch note iteration and inline key arrays
+- **Alphabet Caching**: Cache sparrow atlases and skip duplicate animations
+- **ChartingState**: Cache grid layer/waveform buffers, dedupe undo
+- **Options Performance**: Throttle option text updates and guard score redraw
+- **FPS Counter**: Cache PlayState check and throttle outline redraw
+
+### **2. Code Refactoring & Architecture**
+- **Modding System Rewrite**: Switched to cleaner Mods backend (0.7 style)
+- **Source Tree Reorganization**: Split into packages (`backend/`, `states/`, `play/`, `objects/`, `data/`, `shaders/`, `psychlua/`)
+- **Large File Splits**:
+  - PlayState: 6448 → 3313 lines
+  - ChartingState: 4821 → 2367 lines
+  - FunkinLua: 3455 → 807 lines
+- **GameOverSubstate Refactor**: Generic fallback + safer null handling
+- **Stage Loading Centralization**: Created StageData.vanillaSongStage mapping
+- **MS/Judge Text Popups**: Refactored into separate classes
+
+### **3. Python Scripting Support**
+- **Hython Integration**: Pure-Haxe Python interpreter
+- **Mirrors Lua System**: Same callbacks/API as Lua scripts
+- Supports `-DMODDING_LEVEL` flag for enable/disable
+
+### **4. Build System & Compilation**
+- **Windows MSVC Fixes**: Assembler support, C++17 flag handling
+- **GitHub Actions Cache**: Proper `HXCPP_COMPILE_CACHE` detection
+- **Platform-Specific Code**: Centralized in PlatformUtilNative.hx
+
+### **5. Platform Support Improvements**
+- **Linux GameMode**: Proper support with feature flags
+- **Windows Console**: SetProcessDPIAware, DisableProcessWindowsGhosting
+- **Fullscreen Handling**: Centralized F11 toggle in FunkinGame backend
+- **Mac/iOS Headers**: Proper sys/utsname.h includes
+
+### **6. Asset Management**
+- **Audio Compression**: OGG/MP3 files (~50% size reduction)
+- **JSON Minification**: Across entire codebase
+- **Image Compression**: Lossy but invisible optimization
+- **Character Icon Refresh**: Updated multiple icon PNGs
+- **BF Clicker _(WIP Python testing  sample)_ Mod**: Shipped as example mod
+- **Shader Embedding**: Runtime shaders (pulseEffect.frag → RuntimeShaders.hx)
+
+### **7. Bug Fixes**
+- **UTF-8 BOM Handling**: Strip BOM from JSON reads
+- **defaultCamZoom Crashes**: More fixes for camera zoom behavior
+- **Sustain Note Issues**: Fixed missing sustain notes if no BPM changes
+- **GameOver Music Loop**: Fixed repeated triggering every frame
+- **ControlsSubstate Crash**: Alt fix for crash issues
+- **Scared Animations**: Fix Week 2 animation forcing
+- **Time Bar Updating**: Proper time position calculation
+
+### **8. Feature Additions**
+- **Camera Zoom System**: V-Slice compatible (separate from bopping)
+- **Zoom Tweening Event**: New event system for camera zoom
+- **CrossFades Feature**: Character-specific and generic crossfades
+- **Rain FX Toggle**: New option with shader optimization
+- **Decimal Hit Windows**: Merged from Psych 1.0
+- **Shift-Step Multiplier**: 5x step for int options
+- **FPS Counter Border**: Outline rendering with visibility option
+- **Discord RPC**: Centralized with DISCORD_ALLOWED flag
+
+### **9. Lua Scripting Improvements**
+- **Lua 1.0 Chart Support**: Now handles Psych 1.0 format
+- **StartTween Function**: New tweening utility
+- **moveCamera Update**: Now uses string names for global access
+- **Script Initialization Fix**: Lua scripts no longer called twice
+
+### **10. UI & Visual Polish**
+- **Menu Track Modding**: Support for modified freakyMenu names
+- **GF Limo Layering**: Fixed visual layering issues
+- **Rainbow Eyesore Shader**: Validation and waveSpeed fixes
+- **Visual Options**: FPS display updates on setting changes
+
+### **11. Code Cleanup**
+- **Removed Features**:
+  - FLX_RECORD (replay/record system)
+  - Showcase Mode
+  - Angel Note type (did nothing)
+  - In-game updater (broken/Windows-only)
+  - PSYCH_WATERMARKS conditionals
+  - Mod installation UI (dead code)
+  - Neko GC support
+- **Deduplicated Code**: formatCompatNumber moved to CoolUtil
+- **Unused Variables**: Removed songTime field, stale precompiled headers
+- **Trace Cleanup**: Debug traces wrapped with #if debug
+
+### **12. Dependency Updates**
+- hxluajit → hxluau
+- hxcpp configuration updates
+- flixel and lime updates
+- hxvlc CPU rendering optimizations
+
 <details>
   <summary><h2>OG FNF JS Engine README and Stuff</h2></summary>
 <!-- this is an secret -->
