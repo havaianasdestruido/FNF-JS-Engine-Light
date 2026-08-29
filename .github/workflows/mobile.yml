@@ -10,10 +10,6 @@ on:
         required: false
         type: string
 
-env:
-  HAXELIB_PATH: ${{ github.workspace }}/.haxelib
-  HXCPP_CACHE_DIR: ${{ github.workspace }}/.hxcpp_cache
-
 jobs:
   Mobile:
     runs-on: ${{matrix.os}}
@@ -23,23 +19,15 @@ jobs:
         os: [ubuntu-24.04, macos-15]
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@main
 
       - name: Setup Haxe
         uses: krdlab/setup-haxe@master
         with:
-          haxe-version: 4.3.7
-
-      - name: Cache Android NDK
-        id: cache-ndk
-        if: startsWith(matrix.os, 'ubuntu')
-        uses: actions/cache@v4
-        with:
-          path: ${{ runner.temp }}/android-ndk-r27c
-          key: android-ndk-r27c-linux
+          haxe-version: 4.3.6
 
       - name: Setup Android NDK
-        if: startsWith(matrix.os, 'ubuntu') && steps.cache-ndk.outputs.cache-hit != 'true'
+        if: startsWith(matrix.os, 'ubuntu')
         shell: bash
         run: |
           cd ${{ runner.temp }}
@@ -47,36 +35,12 @@ jobs:
           curl -sSfL -o android-ndk.zip "https://dl.google.com/android/repository/android-ndk-r27c-linux.zip"
           echo "Extracting Android NDK r27c..."
           unzip -qq android-ndk.zip
-          rm -f android-ndk.zip
           echo "NDK r27c successfully downloaded and extracted!"
 
-      - name: Restore haxelib dependencies
-        id: haxelib-cache
-        uses: actions/cache@v4
-        with:
-          path: ${{ env.HAXELIB_PATH }}
-          key: mobile-haxelib-${{ runner.os }}-haxe-4.3.7-${{ hashFiles('hmm.json') }}
-
       - name: Install Libraries
-        if: steps.haxelib-cache.outputs.cache-hit != 'true'
         run: |
-          haxelib setup "$HAXELIB_PATH"
           haxelib install hmm --quiet
           haxelib run hmm install --quiet
-
-      - name: Restore generated build cache
-        id: build-cache
-        uses: actions/cache/restore@v4
-        with:
-          path: |
-            build/release/${{ startsWith(matrix.os, 'ubuntu') && 'android' || 'ios' }}/haxe
-            build/release/${{ startsWith(matrix.os, 'ubuntu') && 'android' || 'ios' }}/obj
-            ${{ env.HXCPP_CACHE_DIR }}
-            ~/.gradle/caches
-          key: mobile-build-${{ runner.os }}-${{ inputs.buildFlags || 'commit' }}-${{ hashFiles('project.hxp', 'source/**') }}
-          restore-keys: |
-            mobile-build-${{ runner.os }}-${{ inputs.buildFlags || 'commit' }}-
-            mobile-build-${{ runner.os }}-
 
       - name: Configure Android
         if: startsWith(matrix.os, 'ubuntu')
@@ -88,50 +52,35 @@ jobs:
 
       - name: Compile (Android)
         if: startsWith(matrix.os, 'ubuntu')
-        env:
-          HXCPP_COMPILE_THREADS: 4
-        run: haxelib run lime build android -D"${{ inputs.buildFlags || 'commit' }}"
+        run: haxelib run lime build android ${{ inputs.buildFlags != '' && format('-D {0}', inputs.buildFlags) || '' }}
 
       - name: Compile (iOS)
         if: startsWith(matrix.os, 'macos')
-        env:
-          HXCPP_COMPILE_THREADS: 4
-        run: haxelib run lime build ios -nosign -D"${{ inputs.buildFlags || 'commit' }}"
+        run: haxelib run lime build ios -nosign ${{ inputs.buildFlags != '' && format('-D {0}', inputs.buildFlags) || '' }}
 
       - name: Make Ipa
         if: startsWith(matrix.os, 'macos')
         run: |
           brew install ldid
-          cd build/release/ios/build/Release-iphoneos/JSEngine.app
+          cd export/release/ios/build/Release-iphoneos/JSEngine.app
           ldid -S../../../JSEngine/JSEngine.entitlements JSEngine
           cd ..
           mkdir Payload
           mv JSEngine.app Payload
           zip -r JSEngine.ipa Payload
 
-      - name: Save generated build cache
-        if: always() && steps.build-cache.outputs.cache-hit != 'true'
-        uses: actions/cache/save@v4
-        with:
-          path: |
-            build/release/${{ startsWith(matrix.os, 'ubuntu') && 'android' || 'ios' }}/haxe
-            build/release/${{ startsWith(matrix.os, 'ubuntu') && 'android' || 'ios' }}/obj
-            ${{ env.HXCPP_CACHE_DIR }}
-            ~/.gradle/caches
-          key: ${{ steps.build-cache.outputs.cache-primary-key }}
-
       - name: Upload Artifact (Android)
         if: startsWith(matrix.os, 'ubuntu')
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@main
         with:
           name: androidBuild
-          path: build/release/android/bin/app/build/outputs/apk/release/*.apk
+          path: export/release/android/bin/app/build/outputs/apk/release/*.apk
           if-no-files-found: error
 
       - name: Upload Artifact (iOS)
         if: startsWith(matrix.os, 'macos')
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@main
         with:
           name: iOSBuild
-          path: build/release/ios/build/Release-iphoneos/*.ipa
+          path: export/release/ios/build/Release-iphoneos/*.ipa
           if-no-files-found: error

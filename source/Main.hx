@@ -89,6 +89,13 @@ class Main extends Sprite
   public function new()
   {
     super();
+    #if mobile
+    #if android
+    mobile.StorageUtil.requestPermissions();
+    #end
+    Sys.setCwd(mobile.StorageUtil.getStorageDirectory());
+    #end
+
     instance = this;
     CrashHandler.init();
     #if (cpp && windows)
@@ -123,7 +130,7 @@ class Main extends Sprite
     ClientPrefs.loadDefaultStuff();
     #if ACHIEVEMENTS_ALLOWED Achievements.load(); #end
 
-    final funkinGame:FunkinGame = new FunkinGame(game.width, game.height, game.initialState, #if (flixel < "5.0.0") game.zoom, #end game.framerate, game.framerate,
+    final funkinGame:FunkinGame = new FunkinGame(game.width, game.height, #if (mobile && MODS_ALLOWED) !mobile.CopyState.checkExistingFiles() ? mobile.CopyState : #end game.initialState, #if (flixel < "5.0.0") game.zoom, #end game.framerate, game.framerate,
       game.skipSplash, game.startFullscreen);
     // Literally just from Vanilla FNF but I implemented it my own way. -Torch
     // torch is my friend btw :3 -moxie

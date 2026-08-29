@@ -103,6 +103,8 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		searchText.setFormat(Paths.font("vcr.ttf"), 24, FlxColor.BLACK);
 		add(searchText);
 		FlxG.mouse.visible = true;
+
+		addVirtualPad(LEFT_FULL, A_B_C);
 	}
 
 	public function addOption(option:Option) {
@@ -297,7 +299,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 				}
 			}
 
-			if(controls.RESET)
+			if(virtualPad.buttonC.justPressed || controls.RESET)
 			{
 				if (!FlxG.keys.pressed.SHIFT)
 				{

@@ -1151,6 +1151,11 @@ class PlayState extends MusicBeatState
 
 		// trace ('Loading chart...');
 
+		addVirtualPad(NONE, P);
+		addVirtualPadCamera();
+		virtualPad.visible = true;
+		addMobileControls();
+
 		if (dad.flixelTrail && dad.trailLength != null && dad.trailDelay != null && dad.trailAlpha != null && dad.trailDiff != null)
 		{
 			var dadTrail = new FlxTrail(dad, null, dad.trailLength, dad.trailDelay, dad.trailAlpha,
