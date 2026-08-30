@@ -3,6 +3,7 @@ package backend;
 import flixel.input.FlxInput;
 import flixel.input.actions.FlxAction;
 import flixel.input.actions.FlxActionInput;
+import flixel.input.actions.FlxActionInputDigital;
 import flixel.input.actions.FlxActionManager;
 import flixel.input.actions.FlxActionSet;
 import flixel.input.gamepad.FlxGamepadInputID;
@@ -647,8 +648,8 @@ class Controls extends FlxActionSet
 	public function bindKeys(control:Control, keys:Array<FlxKey>) {
 		var copyKeys:Array<FlxKey> = keys.copy();
 		for (i in 0...copyKeys.length) {
-			if (i == NONE)
-				copyKeys.remove(i);
+			if (copyKeys[i] == FlxKey.NONE)
+				copyKeys.remove(FlxKey.NONE);
 		}
 
 		inline forEachBound(control, (action, state) -> addKeys(action, copyKeys, state));
@@ -657,8 +658,8 @@ class Controls extends FlxActionSet
 	public function unbindKeys(control:Control, keys:Array<FlxKey>) {
 		var copyKeys:Array<FlxKey> = keys.copy();
 		for (i in 0...copyKeys.length) {
-			if (i == NONE)
-				copyKeys.remove(i);
+			if (copyKeys[i] == FlxKey.NONE)
+				copyKeys.remove(FlxKey.NONE);
 		}
 
 		inline forEachBound(control, (action, _) -> removeKeys(action, copyKeys));
