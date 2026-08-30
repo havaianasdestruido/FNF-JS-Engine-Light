@@ -130,7 +130,7 @@ class CrashHandler
 			dateNow = dateNow.replace(" ", "_");
 			dateNow = dateNow.replace(":", "'");
 
-			path = "crash/JSEngine_" + dateNow + ".log";
+			path = "crash/FNF-Phoenix-Engine_" + dateNow + ".log";
 
 			for (stackItem in stack)
 			{
@@ -172,7 +172,7 @@ class CrashHandler
 			{
 				if (!FileSystem.exists("crash/"))
 					FileSystem.createDirectory("crash/");
-				File.saveContent(path, '$errorMessage\n\nCrash Happened on JS Engine v${MainMenuState.psychEngineJSVersion}!');
+				File.saveContent(path, '$errorMessage\n\nCrash Happened on Phoenix Engine v${MainMenuState.phoenixEngineVersion} (JSE v${MainMenuState.psychEngineJSVersion})!');
 			}
 			catch (e)
 				trace('Couldn\'t save error message. (${e.message})');
@@ -220,7 +220,7 @@ class Crash extends MusicBeatState
 		bg.color = 0xFF232323;
 		add(bg);
 
-		var ohNo:FlxText = new FlxText(0, 0, 1280, 'JS Engine v${MainMenuState.psychEngineJSVersion} has crashed!');
+		var ohNo:FlxText = new FlxText(0, 0, 1280, 'Phoenix Engine v${MainMenuState.phoenixEngineVersion} (JSE v${MainMenuState.psychEngineJSVersion}) has crashed!');
 		ohNo.setFormat(Paths.font('vcr.ttf'), 48, FlxColor.WHITE, FlxTextAlign.CENTER);
 		ohNo.alpha = 0;
 		ohNo.screenCenter();

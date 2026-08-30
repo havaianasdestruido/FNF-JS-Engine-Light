@@ -185,6 +185,7 @@ class FunkinLua {
 		set('rating', 0);
 		set('ratingName', '');
 		set('ratingFC', '');
+		set('phoenixVersion', MainMenuState.phoenixEngineVersion.trim());
 		set('version', MainMenuState.psychEngineVersion.trim());
 		set('jsVersion', MainMenuState.psychEngineJSVersion.trim());
 

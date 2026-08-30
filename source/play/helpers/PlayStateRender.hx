@@ -17,7 +17,7 @@ class PlayStateRender
 		#if windows
 		if (!FileSystem.exists('ffmpeg.exe'))
 		{
-			trace("\"FFmpeg\" not found! (Is it in the same folder as JSEngine?)");
+			trace("\"FFmpeg\" not found! (Is it in the same folder as FNF-Phoenix-Engine?)");
 			return;
 		}
 		#end
