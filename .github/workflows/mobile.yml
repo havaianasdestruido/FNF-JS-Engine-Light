@@ -39,11 +39,27 @@ jobs:
           api-level: 33
           ndk: r27c
 
-      - name: Install Libraries
+      - name: Ensure haxelib and show diagnostics
         run: |
-          haxelib install hscript --quiet
-          haxelib install hmm --quiet
-          haxelib run hmm install --quiet
+          set -eux
+          echo "PATH=$PATH"
+          haxe --version || true
+          if ! command -v haxelib >/dev/null 2>&1; then
+            echo "ERROR: haxelib not found in PATH"
+            exit 1
+          fi
+          haxelib --version || true
+          haxelib selfupdate || true
+
+      - name: Install Haxe libraries
+        run: |
+          set -eux
+          # Install required libs (idempotent)
+          haxelib install hscript || true
+          haxelib install hmm || true
+          haxelib install lime || true
+          # Install any native deps via hmm
+          haxelib run hmm install --quiet || true
 
       - name: Configure Android
         if: startsWith(matrix.os, 'ubuntu')
