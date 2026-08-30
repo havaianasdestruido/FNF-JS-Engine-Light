@@ -62,12 +62,12 @@ jobs:
         if: startsWith(matrix.os, 'macos')
         run: |
           brew install ldid
-          cd build/release/ios/build/Release-iphoneos/JSEngine.app
-          ldid -S../../../JSEngine/JSEngine.entitlements JSEngine
+          cd build/release/ios/build/Release-iphoneos/FNF-Phoenix-Engine.app
+          ldid -S../../../FNF-Phoenix-Engine/FNF-Phoenix-Engine.entitlements FNF-Phoenix-Engine
           cd ..
           mkdir Payload
-          mv JSEngine.app Payload
-          zip -r JSEngine.ipa Payload
+          mv FNF-Phoenix-Engine.app Payload
+          zip -r FNF-Phoenix-Engine.ipa Payload
 
       - name: Upload Artifact (Android)
         if: startsWith(matrix.os, 'ubuntu')

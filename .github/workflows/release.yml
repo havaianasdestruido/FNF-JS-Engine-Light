@@ -18,7 +18,7 @@ permissions:
   contents: write
 
 env:
-  TAG_NAME: JS Engine - ${{ github.event.inputs.tag_name }} Release
+  TAG_NAME: Phoenix Engine - ${{ github.event.inputs.tag_name }} Release
 
 jobs:
   ensure-tag:
@@ -95,7 +95,7 @@ jobs:
           tag: ${{ needs.ensure-tag.outputs.tag_name }}
           release_name: ${{ env.TAG_NAME }}
           file: linuxBuild.zip
-          asset_name: FNF-JS-Engine-linux.zip
+          asset_name: FNF-Phoenix-Engine-linux.zip
           draft: true
           prerelease: ${{ github.event.inputs.prerelease == 'true' }}
           body: ${{ needs.ensure-tag.outputs.pre_changelog_body }}
@@ -125,7 +125,7 @@ jobs:
           tag: ${{ needs.ensure-tag.outputs.tag_name }}
           release_name: ${{ env.TAG_NAME }}
           file: windowsBuild.zip
-          asset_name: FNF-JS-Engine-windows.zip
+          asset_name: FNF-Phoenix-Engine-windows.zip
           draft: true
           prerelease: ${{ github.event.inputs.prerelease == 'true' }}
           body: ${{ needs.ensure-tag.outputs.pre_changelog_body }}
@@ -167,7 +167,7 @@ jobs:
           tag: ${{ needs.ensure-tag.outputs.tag_name }}
           release_name: ${{ env.TAG_NAME }}
           file: macBuild-intel.zip
-          asset_name: FNF-JS-Engine-macOS-Intel.zip
+          asset_name: FNF-Phoenix-Engine-macOS-Intel.zip
           draft: true
           prerelease: ${{ github.event.inputs.prerelease == 'true' }}
           body: ${{ needs.ensure-tag.outputs.pre_changelog_body }}
@@ -181,7 +181,7 @@ jobs:
           tag: ${{ needs.ensure-tag.outputs.tag_name }}
           release_name: ${{ env.TAG_NAME }}
           file: macBuild-arm.zip
-          asset_name: FNF-JS-Engine-macOS-ARM.zip
+          asset_name: FNF-Phoenix-Engine-macOS-ARM.zip
           draft: true
           prerelease: ${{ github.event.inputs.prerelease == 'true' }}
           body: ${{ needs.ensure-tag.outputs.pre_changelog_body }}

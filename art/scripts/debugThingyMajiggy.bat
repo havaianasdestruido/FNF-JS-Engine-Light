@@ -14,7 +14,7 @@ timeout 10 > nul
 echo Opening Debug Terminal...
 echo ------------------------------
 
-JSEngine.exe
+FNF-Phoenix-Engine.exe
 
 echo ------------------------------
 

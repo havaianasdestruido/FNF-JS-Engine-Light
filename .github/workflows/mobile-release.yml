@@ -44,7 +44,7 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ needs.get-latest-tag.outputs.latest_tag }}
           file: ${{ env.APK_PATH }}
-          asset_name: FNF-JS-Engine-android.apk
+          asset_name: FNF-Phoenix-Engine-android.apk
           overwrite: false
 
   release-ios:
@@ -57,12 +57,12 @@ jobs:
         with:
           name: iOSBuild
       - name: Zip For Release
-        run: zip -r JSEngine-iOS.zip JSEngine.ipa
+        run: zip -r FNF-Phoenix-Engine-iOS.zip FNF-Phoenix-Engine.ipa
       - name: Upload iOSBuild to release
         uses: svenstaro/upload-release-action@2.5.0
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ needs.get-latest-tag.outputs.latest_tag }}
-          file: JSEngine-iOS.zip
-          asset_name: FNF-JS-Engine-iOS.zip
+          file: FNF-Phoenix-Engine-iOS.zip
+          asset_name: FNF-Phoenix-Engine-iOS.zip
           overwrite: false

@@ -24,6 +24,7 @@ class MainMenuState extends MusicBeatState
 {
   public static final gitCommit:String = HaxeCommit.getGitCommitHash();
 
+  public static var phoenixEngineVersion:String = 'pre-alpha';
   public static var psychEngineJSVersion:String = '1.51.0'; // This is also used for Discord RPC
   public static var psychEngineVersion:String = '0.6.3'; // This is also used for Discord RPC
   public static var curSelected:Int = 0;
@@ -167,6 +168,10 @@ class MainMenuState extends MusicBeatState
 
     FlxG.camera.follow(camFollow, null, 1);
 
+    var PhoenixVersion:FlxText = new FlxText(12, FlxG.height - 84, 0, "Phoenix Engine v" + phoenixEngineVersion, 12);
+    PhoenixVersion.scrollFactor.set();
+    PhoenixVersion.setFormat("VCR OSD Mono", 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+    add(PhoenixVersion);
     var JSVersion:FlxText = new FlxText(12, FlxG.height - 64, 0, "JS Engine v" + psychEngineJSVersion, 12);
     JSVersion.scrollFactor.set();
     JSVersion.setFormat("VCR OSD Mono", 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);

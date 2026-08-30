@@ -37,13 +37,13 @@ class Project extends HXProject
 	/**
 	 * The game's name. Used as the default window title.
 	 */
-	static final TITLE:String = "Friday Night Funkin': JS Engine";
+	static final TITLE:String = "Friday Night Funkin' - Phoenix Engine";
 
 	/**
 	 * The name of the generated executable file.
 	 * For example, `"Funkin"` will create a file called `Funkin.exe`.
 	 */
-	static final EXECUTABLE_NAME:String = "JSEngine";
+	static final EXECUTABLE_NAME:String = "FNF-Phoenix-Engine";
 
 	/**
 	 * The codename of the engine.
@@ -64,7 +64,7 @@ class Project extends HXProject
 	/**
 	 * A package name used for identifying the app on various app stores.
 	 */
-	static final PACKAGE_NAME:String = "com.JordanSantiago.JSEngine";
+	static final PACKAGE_NAME:String = "quack.fnf.phoenix";
 
 	/**
 	 * The fully qualified class path for the entry point class to execute when launching the game.
@@ -182,7 +182,7 @@ class Project extends HXProject
 
 	function flair()
 	{
-		info("Friday Night Funkin': JS Engine");
+		info("Friday Night Funkin' - Phoenix Engine");
 		info("Initializing build...");
 
 		// info("Target Version: " + ENGINE_VERSION);
