@@ -2,26 +2,26 @@
   <br>
   <a href="https://github.com/havaianasdestruido/FNF-JS-Engine-Light"><img src="/art/iconOG.png" alt="JSengine" width="150"></a>
   <br>
-  <b>JS Engine LIGHT</b>
+  <b>Phoenix Engine</b>
   <br>
-  <i>(Jordan Santiago Engine, with some tweaks)</i>
+  <i>(Jordan Santiago Engine, with a bunch of new stuff)</i>
   <br>
 </h1>
 <h3 align="center">
-  <b>JS Engine LIGHT is a enhanced fork of JSE, which in turn is a fork of Psych but with performance-related additions.</b>
+  <b>Phoenix Engine is an enhanced fork of JSE, which in turn is a fork of Psych but with performance-related additions.</b>
 </h3>
 
-<b>IMPORTANT: if you want to clone the repo (for making a pull request or for building locally), use <code>git clone -b main --single-branch https://github.com/havaianasdestruido/FNF-JS-Engine-Light.git</code> so you only git clone _only the main branch_, the other ones are for experiments or are extremely old.</b>
+<b>IMPORTANT: if you want to clone the repo (for making a pull request or for building locally), use <code>git clone -b main --single-branch https://github.com/havaianasdestruido/FNF-Phoenix-Engine.git</code> so you only git clone _only the main branch_, the other ones are for experiments or are extremely old.</b>
 
 <p align="center">
-<img alt="GitHub repo size" src="https://img.shields.io/github/repo-size/havaianasdestruido/FNF-JS-Engine-Light">
-<img alt="GitHub commit activity" src="https://img.shields.io/github/commit-activity/w/havaianasdestruido/FNF-JS-Engine-Light">
-<img alt="GitHub contributors" src="https://img.shields.io/github/contributors/havaianasdestruido/FNF-JS-Engine-Light">
+<img alt="GitHub repo size" src="https://img.shields.io/github/repo-size/havaianasdestruido/FNF-Phoenix-Engine">
+<img alt="GitHub commit activity" src="https://img.shields.io/github/commit-activity/w/havaianasdestruido/FNF-Phoenix-Engine">
+<img alt="GitHub contributors" src="https://img.shields.io/github/contributors/havaianasdestruido/FNF-Phoenix-Engine">
 </p>
 
-JSE-Light focuses on making both Hardmodding (Hardcoded mods) *AND* Softmodding (mods you place on `mods/` folder) easier.
+Phoenix Engine focuses on making both Hardmodding (Hardcoded mods) *AND* Softmodding (mods you place on `mods/` folder) easier.
 
-JSE-Light currently has those additions (and more!) that vanilla JSE (Jordan Santiago Engine) doesn't:
+Phoenix Engine currently has those additions (and more!) that vanilla JSE (Jordan Santiago Engine) doesn't:
 
 ## **Major Categories of Changes:**
 
