@@ -1,18 +1,29 @@
 name: Mobile
 on:
- push:
+  push:
     branches: main
- workflow_dispatch:
-
- workflow_call:
+  workflow_dispatch:
+    inputs:
+      buildAllTargets:
+        description: "Build all targets"
+        required: false
+        type: boolean
+        default: false
+  workflow_call:
     inputs:
       buildFlags:
         required: false
         type: string
+      buildAllTargets:
+        description: "Build all targets"
+        required: false
+        type: boolean
+        default: false
 
 jobs:
   Mobile:
     runs-on: ${{matrix.os}}
+    if: ${{ startsWith(matrix.os, 'ubuntu') || inputs.buildAllTargets == true || inputs.buildAllTargets == 'true' }}
     strategy:
       fail-fast: false
       matrix:

@@ -2,6 +2,12 @@ name: Mobile Release
 
 on:
   workflow_dispatch:
+    inputs:
+      buildAllTargets:
+        description: "Build all targets"
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -24,6 +30,7 @@ jobs:
     uses: ./.github/workflows/mobile.yml
     with:
       buildFlags: officialBuild
+      buildAllTargets: ${{ github.event.inputs.buildAllTargets == 'true' || github.event.inputs.buildAllTargets == true }}
 
   release-android:
     name: Release androidBuild
@@ -50,6 +57,7 @@ jobs:
   release-ios:
     name: Release iOSBuild
     needs: [get-latest-tag, build]
+    if: ${{ github.event.inputs.buildAllTargets == 'true' || github.event.inputs.buildAllTargets == true }}
     runs-on: ubuntu-latest
     steps:
       - name: Download iOS artifact
