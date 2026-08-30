@@ -185,7 +185,7 @@ class PlayStateInput
 
 		var char:Character = state.boyfriend;
 		if (PlayState.opponentChart) char = state.dad;
-		final mobileC:mobile.flixel.FlxButton = @:privateAccess {(mobile.MobileControls.mode == "Hitbox") ? PlayState.instance.mobileControls.hitbox.hints[4] : PlayState.instance.mobileControls.virtualPad.buttonEx;}
+		final mobileC:mobile.flixel.FlxButton = @:privateAccess {(PlayState.instance != null && PlayState.instance.mobileControls != null) ? ((mobile.MobileControls.mode == "Hitbox") ? (PlayState.instance.mobileControls.hitbox != null ? PlayState.instance.mobileControls.hitbox.hints[4] : null) : (PlayState.instance.mobileControls.virtualPad != null ? PlayState.instance.mobileControls.virtualPad.buttonEx : null)) : null;}
 		if (state.startedCountdown && !char.stunned && state.generatedMusic)
 		{
 			for (group in [state.notes, state.sustainNotes]){

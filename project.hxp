@@ -712,7 +712,7 @@ class Project extends HXProject
 		{
 			if (sys.FileSystem.exists("key.keystore"))
 			{
-				certificate = new Certificate("key.keystore", "javascriptengine", "jsport", "javascriptengine");
+				this.certificate = new Certificate("key.keystore", "javascriptengine", "jsport", "javascriptengine");
 			}
 		}
 	}
