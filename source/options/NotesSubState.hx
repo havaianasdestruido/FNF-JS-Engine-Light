@@ -117,7 +117,19 @@ class NotesSubState extends MusicBeatSubstate
 		bg.alpha = 0.25;
 		add(bg);
 
-		var text:Alphabet = new Alphabet(50, 86, 'CTRL', false);
+		var thing:String;
+		var thingPosX:Int;
+
+		if (mobile.MobileControls.enabled)
+		{
+			thing = "PRESS";
+			thingPosX = 44;
+		} else {
+			thing = "CTRL";
+			thingPosX = 50;
+		}
+
+		var text:Alphabet = new Alphabet(thingPosX, 86, thing, false);
 		text.alignment = CENTERED;
 		text.setScale(0.4);
 		add(text);
@@ -174,7 +186,15 @@ class NotesSubState extends MusicBeatSubstate
 
 		var tipX = 20;
 		var tipY = 660;
-		var tip:FlxText = new FlxText(tipX, tipY, 0, "Press RELOAD to Reset the selected Note Part.", 16);
+		var tipText:String;
+
+		if (mobile.MobileControls.enabled) {
+			tipText = "Press C to Reset the selected Note Part.";
+			tipY = 0;
+		} else
+			tipText = 'Press RELOAD to Reset the selected Note Part.';
+
+		var tip:FlxText = new FlxText(tipX, tipY, 0, tipText, 16);
 		tip.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		tip.borderSize = 2;
 		add(tip);
@@ -186,11 +206,17 @@ class NotesSubState extends MusicBeatSubstate
 		updateTip();
 
 		FlxG.mouse.visible = true;
+
+		addVirtualPad(NONE, B_C);
+		virtualPad.buttonB.x = FlxG.width - 132;
+		virtualPad.buttonC.x = 0;
+		virtualPad.buttonC.y = FlxG.height - 135;
 	}
 
 	function updateTip()
 	{
-		tipTxt.text = 'Hold Shift + Press RESET key to fully reset the selected Note.';
+		if (!mobile.MobileControls.enabled)
+			tipTxt.text = 'Hold Shift + Press RESET key to fully reset the selected Note.';
 	}
 
 	var _storedColor:FlxColor;
@@ -206,6 +232,7 @@ class NotesSubState extends MusicBeatSubstate
 			FlxG.mouse.visible = false;
 			FlxG.sound.play(Paths.sound('cancelMenu'));
 			close();
+			removeVirtualPad();
 			return;
 		}
 
@@ -432,7 +459,7 @@ class NotesSubState extends MusicBeatSubstate
 				}
 			}
 		}
-		else if(controls.RESET && hexTypeNum < 0)
+		else if(virtualPad.buttonC.justPressed || controls.RESET && hexTypeNum < 0)
 		{
 			var colors:Array<FlxColor> = ClientPrefs.noteColorStyle != 'Quant-Based' ? !onPixel ? ClientPrefs.defaultArrowRGB[curSelectedNote] :
 			ClientPrefs.defaultPixelRGB[curSelectedNote] : ClientPrefs.defaultQuantRGB[curSelectedNote];

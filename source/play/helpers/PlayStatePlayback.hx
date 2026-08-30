@@ -356,6 +356,8 @@ class PlayStatePlayback
 
 	public static function endSong(state:PlayState):Void
 	{
+		if (state.mobileControls != null) state.mobileControls.visible = false;
+		if (state.virtualPad != null) state.virtualPad.visible = false;
 		state.timeBarBG.visible = false;
 		state.timeBar.visible = false;
 		state.timeTxt.visible = false;

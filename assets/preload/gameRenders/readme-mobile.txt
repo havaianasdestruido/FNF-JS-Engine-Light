@@ -1,0 +1,1 @@
+if you're on mobile, you might need install termux or PC and ffmpeg and after that copy render folder and use this command: `ffmpeg -r (video fps) -i "(render folder)/%07d.(png or jpg)" "(output name).mp4"`

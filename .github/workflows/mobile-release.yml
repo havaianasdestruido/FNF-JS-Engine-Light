@@ -2,42 +2,32 @@ name: Mobile Release
 
 on:
   workflow_dispatch:
-    inputs:
-      prerelease:
-        description: 'Mark as a pre-release? (true/false)'
-        default: 'false'
-        required: false
 
 permissions:
   contents: write
 
-env:
-  TAG_NAME: nightly-${{ github.run_number }}
-
 jobs:
-  create-nightly-tag:
+  get-latest-tag:
     runs-on: ubuntu-latest
+    outputs:
+      latest_tag: ${{ steps.get_tag.outputs.LATEST_TAG }}
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
-
-      - name: Create and push tag
+      - name: Get latest release tag
+        id: get_tag
         run: |
-          git config --global user.name "${{ github.actor }}"
-          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
-          git tag ${{ env.TAG_NAME }}
-          git push origin ${{ env.TAG_NAME }}
+          latest_tag=$(curl --silent "https://api.github.com/repos/${{ github.repository }}/releases/latest" | jq -r .tag_name)
+          echo "Latest tag is $latest_tag"
+          echo "LATEST_TAG=$latest_tag" >> $GITHUB_OUTPUT
 
   build:
     name: Build
-    needs: create-nightly-tag
     uses: ./.github/workflows/mobile.yml
     with:
       buildFlags: officialBuild
 
   release-android:
-    name: Release Android Build
-    needs: [build]
+    name: Release androidBuild
+    needs: [get-latest-tag, build]
     runs-on: ubuntu-latest
     steps:
       - name: Download Android artifact
@@ -45,39 +35,34 @@ jobs:
         with:
           name: androidBuild
       - name: Locate APK
-        id: locate_apk
         run: |
-          APK_FILE=$(find . -maxdepth 2 -name "*.apk" | head -n 1)
-          if [ -z "$APK_FILE" ]; then
-            echo "No APK file found!"
-            exit 1
-          fi
-          echo "apk_path=$APK_FILE" >> $GITHUB_OUTPUT
-      - name: Upload Android Build to Release
+          apk_path=$(find . -name "*.apk" | head -n 1)
+          echo "APK_PATH=$apk_path" >> $GITHUB_ENV
+      - name: Upload androidBuild to release
         uses: svenstaro/upload-release-action@2.5.0
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          tag: ${{ env.TAG_NAME }}
-          file: ${{ steps.locate_apk.outputs.apk_path }}
+          tag: ${{ needs.get-latest-tag.outputs.latest_tag }}
+          file: ${{ env.APK_PATH }}
           asset_name: FNF-JS-Engine-android.apk
           overwrite: false
 
   release-ios:
-    name: Release iOS Build
-    needs: [build]
+    name: Release iOSBuild
+    needs: [get-latest-tag, build]
     runs-on: ubuntu-latest
     steps:
       - name: Download iOS artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@main
         with:
           name: iOSBuild
       - name: Zip For Release
         run: zip -r JSEngine-iOS.zip JSEngine.ipa
-      - name: Upload iOS Build to Release
+      - name: Upload iOSBuild to release
         uses: svenstaro/upload-release-action@2.5.0
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          tag: ${{ env.TAG_NAME }}
+          tag: ${{ needs.get-latest-tag.outputs.latest_tag }}
           file: JSEngine-iOS.zip
           asset_name: FNF-JS-Engine-iOS.zip
           overwrite: false

@@ -80,6 +80,15 @@ class ClientPrefs { //default settings if it can't find a save file containing y
 	public static var discordRPC:Bool = true;
 	public static var peOGCrash:Bool = false;
 
+	//Mobile Settings
+	public static var mobileCAlpha:Float = #if mobile 0.6 #else 0 #end;
+	public static var mobileCEx:Bool = false;
+	public static var mobileCPlayStateVpad:Bool = false;
+	public static var mobileCExTaunt:Bool = true;
+	public static var screensaver:Bool = false;
+	public static var hitboxType:String = "Gradient";
+	public static var hitboxPos:Bool = true;
+
 	//Graphics
 	public static var lowQuality:Bool = false;
 	public static var globalAntialiasing:Bool = true;

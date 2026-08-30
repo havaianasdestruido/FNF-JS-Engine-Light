@@ -77,7 +77,7 @@ class PlayStateCountdown
 				state.setOnLuas('defaultPlayerStrumY' + i, state.playerStrums.members[i].y);
 			}
 
-			state.startedCountdown = true;
+			state.startedCountdown = state.mobileControls.visible = true;
 			Conductor.songPosition = -Conductor.crochet * 5;
 			state.setOnLuas('startedCountdown', true);
 			state.callOnLuas('onCountdownStarted');

@@ -28,16 +28,8 @@ class PlayStateInput
 		var eventKey:FlxKey = event.keyCode;
 		var key:Int = getKeyFromEvent(state, eventKey);
 
-		if (!ClientPrefs.controllerMode){
-			#if debug
-			// Prevents crash specifically on debug without needing to try catch shit
-			@:privateAccess if (!FlxG.keys._keyListMap.exists(eventKey))
-				return;
-			#end
-
-			if (FlxG.keys.checkStatus(eventKey, JUST_PRESSED))
-				keyPressed(state, key);
-		}
+		if ((!ClientPrefs.controllerMode && FlxG.keys.checkStatus(eventKey, JUST_PRESSED)) || (mobile.MobileControls.enabled && key > -1))
+			keyPressed(state, key);
 	}
 
 	public static function keyPressed(state:PlayState, key:Int):Void
@@ -131,7 +123,7 @@ class PlayStateInput
 		var key:Int = getKeyFromEvent(state, eventKey);
 		// trace('Pressed: ' + eventKey);
 
-		if (!ClientPrefs.controllerMode && key > -1)
+		if (!ClientPrefs.controllerMode || mobile.MobileControls.enabled && key > -1)
 			keyReleased(state, key);
 	}
 
@@ -193,6 +185,7 @@ class PlayStateInput
 
 		var char:Character = state.boyfriend;
 		if (PlayState.opponentChart) char = state.dad;
+		final mobileC:mobile.flixel.FlxButton = @:privateAccess {(PlayState.instance != null && PlayState.instance.mobileControls != null) ? ((mobile.MobileControls.mode == "Hitbox") ? (PlayState.instance.mobileControls.hitbox != null ? PlayState.instance.mobileControls.hitbox.hints[4] : null) : (PlayState.instance.mobileControls.virtualPad != null ? PlayState.instance.mobileControls.virtualPad.buttonEx : null)) : null;}
 		if (state.startedCountdown && !char.stunned && state.generatedMusic)
 		{
 			for (group in [state.notes, state.sustainNotes]){
@@ -213,7 +206,7 @@ class PlayStateInput
 				}
 			}
 
-			if(ClientPrefs.charsAndBG && FlxG.keys.anyJustPressed(state.tauntKey) && !char.animation.curAnim.name.endsWith('miss') && char.specialAnim == false && ClientPrefs.spaceVPose){
+			if(ClientPrefs.charsAndBG && ((ClientPrefs.mobileCEx && ClientPrefs.mobileCExTaunt && mobileC != null && mobileC.justPressed) || FlxG.keys.anyJustPressed(state.tauntKey)) && !char.animation.curAnim.name.endsWith('miss') && char.specialAnim == false && ClientPrefs.spaceVPose){
 				if (char.animOffsets.exists('hey'))
 				{
 					char.playAnim('hey', true);
@@ -236,7 +229,7 @@ class PlayStateInput
 		}
 
 		// TO DO: Find a better way to handle controller inputs, this should work for now
-		if(ClientPrefs.controllerMode || state.strumsBlocked.contains(true))
+		if((ClientPrefs.controllerMode || mobile.MobileControls.enabled) || state.strumsBlocked.contains(true))
 		{
 			if(state.releaseArray.contains(true))
 			{
