@@ -39,6 +39,7 @@ jobs:
 
       - name: Install Libraries
         run: |
+          haxelib install hscript --quiet
           haxelib install hmm --quiet
           haxelib run hmm install --quiet
 
