@@ -22,43 +22,63 @@ on:
 
 jobs:
   Mobile:
-    runs-on: ${{matrix.os}}
+    runs-on: ${{ matrix.os }}
     if: ${{ startsWith(matrix.os, 'ubuntu') || inputs.buildAllTargets == true || inputs.buildAllTargets == 'true' }}
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-24.04, macos-15]
+        os: [ubuntu-24.04, macos-latest]
     steps:
       - name: Checkout
-        uses: actions/checkout@main
+        uses: actions/checkout@v4
 
       - name: Setup Haxe
         uses: krdlab/setup-haxe@master
         with:
           haxe-version: 4.3.6
 
-      - name: Setup Android NDK
-        if: startsWith(matrix.os, 'ubuntu')
-        shell: bash
-        run: |
-          cd ${{ runner.temp }}
-          echo "Downloading Android NDK r27c..."
-          curl -sSfL -o android-ndk.zip "https://dl.google.com/android/repository/android-ndk-r27c-linux.zip"
-          echo "Extracting Android NDK r27c..."
-          unzip -qq android-ndk.zip
-          echo "NDK r27c successfully downloaded and extracted!"
+      - name: Setup Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
 
-      - name: Install Libraries
+      - name: Setup Android SDK & NDK
+        if: startsWith(matrix.os, 'ubuntu')
+        uses: android-actions/setup-android@v2
+        with:
+          api-level: 33
+          ndk: r27c
+
+      - name: Ensure haxelib and show diagnostics
         run: |
-          haxelib install hmm --quiet
-          haxelib run hmm install --quiet
+          set -eux
+          echo "PATH=$PATH"
+          haxe --version || true
+          if ! command -v haxelib >/dev/null 2>&1; then
+            echo "ERROR: haxelib not found in PATH"
+            exit 1
+          fi
+          haxelib --version || true
+          haxelib selfupdate || true
+
+      - name: Install Haxe libraries
+        run: |
+          set -eux
+          # Install required libs (idempotent)
+          haxelib install hscript || true
+          haxelib install hmm || true
+          haxelib install lime || true
+          # Install any native deps via hmm
+          haxelib run hmm install --quiet || true
 
       - name: Configure Android
         if: startsWith(matrix.os, 'ubuntu')
         run: |
-          haxelib run lime config ANDROID_SDK $ANDROID_HOME
-          haxelib run lime config ANDROID_NDK_ROOT ${{ runner.temp }}/android-ndk-r27c
-          haxelib run lime config JAVA_HOME $JAVA_HOME_17_X64
+          echo "ANDROID_SDK_ROOT=${ANDROID_SDK_ROOT:-$ANDROID_HOME}"
+          haxelib run lime config ANDROID_SDK ${ANDROID_SDK_ROOT:-$ANDROID_HOME}
+          haxelib run lime config ANDROID_NDK_ROOT ${ANDROID_NDK_ROOT:-${RUNNER_TEMP}/android-ndk-r27c}
+          haxelib run lime config JAVA_HOME $JAVA_HOME
           haxelib run lime config ANDROID_SETUP true
 
       - name: Compile (Android)
@@ -74,9 +94,9 @@ jobs:
         run: |
           brew install ldid
           cd build/release/ios/build/Release-iphoneos/FNF-Phoenix-Engine.app
-          ldid -S../../../FNF-Phoenix-Engine/FNF-Phoenix-Engine.entitlements FNF-Phoenix-Engine
+          ldid -S../../../FNF-Phoenix-Engine/FNF-Phoenix-Engine.entitlements FNF-Phoenix-Engine || true
           cd ..
-          mkdir Payload
+          mkdir -p Payload
           mv FNF-Phoenix-Engine.app Payload
           zip -r FNF-Phoenix-Engine.ipa Payload
 
@@ -93,5 +113,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: iOSBuild
-          path: build/release/ios/build/Release-iphoneos/*.ipa
+          path: |
+            FNF-Phoenix-Engine.ipa
+            build/release/ios/build/Release-iphoneos/*.ipa
           if-no-files-found: error

@@ -61,11 +61,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Download iOS artifact
-        uses: actions/download-artifact@main
+        uses: actions/download-artifact@v4
         with:
           name: iOSBuild
       - name: Zip For Release
-        run: zip -r FNF-Phoenix-Engine-iOS.zip FNF-Phoenix-Engine.ipa
+        run: |
+          if [ -f "FNF-Phoenix-Engine.ipa" ]; then
+            zip -r FNF-Phoenix-Engine-iOS.zip FNF-Phoenix-Engine.ipa
+          else
+            # try to find any ipa and zip it
+            ipa=$(find . -name "*.ipa" | head -n 1)
+            if [ -n "$ipa" ]; then
+              zip -r FNF-Phoenix-Engine-iOS.zip "$ipa"
+            else
+              echo "No IPA found to zip" >&2
+              exit 1
+            fi
+          fi
       - name: Upload iOSBuild to release
         uses: svenstaro/upload-release-action@2.5.0
         with:
