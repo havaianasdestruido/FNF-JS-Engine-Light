@@ -62,7 +62,7 @@ jobs:
         if: startsWith(matrix.os, 'macos')
         run: |
           brew install ldid
-          cd export/release/ios/build/Release-iphoneos/JSEngine.app
+          cd build/release/ios/build/Release-iphoneos/JSEngine.app
           ldid -S../../../JSEngine/JSEngine.entitlements JSEngine
           cd ..
           mkdir Payload
@@ -71,16 +71,16 @@ jobs:
 
       - name: Upload Artifact (Android)
         if: startsWith(matrix.os, 'ubuntu')
-        uses: actions/upload-artifact@main
+        uses: actions/upload-artifact@v4
         with:
           name: androidBuild
-          path: export/release/android/bin/app/build/outputs/apk/release/*.apk
+          path: build/release/android/bin/app/build/outputs/apk/release/*.apk
           if-no-files-found: error
 
       - name: Upload Artifact (iOS)
         if: startsWith(matrix.os, 'macos')
-        uses: actions/upload-artifact@main
+        uses: actions/upload-artifact@v4
         with:
           name: iOSBuild
-          path: export/release/ios/build/Release-iphoneos/*.ipa
+          path: build/release/ios/build/Release-iphoneos/*.ipa
           if-no-files-found: error
