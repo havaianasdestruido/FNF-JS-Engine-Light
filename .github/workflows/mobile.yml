@@ -1,7 +1,7 @@
 name: Mobile
 on:
  push:
-    branches: mobile
+    branches: main
  workflow_dispatch:
 
  workflow_call:
