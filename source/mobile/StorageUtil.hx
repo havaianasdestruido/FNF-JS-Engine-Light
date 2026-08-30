@@ -22,6 +22,8 @@
 
 package mobile;
 
+import backend.CoolUtil;
+
 #if android
 import android.content.Context as AndroidContext;
 import android.os.Environment as AndroidEnvironment;

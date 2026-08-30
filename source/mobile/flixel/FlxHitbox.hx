@@ -22,6 +22,7 @@
 
 package mobile.flixel;
 
+import backend.ClientPrefs;
 import flixel.FlxG;
 import flixel.group.FlxSpriteGroup;
 import flixel.util.FlxColor;
