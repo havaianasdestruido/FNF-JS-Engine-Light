@@ -88,6 +88,10 @@ env:
   # Cross-platform hxcpp performance optimization.
   HXCPP_PERF_FLAGS: "-D HXCPP_OPTIMIZE_LINK"
 
+# Cancel previous runs for the same branch/PR concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     name: ${{ matrix.name }}
