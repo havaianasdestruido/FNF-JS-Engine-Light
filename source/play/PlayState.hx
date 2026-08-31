@@ -386,11 +386,11 @@ class PlayState extends MusicBeatState
 
 	var heyStopTrying:Bool = false;
 
-	#if desktop
+	#if DISCORD_ALLOWED
 	// Discord RPC variables
-	var storyDifficultyText:String = "";
-	var detailsText:String = "";
-	var detailsPausedText:String = "";
+	public var storyDifficultyText:String = "";
+	public var detailsText:String = "";
+	public var detailsPausedText:String = "";
 	#end
 
 	//Achievement shit
@@ -585,7 +585,7 @@ class PlayState extends MusicBeatState
 
 		if (!chartingMode) CoolUtil.currentDifficulty = CoolUtil.difficultyString();
 
-		#if desktop
+		#if DISCORD_ALLOWED
 		storyDifficultyText = CoolUtil.difficulties[storyDifficulty];
 
 		// String that contains the mode defined here so it isn't necessary to call changePresence for each mode
