@@ -4,10 +4,6 @@ on:
   push:
     branches: [main]
 
-# Cancel previous runs for the same branch/PR concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
-
   workflow_dispatch:
     inputs:
       buildAndroid:
