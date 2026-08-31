@@ -42,7 +42,6 @@ jobs:
   build:
     name: ${{ matrix.name }}
     runs-on: ${{ matrix.os }}
-    if: ${{ matrix.target == 'windows' || inputs.buildAllTargets == true || inputs.buildAllTargets == 'true' }}
     strategy:
       fail-fast: false
       matrix:
@@ -84,6 +83,16 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
+      # Skip matrix entry early when not requested. Job-level `if` cannot use `matrix`
+      # because `matrix` is not available at job evaluation time; using a step-level
+      # `if` is valid because `matrix` is available when steps run.
+      - name: Skip matrix entry if not requested
+        if: ${{ matrix.target != 'windows' && inputs.buildAllTargets != true && inputs.buildAllTargets != 'true' }}
+        run: |
+          echo "Skipping build for ${{ matrix.name }} (target=${{ matrix.target }}) because buildAllTargets was not requested"
+          exit 0
+
       - uses: krdlab/setup-haxe@master
         with:
           haxe-version: 4.3.7
