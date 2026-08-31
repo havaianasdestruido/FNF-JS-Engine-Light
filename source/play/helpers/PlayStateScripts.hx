@@ -6,7 +6,9 @@ import shaders.ErrorHandledShader.ErrorHandledRuntimeShader;
 import backend.ClientPrefs;
 import backend.Paths;
 #if MODS_ALLOWED
+#if MODS_ALLOWED
 import backend.Mods;
+#end
 #end
 
 import play.PlayState;
@@ -49,15 +51,20 @@ class PlayStateScripts
 			return true;
 		}
 
+		#if MODS_ALLOWED
 		var foldersToCheck:Array<String> = [Paths.mods('shaders/')];
 		if(Mods.currentModDirectory != null && Mods.currentModDirectory.length > 0)
 			foldersToCheck.insert(0, Paths.mods(Mods.currentModDirectory + '/shaders/'));
 
 		for(mod in Mods.getGlobalMods())
 			foldersToCheck.insert(0, Paths.mods(mod + '/shaders/'));
+		#else
+		var foldersToCheck:Array<String> = [];
+		#end
 
 		for (folder in foldersToCheck)
 		{
+			#if sys
 			if(FileSystem.exists(folder))
 			{
 				var frag:String = folder + name + '.frag';
@@ -84,6 +91,7 @@ class PlayStateScripts
 					return true;
 				}
 			}
+			#end
 		}
 		FlxG.log.warn('Missing shader $name .frag AND .vert files!');
 		return false;

@@ -31,8 +31,7 @@ class GetTotalMemory
 	 */
 	public static function getPeakRSS():Float
 	{
-		// might not be the smartest move?
-		var memPeak:Float;
+		var memPeak:Float = 0;
 
 		if (getCurrentRSS() > memPeak)
 			memPeak = getCurrentRSS();
