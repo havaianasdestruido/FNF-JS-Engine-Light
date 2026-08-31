@@ -21,6 +21,7 @@ import objects.Alphabet;
 import backend.Controls;
 import headers.States;
 
+#if MODS_ALLOWED
 class ModsMenuState extends MusicBeatState
 {
 	var bg:FlxSprite;
@@ -813,3 +814,9 @@ class MenuButton extends FlxSpriteGroup
 		spr.y = bg.height/2 - spr.height/2;
 	}
 }
+#else
+class ModsMenuState extends MusicBeatState
+{
+	public function new() { super(); }
+}
+#end

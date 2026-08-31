@@ -14,11 +14,6 @@ import sys.io.*;
 import hxluajit.*;
 import hxluajit.Types;
 import psychlua.*;
-#else
-import psychlua.FunkinLua; // TODO: test and seperate this into LuaUtils
-// import psychlua.LuaUtils;
-import psychlua.HScript;
-// import psychlua.ScriptHandler;
 #end
 
 #if flxanimate

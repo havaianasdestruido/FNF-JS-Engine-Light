@@ -146,6 +146,7 @@ class CoolUtil
 
 	public static function checkForOBS():Bool
 	{
+		#if sys
 		var fs:Bool = FlxG.fullscreen;
 		if (fs)
 		{
@@ -159,7 +160,9 @@ class CoolUtil
 			FlxG.fullscreen = true;
 		}
 		return tasklist.contains("obs64.exe") || tasklist.contains("obs32.exe");
-	}
+		#else
+		return false;
+		#end
 
 	/**
 	 * Can be used to check if your using a specific version of an OS (or if your using a certain OS).

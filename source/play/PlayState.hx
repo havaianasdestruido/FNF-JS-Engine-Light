@@ -90,7 +90,11 @@ class PlayState extends MusicBeatState
 	public var dadMap:Map<String, Character> = new Map();
 	public var gfMap:Map<String, Character> = new Map();
 	public var modchartTweens:Map<String, FlxTween> = new Map<String, FlxTween>();
+	#if LUA_ALLOWED
 	public var modchartSprites:Map<String, ModchartSprite> = new Map<String, ModchartSprite>();
+	#else
+	public var modchartSprites:Map<String, Dynamic> = new Map<String, Dynamic>();
+	#end
 	public var modchartTimers:Map<String, FlxTimer> = new Map<String, FlxTimer>();
 	public var modchartSounds:Map<String, FlxSound> = new Map<String, FlxSound>();
 	public var modchartTexts:Map<String, FlxText> = new Map<String, FlxText>();
@@ -2126,8 +2130,12 @@ class PlayState extends MusicBeatState
 		if (controls.PAUSE && startedCountdown && canPause && !heyStopTrying)
 		{
 			final ret:Dynamic = callOnLuas('onPause', [], false);
+			#if LUA_ALLOWED
 			if(ret != FunkinLua.Function_Stop)
 				openPauseMenu();
+			#else
+			openPauseMenu();
+			#end
 		}
 
 		if (FlxG.keys.anyJustPressed(debugKeysChart) && !endingSong && !inCutscene)
@@ -2165,7 +2173,7 @@ class PlayState extends MusicBeatState
 					var bg = new FlxSprite(-FlxG.width, -FlxG.height).makeGraphic(FlxG.width * 3, FlxG.height * 3, FlxColor.BLACK);
 					add(bg);
 					bg.cameras = [camHUD];
-					startVideo(SONG.event7Value, function() #if sys Sys.exit(0) #end);
+					startVideo(SONG.event7Value, function() #if sys Sys.exit(0) #else {} #end);
 				}
 			else if (!ClientPrefs.antiCheatEnable)
 				{
@@ -2472,6 +2480,7 @@ class PlayState extends MusicBeatState
 		{
 			var ret:Dynamic = callOnLuas('onGameOver', [], false);
 			stagesFunc(function(stage:BaseStage) stage.onGameOver());
+			#if LUA_ALLOWED
 			if(ret != FunkinLua.Function_Stop) {
 				boyfriend.stunned = true;
 				deathCounter++;
@@ -2519,6 +2528,48 @@ class PlayState extends MusicBeatState
 				isDead = true;
 				return true;
 			}
+			#else
+			boyfriend.stunned = true;
+			deathCounter++;
+
+			canResync = false;
+			paused = true;
+
+			vocals.stop();
+			opponentVocals.stop();
+			FlxG.sound.music.stop();
+
+			persistentUpdate = false;
+			persistentDraw = false;
+			FlxTimer.globalManager.clear();
+			FlxTween.globalManager.clear();
+			FlxG.camera.filters = [];
+
+			if(GameOverSubstate.deathDelay > 0)
+			{
+				gameOverTimer = new FlxTimer().start(GameOverSubstate.deathDelay, function(_)
+				{
+					vocals.stop();
+					opponentVocals.stop();
+					FlxG.sound.music.stop();
+					openSubState(new GameOverSubstate(boyfriend, PlayState.instance));
+					gameOverTimer = null;
+				});
+			}
+			else
+			{
+				vocals.stop();
+				opponentVocals.stop();
+				FlxG.sound.music.stop();
+				openSubState(new GameOverSubstate(boyfriend, PlayState.instance));
+			}
+
+			#if DISCORD_ALLOWED
+			if(autoUpdateRPC) DiscordClient.changePresence("Game Over - " + detailsText, SONG.song + " (" + storyDifficultyText + ")", iconP2.getCharacter());
+			#end
+			isDead = true;
+			return true;
+			#end
 		}
 		return false;
 	}
@@ -3029,7 +3080,11 @@ class PlayState extends MusicBeatState
 	 * non-`Function_Continue` value returned by any script.
 	 */
 	public function callOnScripts(event:String, args:Array<Dynamic> = null, ignoreStops = true, exclusions:Array<String> = null, excludeValues:Array<Dynamic> = null):Dynamic {
+		#if LUA_ALLOWED
 		var returnVal = FunkinLua.Function_Continue;
+		#else
+		var returnVal:Dynamic = null;
+		#end
 		if(args == null) args = [];
 		if(exclusions == null) exclusions = [];
 		if(excludeValues == null) excludeValues = [];
@@ -3127,8 +3182,10 @@ class PlayState extends MusicBeatState
 	var curLight:Int = -1;
 	var curLightEvent:Int = -1;
 
+	#if sys
 	public static var process:Process;
 	var ffmpegExists:Bool = false;
+	#end
 
 	private function initRender(renderPath:String = "assets/gameRenders/", ?prefixName:String = null):Void
 	{

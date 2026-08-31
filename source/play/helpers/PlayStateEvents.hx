@@ -86,9 +86,11 @@ class PlayStateEvents
 
 	public static function eventNoteEarlyTrigger(state:PlayState, event:EventNote):Float {
 		var returnedValue:Null<Float> = state.callOnLuas('eventEarlyTrigger', [event.event, event.value1, event.value2, event.strumTime], [], [0]);
+		#if LUA_ALLOWED
 		if(returnedValue != null && returnedValue != 0 && returnedValue != FunkinLua.Function_Continue) {
 			return returnedValue;
 		}
+		#end
 
 		switch(event.event) {
 			case 'Kill Henchmen': //Better timing so that the kill sound matches the beat intended
@@ -241,7 +243,9 @@ class PlayStateEvents
 					duration = parsedDuration / state.playbackRate;
 				  }
 				}
+				#if LUA_ALLOWED
 				if (split.length > 1) ease = psychlua.LuaUtils.getFlxEaseByString(split[1]);
+				#end
 
 				state.cameraTwn?.cancel();
 				if (state.camZooming) {
@@ -601,11 +605,13 @@ class PlayStateEvents
 				try
 				{
 					var split:Array<String> = value1.split('.');
-					if(split.length > 1) {
-						FunkinLua.setVarInArray(FunkinLua.getPropertyLoopThingWhatever(split), split[split.length-1], value2);
-					} else {
-						FunkinLua.setVarInArray(state, value1, value2);
-					}
+#if LUA_ALLOWED
+				if(split.length > 1) {
+					FunkinLua.setVarInArray(FunkinLua.getPropertyLoopThingWhatever(split), split[split.length-1], value2);
+				} else {
+					FunkinLua.setVarInArray(state, value1, value2);
+				}
+				#end
 				}
 				catch(e:Dynamic)
 				{

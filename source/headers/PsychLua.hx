@@ -1,4 +1,7 @@
 package headers;
 
-// REFACTOR: categorization header re-exporting the psychlua.LuaUtils group
+#if LUA_ALLOWED
 typedef LuaUtils = psychlua.LuaUtils;
+#else
+typedef LuaUtils = Dynamic;
+#end

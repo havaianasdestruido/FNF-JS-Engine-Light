@@ -115,11 +115,14 @@ class PlayStateScripts
 			case 'camgame' | 'game':
 				state.camGame.addShader(effect.shader);
 			default:
+				#if LUA_ALLOWED
 				if(state.modchartSprites.exists(cam)) {
 					Reflect.setProperty(state.modchartSprites.get(cam),"shader",effect.shader);
 				} else if(state.modchartTexts.exists(cam)) {
 					Reflect.setProperty(state.modchartTexts.get(cam),"shader",effect.shader);
-				} else {
+				} else
+				#end
+				{
 					var OBJ = Reflect.getProperty(PlayState.instance,cam);
 					Reflect.setProperty(OBJ,"shader", effect.shader);
 				}
@@ -156,11 +159,14 @@ class PlayStateScripts
 					trace("Shader wasn't found");
 				}
 			default:
+				#if LUA_ALLOWED
 				if(state.modchartSprites.exists(cam)) {
 					Reflect.setProperty(state.modchartSprites.get(cam),"shader",null);
 				} else if(state.modchartTexts.exists(cam)) {
 					Reflect.setProperty(state.modchartTexts.get(cam),"shader",null);
-				} else {
+				} else
+				#end
+				{
 					var OBJ = Reflect.getProperty(PlayState.instance,cam);
 					Reflect.setProperty(OBJ,"shader", null);
 				}
@@ -181,9 +187,11 @@ class PlayStateScripts
 	}
 
 	public static function getLuaObject(state:PlayState, tag:String, text:Bool=true):FlxSprite {
+		#if LUA_ALLOWED
 		if(state.modchartSprites.exists(tag)) return state.modchartSprites.get(tag);
 		if(text && state.modchartTexts.exists(tag)) return state.modchartTexts.get(tag);
 		if(state.variables.exists(tag)) return state.variables.get(tag);
+		#end
 		return null;
 	}
 
@@ -199,7 +207,9 @@ class PlayStateScripts
 		var luaToLoad:String = Paths.modFolders(luaFile);
 		if(FileSystem.exists(luaToLoad))
 		{
+			#if LUA_ALLOWED
 			new FunkinLua(luaToLoad);
+			#end
 			return true;
 		}
 		else
@@ -207,7 +217,9 @@ class PlayStateScripts
 			luaToLoad = Paths.getPreloadPath(luaFile);
 			if(FileSystem.exists(luaToLoad))
 			{
+				#if LUA_ALLOWED
 				new FunkinLua(luaToLoad);
+				#end
 				return true;
 			}
 		}
@@ -215,7 +227,9 @@ class PlayStateScripts
 		var luaToLoad:String = Paths.getPreloadPath(luaFile);
 		if(OpenFlAssets.exists(luaToLoad))
 		{
+			#if LUA_ALLOWED
 			new FunkinLua(luaToLoad);
+			#end
 			return true;
 		}
 		#end

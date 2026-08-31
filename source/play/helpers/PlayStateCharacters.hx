@@ -65,15 +65,17 @@ class PlayStateCharacters
 		}
 		#end
 
-		if(doPush)
-		{
-			for (script in state.luaArray)
+if(doPush)
 			{
-				if(script.scriptName == luaFile) return;
+				for (script in state.luaArray)
+				{
+					if(script.scriptName == luaFile) return;
+				}
+				#if LUA_ALLOWED
+				if(doPush) new FunkinLua(luaFile);
+				#end
 			}
-			if(doPush) new FunkinLua(luaFile);
-		}
-		#end
+			#end
 	}
 
 	public static function startCharacterPos(state:PlayState, char:Character, ?gfCheck:Bool = false) {

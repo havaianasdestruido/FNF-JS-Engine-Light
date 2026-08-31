@@ -62,7 +62,11 @@ class PlayStateCountdown
 			state.add(secretsong);
 		}
 
+		#if LUA_ALLOWED
 		if(ret != FunkinLua.Function_Stop) {
+		#else
+		if(true) {
+		#end
 			if (state.skipCountdown || PlayState.startOnTime > 0) state.skipArrowStartTween = true;
 
 			PlayStateNoteHelpers.generateStaticArrows(state, 0);

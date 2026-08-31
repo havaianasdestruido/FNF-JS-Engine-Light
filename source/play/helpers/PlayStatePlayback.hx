@@ -377,7 +377,11 @@ class PlayStatePlayback
 		#end
 
 		var ret:Dynamic = state.callOnLuas('onEndSong', [], true);
+		#if LUA_ALLOWED
 		if(ret != FunkinLua.Function_Stop && !state.transitioning) {
+		#else
+		if(!state.transitioning) {
+		#end
 			if (!state.cpuControlled && !PlayState.playerIsCheating && ClientPrefs.safeFrames <= 10)
 			{
 				var percent:Float = state.ratingPercent;

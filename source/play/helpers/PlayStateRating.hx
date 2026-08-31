@@ -257,7 +257,11 @@ class PlayStateRating
 		if (badHit) state.missRecalcsPerFrame += 1;
 
 		var ret:Dynamic = state.callOnLuas('onRecalculateRating');
+		#if LUA_ALLOWED
 		if(ret != FunkinLua.Function_Stop)
+		#else
+		if(true)
+		#end
 		{
 			if(state.totalPlayed < 1) //Prevent divide by 0
 				state.ratingName = '?';
