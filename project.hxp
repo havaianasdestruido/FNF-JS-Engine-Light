@@ -605,10 +605,10 @@ class Project extends HXProject
 		addHaxelib('hxnativefiledialog');
 		addHaxelib('tjson');
 
-		if (isDesktop() && DISCORD_ALLOWED.isEnabled(this))
+		if (DISCORD_ALLOWED.isEnabled(this))
 			addHaxelib('hxdiscord_rpc'); // Discord API
 
-		if (isDesktop() && LUA_ALLOWED.isEnabled(this))
+		if (LUA_ALLOWED.isEnabled(this))
 			addHaxelib('hxluajit'); // Lua API
 
 		if (PYTHON_ALLOWED.isEnabled(this))
@@ -620,7 +620,7 @@ class Project extends HXProject
 		if (GAMEMODE_ALLOWED.isEnabled(this))
 			addHaxelib("hxgamemode");
 
-		if (isDesktop() && VIDEOS_ALLOWED.isEnabled(this))
+		if (VIDEOS_ALLOWED.isEnabled(this))
 			addHaxelib('hxvlc');
 	}
 
