@@ -15,7 +15,9 @@ class PsychFlxAnimate extends OriginalFlxAnimate
 			var trimmed:String = pathOrStr.trim();
 			trimmed = trimmed.substr(trimmed.length - 5).toLowerCase();
 
+			#if sys
 			if(trimmed == '.json') myJson = File.getContent(myJson); //is a path
+			#end
 			animJson = cast haxe.Json.parse(_removeBOM(myJson));
 		}
 		else animJson = cast myJson;
@@ -28,12 +30,20 @@ class PsychFlxAnimate extends OriginalFlxAnimate
 
 		if(trimmed == '.json') //Path is json
 		{
+			#if sys
 			myData = File.getContent(pathOrStr);
+			#else
+			myData = Assets.getText(pathOrStr);
+			#end
 			isXml = false;
 		}
 		else if (trimmed.substr(1) == '.xml') //Path is xml
 		{
+			#if sys
 			myData = File.getContent(pathOrStr);
+			#else
+			myData = Assets.getText(pathOrStr);
+			#end
 			isXml = true;
 		}
 		myData = _removeBOM(myData);

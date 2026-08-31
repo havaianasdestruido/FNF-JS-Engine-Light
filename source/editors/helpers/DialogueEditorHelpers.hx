@@ -10,7 +10,9 @@ import openfl.events.Event;
 import openfl.events.IOErrorEvent;
 import openfl.net.FileFilter;
 import openfl.net.FileReference;
+#if sys
 import sys.io.File;
+#end
 import flixel.FlxG;
 
 @:access(editors.DialogueCharacterEditorState)
@@ -26,7 +28,11 @@ class DialogueEditorHelpers
 	// ---- Pure shared: read raw json file content ----
 	public static function readRawJson(path:String):String
 	{
+		#if sys
 		return File.getContent(path);
+		#else
+		return Assets.getText(path);
+		#end
 	}
 
 	// ---- Shared: set up a FileReference browse dialog for a JSON file ----

@@ -23,6 +23,7 @@ class CharacterEditorHelpers
 	{
 		state.characterList = Mods.mergeAllTextsNamed('data/characterList.txt', Paths.getSharedPath());
 		var foldersToCheck:Array<String> = Mods.directoriesWithFile(Paths.getSharedPath(), 'characters/');
+		#if sys
 		for (folder in foldersToCheck)
 			for (file in FileSystem.readDirectory(folder))
 				if(file.toLowerCase().endsWith('.json'))
@@ -31,6 +32,7 @@ class CharacterEditorHelpers
 					if(!state.characterList.contains(charToCheck))
 						state.characterList.push(charToCheck);
 				}
+		#end
 
 		if(state.characterList.length < 1) state.characterList.push('');
 		state.charDropDown.setData(FlxUIDropDownMenuCustom.makeStrIdLabelArray(state.characterList, true));

@@ -10,7 +10,9 @@ import flixel.util.FlxColor;
 import states.LoadingState;
 import states.ModsMenuState;
 import states.ModsMenuState.ModItem;
+#if sys
 import sys.io.File;
+#end
 
 @:access(states.ModsMenuState)
 class ModsMenuHelpers
@@ -233,6 +235,7 @@ class ModsMenuHelpers
 
 	public static function saveTxt(state:ModsMenuState)
 	{
+		#if sys
 		var fileStr:String = '';
 		for (mod in state.modsList.all)
 		{
@@ -247,5 +250,6 @@ class ModsMenuHelpers
 
 		var path:String = 'modsList.txt';
 		File.saveContent(path, fileStr);
+		#end
 	}
 }

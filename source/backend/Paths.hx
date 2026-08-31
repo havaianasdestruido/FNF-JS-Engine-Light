@@ -9,8 +9,10 @@ import flixel.graphics.FlxGraphic;
 import flixel.graphics.frames.FlxFramesCollection;
 import haxe.io.Bytes;
 import haxe.io.Path;
+#if lime_vorbis
 import lime.media.AudioBuffer;
 import lime.media.vorbis.VorbisFile;
+#end
 import openfl.display.BitmapData;
 import openfl.display3D.textures.RectangleTexture;
 import openfl.geom.Rectangle;
@@ -29,7 +31,7 @@ import hl.Gc;
 // @:nullSafety // not yet
 class Paths
 {
-  inline public static var SOUND_EXT = #if web "mp3" #else "ogg" #end;
+  inline public static var SOUND_EXT = #if (web || flash) "mp3" #else "ogg" #end;
   inline public static var VIDEO_EXT = "mp4";
   inline public static var IMAGE_EXT = "png";
 
@@ -136,8 +138,10 @@ class Paths
   public static function initSplashConfig(skin:String)
   {
     var path:String = Paths.getSharedPath('images/' + skin + '.txt');
+    #if sys
     if (!FileSystem.exists(path)) path = Paths.modsTxt(skin);
     if (!FileSystem.exists(path)) path = Paths.getSharedPath('images/noteSplashes/noteSplashes' + NoteSplash.getSplashSkinPostfix() + '.txt');
+    #end
 
     var configFile:Array<String> = CoolUtil.coolTextFile(path);
 
@@ -428,7 +432,7 @@ class Paths
   {
     var formattedDifficulty:String = formatToSongPath(difficulty);
     if (difficulty.contains(' ')) difficulty = formattedDifficulty;
-    #if html5
+    #if (html5 || flash)
     return 'songs:assets/songs/${formatToSongPath(song)}/Voices.$SOUND_EXT';
     #else
     if (difficulty != null)
@@ -455,7 +459,7 @@ class Paths
   {
     var formattedDifficulty:String = formatToSongPath(difficulty);
     if (difficulty.contains(' ')) difficulty = formattedDifficulty;
-    #if html5
+    #if (html5 || flash)
     return 'songs:assets/songs/${formatToSongPath(song)}/Inst.$SOUND_EXT';
     #else
     if (difficulty != null)
@@ -507,8 +511,12 @@ class Paths
       if (difficulty.contains(' ')) difficulty = formattedDifficulty;
 
       var eventsKey:String = formatToSongPath(song) + '/events-${difficulty.toLowerCase()}';
+      #if sys
       if (FileSystem.exists(Paths.json(eventsKey))
         || FileSystem.exists(Paths.modsJson(eventsKey))) return (!onlyEventsString ? eventsKey : 'events-${difficulty.toLowerCase()}');
+      #else
+      if (OpenFlAssets.exists(Paths.json(eventsKey))) return (!onlyEventsString ? eventsKey : 'events-${difficulty.toLowerCase()}');
+      #end
     }
     var eventsKey:String = formatToSongPath(song) + '/events';
     return (!onlyEventsString ? eventsKey : 'events');
@@ -969,13 +977,21 @@ class Paths
     if (spriteJson != null)
     {
       changedAtlasJson = true;
+      #if sys
       spriteJson = File.getContent(spriteJson);
+      #else
+      spriteJson = Assets.getText(spriteJson);
+      #end
     }
 
     if (animationJson != null)
     {
       changedAnimJson = true;
+      #if sys
       animationJson = File.getContent(animationJson);
+      #else
+      animationJson = Assets.getText(animationJson);
+      #end
     }
 
     // is folder or image path

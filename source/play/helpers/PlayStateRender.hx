@@ -14,6 +14,7 @@ class PlayStateRender
 {
 	public static function initRender(state:PlayState, renderPath:String = "assets/gameRenders/", ?prefixName:String = null):Void
 	{
+		#if sys
 		#if windows
 		if (!FileSystem.exists('ffmpeg.exe'))
 		{
@@ -55,28 +56,36 @@ class PlayStateRender
 			trace("Error initializing FFmpeg process: " + e);
 			PlayState.process = null;
 		}
+		#else
+		trace('Video rendering is not supported on this platform.');
+		#end
 	}
 
 	public static function pipeFrame(state:PlayState):Void
 	{
+		#if sys
 		if (!state.ffmpegExists || PlayState.process == null)
 			return;
 
 		state.img = lime.app.Application.current.window.readPixels(new lime.math.Rectangle(FlxG.scaleMode.offset.x, FlxG.scaleMode.offset.y, FlxG.scaleMode.gameSize.x, FlxG.scaleMode.gameSize.y));
 		state.bytes = state.img.getPixels(new lime.math.Rectangle(0, 0, state.img.width, state.img.height));
 		PlayState.process.stdin.writeBytes(state.bytes, 0, state.bytes.length);
+		#end
 	}
 
 	public static function stopRender():Void
 	{
+		#if sys
 		if (!ClientPrefs.ffmpegMode || PlayState.process == null)
 			return;
 
 		PlayState.process?.stdin?.close();
 
 		PlayState.process?.close();
+
 		PlayState.process?.kill();
 
 		FlxG.autoPause = ClientPrefs.autoPause;
+		#end
 	}
 }

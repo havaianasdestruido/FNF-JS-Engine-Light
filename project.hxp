@@ -124,6 +124,7 @@ class Project extends HXProject
 	static final CRASH_HANDLER:FeatureFlag = "CRASH_HANDLER";
 	static final TITLE_SCREEN_EASTER_EGG:FeatureFlag = "TITLE_SCREEN_EASTER_EGG";
 	static final CHECK_FOR_UPDATES:FeatureFlag = "CHECK_FOR_UPDATES";
+	static final FLASH_ALLOWED:FeatureFlag = "FLASH_ALLOWED";
 
 	/**
 	 * `-DULTRA_OPTIMIZED` (WIP / EXPERIMENTAL max-speed build flag).
@@ -279,6 +280,8 @@ class Project extends HXProject
 				info('Target Platform: IOS');
 			case Platform.HTML5:
 				info('Target Platform: HTML5');
+			case Platform.FLASH:
+				info('Target Platform: Flash');
 			default:
 				error('Unsupported platform! (got ${target})');
 		}
@@ -298,7 +301,9 @@ class Project extends HXProject
 		}
 
 		// Print whether we are using HXCPP, HashLink, or something else.
-		if (isWeb())
+		if (isFlash())
+			info('Target Language: ActionScript 3 (Flash)');
+		else if (isWeb())
 			info('Target Language: JavaScript (HTML5)');
 		else if (isHashLink())
 			info('Target Language: HashLink');
@@ -381,7 +386,7 @@ class Project extends HXProject
 		// For example, `-DMODS_ALLOWED` or `-DVIDEOS_ALLOWED`
 
 		// Should be true unless explicitly requested.
-		MODS_ALLOWED.apply(this, (isDesktop() || isMobile()) && !isWeb());
+		MODS_ALLOWED.apply(this, (isDesktop() || isMobile()) && !isWeb() && !isFlash());
 
 		// Script modding level. Pass `-DMODDING_LEVEL=0|1|2` to force:
 		//   0 = no Lua/Python scripts, 1 = Lua only, 2 = Lua + Python
@@ -403,19 +408,19 @@ class Project extends HXProject
 		}
 		else
 		{
-			LUA_ALLOWED.apply(this, (isDesktop() || isMobile()) && (!isWeb() || !isHashLink()));
-			PYTHON_ALLOWED.apply(this, (isDesktop() || isMobile()) && (!isWeb() || !isHashLink()));
+			LUA_ALLOWED.apply(this, (isDesktop() || isMobile()) && (!isWeb() || !isHashLink()) && !isFlash());
+			PYTHON_ALLOWED.apply(this, (isDesktop() || isMobile()) && (!isWeb() || !isHashLink()) && !isFlash());
 		}
 
-		VIDEOS_ALLOWED.apply(this, (isDesktop() || isMobile()) && (!isWeb() || !is32Bit()));
+		VIDEOS_ALLOWED.apply(this, (isDesktop() || isMobile()) && (!isWeb() || !is32Bit()) && !isFlash());
 		// Feral GameMode integration (Linux only). Degrades gracefully when
 		// gamemode isn't installed, so it is safe to enable on all Linux builds.
 		GAMEMODE_ALLOWED.apply(this, isDesktop() && isLinux());
 		CRASH_HANDLER.apply(this, true);
 		ACHIEVEMENTS_ALLOWED.apply(this, true);
 		CHECK_FOR_UPDATES.apply(this, true);
-		HSCRIPT_ALLOWED.apply(this, (isDesktop() || isMobile() || isWeb()));
-		DISCORD_ALLOWED.apply(this, (isDesktop() || isMobile()));
+		HSCRIPT_ALLOWED.apply(this, (isDesktop() || isMobile() || isWeb()) && !isFlash());
+		DISCORD_ALLOWED.apply(this, (isDesktop() || isMobile()) && !isFlash());
 		SHADERS_ALLOWED.apply(this, true);
 		FUNNY_ALLOWED.apply(this, true);
 		// TITLE_SCREEN_EASTER_EGG.apply(this, true);
@@ -427,7 +432,9 @@ class Project extends HXProject
 
 		// Should be true except on MacOS.
 		// File drop doesn't work there.
-		FEATURE_FILE_DROP.apply(this, !isMac());
+		FEATURE_FILE_DROP.apply(this, !isMac() && !isFlash());
+
+		FLASH_ALLOWED.apply(this, isFlash());
 	}
 
 	/**
@@ -602,7 +609,8 @@ class Project extends HXProject
 		addHaxelib('grig.audio');
 		addHaxelib('funkin.vis');
 		addHaxelib('flxanimate'); // Texture atlas rendering
-		addHaxelib('hxnativefiledialog');
+		if (!isFlash())
+			addHaxelib('hxnativefiledialog');
 		addHaxelib('tjson');
 
 		if (isDesktop() && DISCORD_ALLOWED.isEnabled(this))
@@ -724,7 +732,7 @@ class Project extends HXProject
 
 	public function isWeb():Bool
 	{
-		return this.platformType == PlatformType.WEB;
+		return this.platformType == PlatformType.WEB || isFlash();
 	}
 
 	public function isMobile():Bool
@@ -775,6 +783,11 @@ class Project extends HXProject
 	public function isIOS():Bool
 	{
 		return this.target == Platform.IOS;
+	}
+
+	public function isFlash():Bool
+	{
+		return this.target == Platform.FLASH;
 	}
 
 	public function isHashLink():Bool

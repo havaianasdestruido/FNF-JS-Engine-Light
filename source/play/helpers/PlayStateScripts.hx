@@ -100,7 +100,9 @@ class PlayStateScripts
 		});
 		state.luaDebugGroup.add(newText);
 
+		#if sys
 		Sys.println(text);
+		#end
 		#end
 	}
 

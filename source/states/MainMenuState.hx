@@ -11,7 +11,9 @@ import backend.Paths;
 import editors.MasterEditorMenu;
 import flixel.effects.FlxFlicker;
 import flixel.input.keyboard.FlxKey;
+#if !flash
 import lime.app.Application;
+#end
 
 import backend.Controls;
 import objects.MenuItem;
@@ -180,7 +182,11 @@ class MainMenuState extends MusicBeatState
     PsychVersion.scrollFactor.set();
     PsychVersion.setFormat("VCR OSD Mono", 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
     add(PsychVersion);
+    #if !flash
     var FNFVersion:FlxText = new FlxText(12, FlxG.height - 24, 0, "Friday Night Funkin' v" + Application.current.meta.get('version'), 12);
+    #else
+    var FNFVersion:FlxText = new FlxText(12, FlxG.height - 24, 0, "Friday Night Funkin'", 12);
+    #end
     FNFVersion.scrollFactor.set();
     FNFVersion.setFormat("VCR OSD Mono", 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
     add(FNFVersion);

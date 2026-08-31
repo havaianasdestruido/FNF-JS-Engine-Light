@@ -552,14 +552,18 @@ class PlayStateEvents
 				FlxG.sound.music.pause();
 				PlayStatePlayback.pauseVocals(state);
 
+				#if !flash
 				lime.app.Application.current.window.alert(message, title);
+				#end
 				FlxG.sound.music.resume();
 				PlayStatePlayback.unpauseVocals(state);
 			case 'Popup (No Pause)':
 				final title:String = (value1);
 				final message:String = (value2);
 
+				#if !flash
 				lime.app.Application.current.window.alert(message, title);
+				#end
 
 			case 'Change Scroll Speed':
 				if (state.songSpeedType == "constant")

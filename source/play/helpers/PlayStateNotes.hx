@@ -244,7 +244,12 @@ class PlayStateNotes
 			{
 				state.hitsound.play(true);
 				state.hitsound.pitch = state.playbackRate;
-				if (FileSystem.exists('assets/shared/images/' + state.hitsoundImageToLoad + '.png') || FileSystem.exists(Paths.modFolders('images/' + state.hitsoundImageToLoad + '.png')) && state.hitImagesFrame < 4)
+				#if sys
+				var hitsoundImageExists = FileSystem.exists('assets/shared/images/' + state.hitsoundImageToLoad + '.png') || FileSystem.exists(Paths.modFolders('images/' + state.hitsoundImageToLoad + '.png'));
+				#else
+				var hitsoundImageExists = OpenFlAssets.exists('assets/shared/images/' + state.hitsoundImageToLoad + '.png') || OpenFlAssets.exists(Paths.modFolders('images/' + state.hitsoundImageToLoad + '.png'));
+				#end
+				if (hitsoundImageExists && state.hitImagesFrame < 4)
 				{
 					state.hitImagesFrame++;
 					state.hitsoundImage = new FlxSprite().loadGraphic(Paths.image(state.hitsoundImageToLoad));

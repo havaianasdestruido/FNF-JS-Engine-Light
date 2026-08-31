@@ -97,7 +97,9 @@ class CrashHandler
 	public static function init():Void
 	{
 		Lib.current.loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, onUncaughtError);
+		#if cpp
 		untyped __global__.__hxcpp_set_critical_error_handler(onError);
+		#end
 	}
 
 	private static function onUncaughtError(e:UncaughtErrorEvent):Void
@@ -125,12 +127,14 @@ class CrashHandler
 			final stackLabelArr:Array<String> = [];
 			var stackLabel:String = "";
 			// legacy code below for the messages
+			#if sys
 			var path:String;
 			var dateNow:String = Date.now().toString();
 			dateNow = dateNow.replace(" ", "_");
 			dateNow = dateNow.replace(":", "'");
 
 			path = "crash/FNF-Phoenix-Engine_" + dateNow + ".log";
+			#end
 
 			for (stackItem in stack)
 			{
@@ -168,6 +172,7 @@ class CrashHandler
 
 			errorMessage += 'Uncaught Error: $m\n\n$stackLabel';
 
+			#if sys
 			try
 			{
 				if (!FileSystem.exists("crash/"))
@@ -179,6 +184,7 @@ class CrashHandler
 
 			Sys.println(errorMessage);
 			Sys.println("Crash dump saved in " + Path.normalize(path));
+			#end
 		}
 		catch (e:Dynamic)
 			trace(e);
@@ -191,6 +197,7 @@ class CrashHandler
 			errorMessage += "\n\nPlease report this error to the GitHub page: https://github.com/JordanSantiagoYT/FNF-JS-Engine"
 				+ "\nThe engine has saved a crash log inside the crash folder, If you're making a GitHub issue you might want to send that!";
 
+			#if !flash
 			CoolUtil.showPopUp(errorMessage,
 				"Error! JS Engine v"
 				+ MainMenuState.psychEngineJSVersion
@@ -199,6 +206,7 @@ class CrashHandler
 				+ ")");
 
 			lime.system.System.exit(1);
+			#end
 		}
 		else
 			FlxG.switchState(Crash.new);

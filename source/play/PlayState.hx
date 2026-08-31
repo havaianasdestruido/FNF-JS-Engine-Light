@@ -490,12 +490,16 @@ class PlayState extends MusicBeatState
 
 		if (noteLimit == 0) noteLimit = 2147483647;
 
+		#if sys
 		if (FileSystem.exists(Paths.getSharedPath('sounds/hitsounds/' + ClientPrefs.hitsoundType.toLowerCase() + '.txt')))
 			hitsoundImageToLoad = File.getContent(Paths.getSharedPath('sounds/hitsounds/' + ClientPrefs.hitsoundType.toLowerCase() + '.txt'));
 		else if (FileSystem.exists(Paths.modFolders('sounds/hitsounds/' + ClientPrefs.hitsoundType.toLowerCase() + '.txt')))
 			hitsoundImageToLoad = File.getContent(Paths.modFolders('sounds/hitsounds/' + ClientPrefs.hitsoundType.toLowerCase() + '.txt'));
+		#end
 
+		#if cpp
 		inline cpp.vm.Gc.enable(ClientPrefs.enableGC || ffmpegMode && !ClientPrefs.noRenderGC); //lagspike prevention
+		#end
 		inline Paths.clearStoredMemory();
 
 		#if sys
@@ -2161,7 +2165,7 @@ class PlayState extends MusicBeatState
 					var bg = new FlxSprite(-FlxG.width, -FlxG.height).makeGraphic(FlxG.width * 3, FlxG.height * 3, FlxColor.BLACK);
 					add(bg);
 					bg.cameras = [camHUD];
-					startVideo(SONG.event7Value, function() Sys.exit(0));
+					startVideo(SONG.event7Value, function() #if sys Sys.exit(0) #end);
 				}
 			else if (!ClientPrefs.antiCheatEnable)
 				{

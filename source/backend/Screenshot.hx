@@ -1,5 +1,6 @@
 package backend;
 
+#if sys
 import haxe.io.Bytes;
 import lime.app.Application;
 import lime.graphics.Image;
@@ -37,10 +38,12 @@ class Screenshot {
 	}
 
 	private function getScreen() {
+		#if sys
 		if(window == null)
 			window = Application.current.window;
 
 		image = window.readPixels();
+		#end
 	}
 
 	private function fixFilename(name:String, lossless:Bool = false):String
@@ -92,6 +95,17 @@ class Screenshot {
 		#else
 		trace('Cannot save on non-Sys platforms!');
 		return false;
-		#end
+	#end
+}
+}
+#else
+class Screenshot {
+	public static var slash:String = "/";
+	public function new(x:Int = -1, y:Int = -1, w:Int = -1, h:Int = -1) {}
+	public function setRegion(x:Int, y:Int, w:Int, h:Int) {}
+	public function save(path:String = "", name:String = ''):Bool {
+		trace('Cannot save on non-Sys platforms!');
+		return false;
 	}
 }
+#end

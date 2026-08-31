@@ -103,10 +103,17 @@ class ChartingSaveLoad
     // shitty null fix, i fucking hate it when this happens
     // make it look sexier if possible
     var songName:String = Paths.formatToSongPath(state._song.song);
+    #if sys
     var jsonExists = sys.FileSystem.exists(Paths.json(songName + '/' + songName))
       || sys.FileSystem.exists(Paths.modsJson(songName + '/' + songName));
     var diffJsonExists = sys.FileSystem.exists(Paths.json(songName + '/' + songName + '-$diff'))
       || sys.FileSystem.exists(Paths.modsJson(songName + '/' + songName + '-$diff'));
+    #else
+    var jsonExists = OpenFlAssets.exists(Paths.json(songName + '/' + songName))
+      || OpenFlAssets.exists(Paths.modsJson(songName + '/' + songName));
+    var diffJsonExists = OpenFlAssets.exists(Paths.json(songName + '/' + songName + '-$diff'))
+      || OpenFlAssets.exists(Paths.modsJson(songName + '/' + songName + '-$diff'));
+    #end
     if (jsonExists || diffJsonExists)
     {
       if (diff != CoolUtil.defaultDifficulty.toLowerCase())
@@ -142,10 +149,12 @@ class ChartingSaveLoad
   public static function saveLevel(state:ChartingState, ?compressed:Bool = false, ?isAuto:Bool = false)
   {
     Paths.gc(true);
+    #if cpp
     if (CoolUtil.getNoteAmount(state._song) > 1000000)
     {
       cpp.vm.Gc.enable(false);
     }
+    #end
     if (state._song.events != null && state._song.events.length > 1) state._song.events.sort(sortByTime);
 
     final json =
@@ -171,6 +180,7 @@ class ChartingSaveLoad
         state._file.save(data.trim(), gamingName + ".json");
       } else
       {
+        #if sys
         // create backups folder if it doesn't exist yet
         if (!FileSystem.exists('backups/'))
         {
@@ -199,10 +209,13 @@ class ChartingSaveLoad
         dateNow = dateNow.replace(":", "'");
 
         File.saveContent('backups/${gamingName}_$dateNow.json', data.trim());
+        #end
       }
     }
 
+    #if cpp
     cpp.vm.Gc.enable(true);
+    #end
     ChartingState.unsavedChanges = false;
     if (state.autoSaveTimer != null) state.autoSaveTimer.reset(state.autoSaveLength);
   }

@@ -7,7 +7,9 @@ import backend.Paths;
 import flixel.addons.display.FlxBackdrop;
 import flixel.effects.FlxFlicker;
 import flixel.util.FlxAxes;
+#if !flash
 import lime.app.Application;
+#end
 import openfl.display.BlendMode;
 
 import backend.Controls;

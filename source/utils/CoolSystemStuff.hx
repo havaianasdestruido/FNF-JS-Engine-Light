@@ -6,8 +6,7 @@ package utils;
     Shoutout to him :D
 */
 
-import haxe.io.Bytes;
-
+#if sys
 class CoolSystemStuff
 {
 	public static function getUsername():String
@@ -50,3 +49,12 @@ class CoolSystemStuff
 		return programPath[programPath.length - 1];
 	}
 }
+#else
+class CoolSystemStuff
+{
+	public static function getUsername():String { return "unknown"; }
+	public static function getUserPath():String { return ""; }
+	public static function getTempPath():String { return ""; }
+	public static function executableFileName():String { return ""; }
+}
+#end

@@ -35,7 +35,11 @@ class EditorPlayStateHelpers
 {
 	public static function generateSong(state:EditorPlayState, ?startingPoint:Float = 0):Void
 	{
+		#if sys
 	   	final startTime = Sys.time();
+		#else
+		final startTime = haxe.Timer.stamp();
+		#end
 
 		Conductor.changeBPM(PlayState.SONG.bpm);
 
@@ -162,7 +166,11 @@ class EditorPlayStateHelpers
 
 		state.generatedMusic = true;
 
+		#if sys
 		var endTime = Sys.time();
+		#else
+		var endTime = haxe.Timer.stamp();
+		#end
 
 		openfl.system.System.gc();
 

@@ -107,7 +107,9 @@ class WindowColorMode
 	 */
 	public static function redrawWindowHeader()
     {
+		#if !flash
 		flixel.FlxG.stage.window.borderless = true;
 		flixel.FlxG.stage.window.borderless = false;
+		#end
     }
 }

@@ -27,7 +27,9 @@ import openfl.utils.AssetType;
 import states.FreeplayState;
 import states.FreeplayState.SongMetadata;
 import states.StoryMenuState;
+#if sys
 import sys.io.File;
+#end
 
 // REFACTOR: imports for relocated root classes
 import data.Section;

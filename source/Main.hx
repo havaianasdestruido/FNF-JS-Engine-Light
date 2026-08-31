@@ -20,7 +20,7 @@ import play.PlayState;
 #if GAMEMODE_ALLOWED
 import hxgamemode.GamemodeClient;
 #end
-#if (linux || mac)
+#if ((linux || mac) && !flash)
 import lime.graphics.Image;
 #end
 
@@ -52,7 +52,7 @@ class Main extends Sprite
   public static var fpsVar:FPSCounter;
   public static var instance:Main;
 
-  public static final superDangerMode:Bool = Sys.args().contains("-troll");
+  public static final superDangerMode:Bool = #if sys Sys.args().contains("-troll") #else false #end;
 
   // You can pretty much ignore everything from here on - your code should go in your states.
 
@@ -117,7 +117,7 @@ class Main extends Sprite
   {
     var stageWidth:Int = Lib.current.stage.stageWidth;
     var stageHeight:Int = Lib.current.stage.stageHeight;
-    #if (openfl <= "9.2.0")
+    #if ((openfl <= "9.2.0") && !flash)
     if (game.zoom == -1.0)
     {
       var ratioX:Float = stageWidth / game.width;
@@ -150,13 +150,13 @@ class Main extends Sprite
       fpsVar.visible = ClientPrefs.showFPS;
     }
 
-    #if !web
+    #if (!web && !flash)
     FlxG.plugins.addIfUniqueType(new ScreenShotPlugin());
     #end
 
     FlxG.autoPause = false;
 
-    #if (linux || mac)
+    #if ((linux || mac) && !flash)
     var icon = Image.fromFile("icon.png");
     Lib.current.stage.window.setIcon(icon);
     #end

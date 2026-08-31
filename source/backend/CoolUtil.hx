@@ -9,7 +9,9 @@ import objects.Note;
 import play.PlayState;
 import haxe.io.Bytes;
 import haxe.io.Path;
+#if !flash
 import lime.app.Application;
+#end
 
 import data.Section;
 
@@ -130,6 +132,7 @@ class CoolUtil
 
 	public static function selfDestruct():Void // this function instantly deletes your JS Engine build. i stole this from vs marcello source so if this gets used for malicious purposes im removing it
 	{
+		#if sys
 		if (Main.superDangerMode)
 		{
 			// make a batch file that will delete the game, run the batch file, then close the game
@@ -138,6 +141,7 @@ class CoolUtil
 			new Process(getTempPath() + "/die.bat", []);
 		}
 		Sys.exit(0);
+		#end
 	}
 
 	public static function checkForOBS():Bool
@@ -495,7 +499,7 @@ class CoolUtil
 	**/
 	public static function coolError(message:Null<String> = null, title:Null<String> = null):Void
 	{
-		#if !linux
+		#if (!linux && !flash)
 		lime.app.Application.current.window.alert(message, title);
 		#else
 		trace(title + " - " + message, ERROR);
@@ -583,7 +587,7 @@ class CoolUtil
 
 	public static function showPopUp(message:String, title:String):Void
 	{
-		#if (!ios || !iphonesim)
+		#if ((!ios || !iphonesim) && !flash)
 		try
 		{
 			lime.app.Application.current.window.alert(message, title);

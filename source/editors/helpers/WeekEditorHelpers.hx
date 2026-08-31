@@ -18,7 +18,9 @@ import openfl.events.Event;
 import openfl.events.IOErrorEvent;
 import openfl.net.FileFilter;
 import openfl.net.FileReference;
+#if sys
 import sys.io.File;
+#end
 
 // REFACTOR: extracted from editors.WeekEditorState (behavior-preserving)
 @:access(editors.WeekEditorState)

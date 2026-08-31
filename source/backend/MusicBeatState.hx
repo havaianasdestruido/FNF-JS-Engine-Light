@@ -10,7 +10,9 @@ import mobile.flixel.FlxVirtualPad;
 import flixel.input.actions.FlxActionInput;
 import flixel.util.FlxDestroyUtil;
 import flixel.addons.ui.FlxUIState;
+#if !flash
 import lime.app.Application;
+#end
 
 import data.Section;
 
@@ -133,12 +135,16 @@ class MusicBeatState extends FlxUIState
 	// better then updating it all the time which can cause memory leaks
 	static function set_windowNameSuffix(value:String){
 		windowNameSuffix = value;
+		#if !flash
 		Application.current.window.title = windowNamePrefix + windowNameSuffix + windowNameSuffix2;
+		#end
 		return value;
 	}
 	static function set_windowNameSuffix2(value:String){
 		windowNameSuffix2 = value;
+		#if !flash
 		Application.current.window.title = windowNamePrefix + windowNameSuffix + windowNameSuffix2;
+		#end
 		return value;
 	}
 	public var variables:Map<String, Dynamic> = new Map<String, Dynamic>();
@@ -165,7 +171,9 @@ class MusicBeatState extends FlxUIState
 		try {windowNamePrefix = Assets.getText(Paths.txt("windowTitleBase", "preload"));}
 		catch(e) {}
 
+		#if !flash
 		Application.current.window.title = windowNamePrefix + windowNameSuffix + windowNameSuffix2;
+		#end
 	}
 
 	public function initPsychCamera():PsychCamera

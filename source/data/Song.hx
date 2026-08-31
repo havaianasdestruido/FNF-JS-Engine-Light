@@ -141,7 +141,11 @@ class Song
 		#if MODS_ALLOWED
 			if (!CoolUtil.defaultSongs.contains(formattedSong) && !CoolUtil.defaultSongsFormatted.contains(formattedSong))
 				jsonToFind = Paths.modsJson(formattedSong + '/' + formattedSong + '-' + formDiff); #end
+		#if sys
 		if(FileSystem.exists(jsonToFind)) return true;
+		#else
+		if(OpenFlAssets.exists(jsonToFind)) return true;
+		#end
 
 		return false;
 	}

@@ -322,7 +322,9 @@ class PlayStateChartLoader
 			PlayState.sectionsLoaded += 1;
 			state.notesLoadedRN += section.sectionNotes.length;
 			#if debug
+			#if sys
 			Sys.print('\rSection ${PlayState.sectionsLoaded} loaded! (' + state.notesLoadedRN + ' notes)');
+			#end
 			#end
 		}
 
@@ -352,7 +354,9 @@ class PlayStateChartLoader
 		final elapsedTime = endTime - startTime;
 
 		#if debug
+		#if sys
 		Sys.print('\nDone! \n\nTime taken: ' + CoolUtil.formatTime(elapsedTime * 1000) + "\nAverage NPS while loading: " + Math.floor(state.notesLoadedRN / elapsedTime));
+		#end
 		#end
 		state.notesLoadedRN = 0;
 	}

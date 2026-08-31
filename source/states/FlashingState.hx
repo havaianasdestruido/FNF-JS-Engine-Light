@@ -4,7 +4,9 @@ import backend.ClientPrefs;
 import backend.MusicBeatState;
 import backend.Paths;
 import flixel.effects.FlxFlicker;
+#if !flash
 import lime.app.Application;
+#end
 
 import backend.Controls;
 

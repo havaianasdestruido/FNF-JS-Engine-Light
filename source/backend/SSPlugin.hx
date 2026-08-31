@@ -115,11 +115,13 @@ class SSPlugin extends flixel.FlxBasic
 		shotDisplayBitmap.scaleY /= 5;
 		screenshotSprite.addChild(shotDisplayBitmap);
 		daContainer.addChild(flashSprite);
+		#if sys
 		@:privateAccess openfl.Lib.application.window.onResize.add((w, h) ->
 		{
 			flashBitmap.bitmapData = new BitmapData(w, h, true, 0xFFFFFFFF);
 			outlineBitmap.bitmapData = new BitmapData(Std.int(w / 5) + 10, Std.int(h / 5) + 10, true, 0xffffffff);
 		});
+		#end
 	}
 
 	var buggedKillTime:Float = 1.5;
@@ -152,7 +154,11 @@ class SSPlugin extends flixel.FlxBasic
 
 		new FlxTimer().start(0.1, _ ->
 		{
+			#if sys
 			final shot:Bitmap = new Bitmap(BitmapData.fromImage(FlxG.stage.window.readPixels()));
+			#else
+			final shot:Bitmap = new Bitmap(new BitmapData(FlxG.width, FlxG.height, true, 0xFFFFFFFF));
+			#end
 			final png:ByteArray = shot.bitmapData.encode(shot.bitmapData.rect, saveFormat.returnEncoder());
 			png.position = 0;
 			#if sys
