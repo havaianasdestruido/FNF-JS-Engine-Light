@@ -6,7 +6,9 @@ import backend.CoolUtil;
 import backend.DiscordClient;
 import backend.Highscore;
 import backend.MusicBeatState;
+#if MODS_ALLOWED
 import backend.Mods;
+#end
 import backend.WeekData;
 
 import data.Song;

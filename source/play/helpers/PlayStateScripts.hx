@@ -4,6 +4,10 @@ package play.helpers;
 import shaders.ErrorHandledShader.ErrorHandledRuntimeShader;
 
 import backend.ClientPrefs;
+import backend.Paths;
+#if MODS_ALLOWED
+import backend.Mods;
+#end
 
 import play.PlayState;
 

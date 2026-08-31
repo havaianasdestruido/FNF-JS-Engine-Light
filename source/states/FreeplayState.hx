@@ -448,7 +448,11 @@ class FreeplayState extends MusicBeatState
 
 					CoolUtil.currentDifficulty = CoolUtil.difficultyString();
 
+					#if sys
 					if(sys.FileSystem.exists(Paths.modsJson(songLowercase + '/' + poop)) || sys.FileSystem.exists(Paths.json(songLowercase + '/' + poop)) || OpenFlAssets.exists(Paths.modsJson(songLowercase + '/' + poop)) || OpenFlAssets.exists(Paths.json(songLowercase + '/' + poop))) {
+					#else
+					if(OpenFlAssets.exists(Paths.json(songLowercase + '/' + poop))) {
+					#end
 					PlayState.SONG = Song.loadFromJson(poop, songLowercase);
 					PlayState.storyDifficulty = curDifficulty;
 
@@ -472,7 +476,7 @@ class FreeplayState extends MusicBeatState
 
 					destroyFreeplayVocals();
 
-							} else {
+							#if sys
 							if(sys.FileSystem.exists(Paths.inst(songLowercase, CoolUtil.difficulties[curDifficulty].toLowerCase())) && !sys.FileSystem.exists(Paths.json(poop + '/' + poop))) { //the json doesn't exist, but the song files do, or you put a typo in the name
 									CoolUtil.coolError("The JSON's name does not match with  " + poop + "!\nTry making them match.", "JS Engine Anti-Crash Tool");
 							} else if(sys.FileSystem.exists(Paths.json(poop + '/' + poop)) && !sys.FileSystem.exists(Paths.inst(songLowercase, CoolUtil.difficulties[curDifficulty].toLowerCase())))  {//the json exists, but the song files don't
@@ -480,6 +484,7 @@ class FreeplayState extends MusicBeatState
 						} else if(!sys.FileSystem.exists(Paths.json(poop + '/' + poop)) && !sys.FileSystem.exists(Paths.inst(songLowercase, CoolUtil.difficulties[curDifficulty].toLowerCase()))) { //neither the json nor the song files actually exist
 							CoolUtil.coolError("It appears that " + poop + " doesn't actually have a JSON, nor does it actually have voices/instrumental files!\nMaybe try fixing its name in weeks/" + WeekData.getWeekFileName() + "?", "JS Engine Anti-Crash Tool");
 						}
+							#end
 					}
 				}
 				else if (controls.RESET && !player.playingMusic) {

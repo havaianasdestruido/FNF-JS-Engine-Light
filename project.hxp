@@ -422,7 +422,7 @@ class Project extends HXProject
 		HSCRIPT_ALLOWED.apply(this, (isDesktop() || isMobile() || isWeb()) && !isFlash());
 		DISCORD_ALLOWED.apply(this, (isDesktop() || isMobile()) && !isFlash());
 		SHADERS_ALLOWED.apply(this, true);
-		FUNNY_ALLOWED.apply(this, true);
+		FUNNY_ALLOWED.apply(this, isDesktop() && !isFlash());
 		// TITLE_SCREEN_EASTER_EGG.apply(this, true);
 
 		// Should be true only on web builds.
@@ -609,7 +609,7 @@ class Project extends HXProject
 		addHaxelib('grig.audio');
 		addHaxelib('funkin.vis');
 		addHaxelib('flxanimate'); // Texture atlas rendering
-		if (!isFlash())
+		if (!isFlash() && !isWeb())
 			addHaxelib('hxnativefiledialog');
 		addHaxelib('tjson');
 

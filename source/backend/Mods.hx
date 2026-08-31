@@ -11,7 +11,11 @@ typedef ModsList = {
 
 class Mods
 {
+	#if MODS_ALLOWED
 	static public var currentModDirectory:String = '';
+	#else
+	static public var currentModDirectory:String = '';
+	#end
 	public static var ignoreModFolders:Array<String> = [
 		'characters',
 		'custom_events',

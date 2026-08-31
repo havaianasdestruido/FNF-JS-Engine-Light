@@ -163,12 +163,19 @@ class CoolUtil
 		#else
 		return false;
 		#end
+	}
 
 	/**
 	 * Can be used to check if your using a specific version of an OS (or if your using a certain OS).
 	 */
-	public static function hasVersion(vers:String)
+	public static function hasVersion(vers:String):Bool
+	{
+		#if !flash
 		return lime.system.System.platformLabel.toLowerCase().indexOf(vers.toLowerCase()) != -1;
+		#else
+		return false;
+		#end
+	}
 
 	public static function getSongDuration(musicTime:Float, musicLength:Float, precision:Int = 0):String
 	{

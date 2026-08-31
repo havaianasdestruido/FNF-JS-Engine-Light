@@ -9,7 +9,9 @@ import backend.Conductor.Rating;
 import backend.CoolUtil;
 import backend.DiscordClient;
 import backend.Highscore;
+#if MODS_ALLOWED
 import backend.Mods;
+#end
 import backend.MusicBeatState;
 import backend.WeekData;
 
@@ -2867,7 +2869,9 @@ class PlayState extends MusicBeatState
 		}
 		FlxG.animationTimeScale = 1;
 		FlxG.sound.music.pitch = 1;
+		#if cpp
 		cpp.vm.Gc.enable(true);
+		#end
 		KillNotes();
 		unspawnNotes = [];
 		eventNotes = [];

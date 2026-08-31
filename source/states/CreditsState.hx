@@ -108,11 +108,13 @@ class CreditsState extends MusicBeatState
 			optionText.snapToPosition();
 			grpOptions.add(optionText);
 
-			if(isSelectable) {
-				if(creditsStuff[i][5] != null)
-				{
-					Mods.currentModDirectory = creditsStuff[i][5];
-				}
+		if(isSelectable) {
+			if(creditsStuff[i][5] != null)
+			{
+				#if MODS_ALLOWED
+				Mods.currentModDirectory = creditsStuff[i][5];
+				#end
+			}
 
 				var icon:AttachedSprite = new AttachedSprite('credits/' + creditsStuff[i][1]);
 				icon.xAdd = optionText.width + 10;
@@ -121,7 +123,9 @@ class CreditsState extends MusicBeatState
 				// using a FlxGroup is too much fuss!
 				iconArray.push(icon);
 				add(icon);
+				#if MODS_ALLOWED
 				Mods.currentModDirectory = '';
+				#end
 
 				if(curSelected == -1) curSelected = i;
 			}

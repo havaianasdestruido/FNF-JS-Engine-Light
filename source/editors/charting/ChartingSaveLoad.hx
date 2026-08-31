@@ -9,12 +9,12 @@ import editors.ChartingState;
 import flixel.util.FlxSort;
 import lime.ui.FileDialog;
 import lime.ui.FileDialogType;
+import lime.utils.Assets;
 import objects.Prompt;
 import openfl.events.Event;
 import openfl.events.IOErrorEvent;
 import openfl.net.FileReference;
 import play.PlayState;
-
 // REFACTOR: imports for relocated root classes
 import objects.Character;
 
@@ -105,14 +105,12 @@ class ChartingSaveLoad
     var songName:String = Paths.formatToSongPath(state._song.song);
     #if sys
     var jsonExists = sys.FileSystem.exists(Paths.json(songName + '/' + songName))
-      || sys.FileSystem.exists(Paths.modsJson(songName + '/' + songName));
+      || (MODS_ALLOWED && sys.FileSystem.exists(Paths.modsJson(songName + '/' + songName)));
     var diffJsonExists = sys.FileSystem.exists(Paths.json(songName + '/' + songName + '-$diff'))
-      || sys.FileSystem.exists(Paths.modsJson(songName + '/' + songName + '-$diff'));
+      || (MODS_ALLOWED && sys.FileSystem.exists(Paths.modsJson(songName + '/' + songName + '-$diff')));
     #else
-    var jsonExists = OpenFlAssets.exists(Paths.json(songName + '/' + songName))
-      || OpenFlAssets.exists(Paths.modsJson(songName + '/' + songName));
-    var diffJsonExists = OpenFlAssets.exists(Paths.json(songName + '/' + songName + '-$diff'))
-      || OpenFlAssets.exists(Paths.modsJson(songName + '/' + songName + '-$diff'));
+    var jsonExists = Assets.exists(Paths.json(songName + '/' + songName));
+    var diffJsonExists = Assets.exists(Paths.json(songName + '/' + songName + '-$diff'));
     #end
     if (jsonExists || diffJsonExists)
     {

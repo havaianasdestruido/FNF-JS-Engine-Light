@@ -2,7 +2,9 @@ package editors.helpers;
 
 // REFACTOR: imports for types used by the extracted helpers
 import backend.CoolUtil;
+#if MODS_ALLOWED
 import backend.Mods;
+#end
 import backend.Paths;
 import editors.CharacterEditorState;
 import flixel.FlxG;

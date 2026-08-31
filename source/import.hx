@@ -23,6 +23,8 @@ import flxanimate.PsychFlxAnimate as FlxAnimate;
 
 #if MODS_ALLOWED
 import backend.Mods;
+#else
+import backend.ModsStub;
 #end
 
 //so that it doesn't bring up a "Type not found: Countdown"
