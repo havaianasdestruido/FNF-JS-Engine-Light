@@ -3,20 +3,73 @@ name: Build
 on:
   push:
     branches: [main]
+
   pull_request:
     branches: [main]
+
   workflow_call:
     inputs:
       buildFlags:
         required: false
         type: string
+        default: ""
+
+      buildWindows:
+        description: "Build Windows"
+        required: false
+        type: boolean
+        default: true
+
+      buildAndroid:
+        description: "Build Android"
+        required: false
+        type: boolean
+        default: true
+
+      buildLinux:
+        description: "Build Linux"
+        required: false
+        type: boolean
+        default: false
+
+      buildMacOS:
+        description: "Build macOS"
+        required: false
+        type: boolean
+        default: false
+
       buildAllTargets:
         description: "Build all targets"
         required: false
         type: boolean
         default: false
+
   workflow_dispatch:
     inputs:
+      buildWindows:
+        description: "Build Windows"
+        required: false
+        type: boolean
+        default: true
+
+      buildAndroid:
+        description: "Build Android"
+        required: false
+        type: boolean
+        default: true
+
+      buildLinux:
+        description: "Build Linux"
+        required: false
+        type: boolean
+        default: false
+
+      buildMacOS:
+        description: "Build macOS"
+        required: false
+        type: boolean
+        default: false
+
       buildAllTargets:
         description: "Build all targets"
         required: false
@@ -27,33 +80,27 @@ on:
 # subsequent runs instead of downloading and compiling dependencies every time.
 env:
   HAXELIB_PATH: ${{ github.workspace }}/.haxelib
+
   # Must be named HXCPP_COMPILE_CACHE - that's the variable hxcpp itself reads
-  # to enable its object cache. Renaming this back to anything else silently
-  # disables caching (no error, it just never gets used).
+  # to enable its object cache.
   HXCPP_COMPILE_CACHE: ${{ github.workspace }}/.hxcpp_cache
-  # -D HXCPP_OPTIMIZE_LINK turns on LTO / whole-program optimization
-  # (-flto on mac, /GL+LTCG on MSVC, respected on Linux too). This is the
-  # actual cross-platform performance knob hxcpp exposes; there's no plain
-  # -O3 define for native gcc/clang/MSVC builds (only the mingw toolchain has
-  # that shortcut, which isn't what's used here). Trade-off: link times go up.
+
+  # Cross-platform hxcpp performance optimization.
   HXCPP_PERF_FLAGS: "-D HXCPP_OPTIMIZE_LINK"
 
 jobs:
   build:
     name: ${{ matrix.name }}
     runs-on: ${{ matrix.os }}
+
     strategy:
       fail-fast: false
+
       matrix:
         include:
-          - name: Linux
-            os: ubuntu-latest
-            target: linux
-            target_dir: linux
-            cache_name: linux
-            artifact: linuxBuild
-            artifact_path: build/release/linux/bin
-            setup: unix
+          # =========================
+          # Windows
+          # =========================
           - name: Windows
             os: windows-latest
             target: windows
@@ -62,6 +109,34 @@ jobs:
             artifact: windowsBuild
             artifact_path: build/release/windows/bin
             setup: windows
+
+          # =========================
+          # Android
+          # =========================
+          - name: Android
+            os: ubuntu-24.04
+            target: android
+            target_dir: android
+            cache_name: android
+            artifact: androidBuild
+            artifact_path: build/release/android/bin/app/build/outputs/apk/release
+            setup: android
+
+          # =========================
+          # Linux
+          # =========================
+          - name: Linux
+            os: ubuntu-latest
+            target: linux
+            target_dir: linux
+            cache_name: linux
+            artifact: linuxBuild
+            artifact_path: build/release/linux/bin
+            setup: unix
+
+          # =========================
+          # macOS Intel
+          # =========================
           - name: macOS (Intel)
             os: macos-15
             target: mac
@@ -71,6 +146,10 @@ jobs:
             artifact: macBuild-intel
             artifact_path: build/release/macos/bin
             setup: unix
+
+          # =========================
+          # macOS ARM
+          # =========================
           - name: macOS (ARM)
             os: macos-15
             target: mac
@@ -82,82 +161,220 @@ jobs:
             setup: unix
 
     steps:
-      - uses: actions/checkout@v4
+      # ==========================================
+      # Checkout
+      # ==========================================
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      # Skip matrix entry early when not requested. Job-level `if` cannot use `matrix`
-      # because `matrix` is not available at job evaluation time; using a step-level
-      # `if` is valid because `matrix` is available when steps run.
-      - name: Skip matrix entry if not requested
-        if: ${{ matrix.target != 'windows' && inputs.buildAllTargets != true && inputs.buildAllTargets != 'true' }}
+      # ==========================================
+      # Determine whether this target is enabled
+      # ==========================================
+      - name: Check target selection
+        id: target-selection
+        shell: bash
         run: |
-          echo "Skipping build for ${{ matrix.name }} (target=${{ matrix.target }}) because buildAllTargets was not requested"
-          exit 0
+          BUILD_ALL="${{ inputs.buildAllTargets }}"
+          BUILD_WINDOWS="${{ inputs.buildWindows }}"
+          BUILD_ANDROID="${{ inputs.buildAndroid }}"
+          BUILD_LINUX="${{ inputs.buildLinux }}"
+          BUILD_MACOS="${{ inputs.buildMacOS }}"
 
+          # Push / pull_request events don't provide workflow_dispatch inputs.
+          # For those events, default to Windows + Android.
+          if [ "${{ github.event_name }}" = "push" ] || [ "${{ github.event_name }}" = "pull_request" ]; then
+            BUILD_WINDOWS="true"
+            BUILD_ANDROID="true"
+            BUILD_LINUX="false"
+            BUILD_MACOS="false"
+          fi
+
+          if [ "$BUILD_ALL" = "true" ]; then
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+            echo "Build all targets enabled."
+            exit 0
+          fi
+
+          case "${{ matrix.target }}" in
+            windows)
+              ENABLED="$BUILD_WINDOWS"
+              ;;
+            android)
+              ENABLED="$BUILD_ANDROID"
+              ;;
+            linux)
+              ENABLED="$BUILD_LINUX"
+              ;;
+            mac)
+              ENABLED="$BUILD_MACOS"
+              ;;
+            *)
+              ENABLED="false"
+              ;;
+          esac
+
+          echo "enabled=$ENABLED" >> "$GITHUB_OUTPUT"
+
+          if [ "$ENABLED" = "true" ]; then
+            echo "Target ${{ matrix.name }} is enabled."
+          else
+            echo "Target ${{ matrix.name }} is disabled."
+          fi
+
+      # ==========================================
+      # Haxe
+      # ==========================================
       - uses: krdlab/setup-haxe@master
+        if: steps.target-selection.outputs.enabled == 'true'
         with:
           haxe-version: 4.3.7
 
-      # The old cache targeted build/release, but Lime writes to export/release.
-      # A dependency-only key makes the expensive haxelib and hxcpp setup reusable.
-      # Restore-only here; the matching save step (below, after compile) runs
-      # with if: always() so a later build failure doesn't cost us this cache.
+      # ==========================================
+      # Java 17 - Android
+      # ==========================================
+      - name: Setup Java 17
+        if: steps.target-selection.outputs.enabled == 'true' && matrix.target == 'android'
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      # ==========================================
+      # Android SDK / NDK
+      # ==========================================
+      - name: Setup Android SDK & NDK
+        if: steps.target-selection.outputs.enabled == 'true' && matrix.target == 'android'
+        uses: android-actions/setup-android@v3
+        with:
+          api-level: 33
+          ndk: r27c
+
+      # ==========================================
+      # Linux packages
+      # ==========================================
+      - name: Install Linux packages
+        if: steps.target-selection.outputs.enabled == 'true' && matrix.target == 'linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libgtk-3-dev \
+            libgl-dev \
+            libx11-dev \
+            libxi-dev \
+            libxpm-dev \
+            libxrandr-dev \
+            libncurses-dev \
+            libvlc-dev \
+            libvlccore-dev
+
+      # ==========================================
+      # Restore Haxelib cache
+      # ==========================================
       - name: Restore haxelib and hxcpp tools
         id: haxelib-cache
+        if: steps.target-selection.outputs.enabled == 'true'
         uses: actions/cache/restore@v4
         with:
           path: ${{ env.HAXELIB_PATH }}
           key: haxelib-${{ runner.os }}-haxe-4.3.7-${{ hashFiles('hmm.json', 'setup/unix.sh', 'setup/windows.bat') }}
 
-      - name: Install Linux packages
-        if: matrix.setup == 'unix' && runner.os == 'Linux'
-        run: sudo apt-get update && sudo apt-get install -y libgtk-3-dev libgl-dev libx11-dev libxi-dev libxpm-dev libxrandr-dev libncurses-dev libvlc-dev libvlccore-dev
-
+      # ==========================================
+      # Install Haxelib dependencies - Unix
+      # ==========================================
       - name: Install haxelib dependencies (Unix)
-        if: matrix.setup == 'unix' && steps.haxelib-cache.outputs.cache-hit != 'true'
+        if: steps.target-selection.outputs.enabled == 'true' && matrix.setup == 'unix' && steps.haxelib-cache.outputs.cache-hit != 'true'
         shell: bash
         run: |
           haxelib setup "$HAXELIB_PATH"
           chmod +x ./setup/unix.sh
           SKIP_SYSTEM_DEPENDENCIES=1 ./setup/unix.sh
 
+      # ==========================================
+      # Install Haxelib dependencies - Android
+      # ==========================================
+      - name: Install haxelib dependencies (Android)
+        if: steps.target-selection.outputs.enabled == 'true' && matrix.setup == 'android' && steps.haxelib-cache.outputs.cache-hit != 'true'
+        shell: bash
+        run: |
+          haxelib setup "$HAXELIB_PATH"
+          chmod +x ./setup/unix.sh
+          SKIP_SYSTEM_DEPENDENCIES=1 ./setup/unix.sh
+
+      # ==========================================
+      # Install Haxelib dependencies - Windows
+      # ==========================================
       - name: Install haxelib dependencies (Windows)
-        if: matrix.setup == 'windows' && steps.haxelib-cache.outputs.cache-hit != 'true'
+        if: steps.target-selection.outputs.enabled == 'true' && matrix.setup == 'windows' && steps.haxelib-cache.outputs.cache-hit != 'true'
         shell: cmd
         run: |
           haxelib setup "%HAXELIB_PATH%"
           call setup\windows.bat
 
+      # ==========================================
+      # Android configuration
+      # ==========================================
+      - name: Configure Android
+        if: steps.target-selection.outputs.enabled == 'true' && matrix.target == 'android'
+        shell: bash
+        run: |
+          echo "ANDROID_SDK_ROOT=${ANDROID_SDK_ROOT:-$ANDROID_HOME}"
+
+          haxelib run lime config ANDROID_SDK "${ANDROID_SDK_ROOT:-$ANDROID_HOME}"
+          haxelib run lime config ANDROID_NDK_ROOT "${ANDROID_NDK_ROOT:-${RUNNER_TEMP}/android-ndk-r27c}"
+          haxelib run lime config JAVA_HOME "$JAVA_HOME"
+          haxelib run lime config ANDROID_SETUP true
+
+      # ==========================================
+      # Windows MSVC fix
+      # ==========================================
       - name: Ensure MSVC hxcpp git checkout (Windows)
-        if: matrix.setup == 'windows'
+        if: steps.target-selection.outputs.enabled == 'true' && matrix.setup == 'windows'
         shell: pwsh
         run: |
           powershell -ExecutionPolicy Bypass -File setup\windows-msvc-fix.ps1
 
+      # ==========================================
+      # Compile hxcpp tools - Unix
+      # ==========================================
       - name: Compile hxcpp tools (Unix)
-        if: matrix.setup == 'unix' && steps.haxelib-cache.outputs.cache-hit != 'true'
+        if: steps.target-selection.outputs.enabled == 'true' && (matrix.setup == 'unix' || matrix.setup == 'android') && steps.haxelib-cache.outputs.cache-hit != 'true'
         shell: bash
         run: |
-          cd "$HAXELIB_PATH/hxcpp/git/tools/run" && haxe compile.hxml
-          cd "$HAXELIB_PATH/hxcpp/git/tools/hxcpp" && haxe compile.hxml
+          cd "$HAXELIB_PATH/hxcpp/git/tools/run"
+          haxe compile.hxml
 
+          cd "$HAXELIB_PATH/hxcpp/git/tools/hxcpp"
+          haxe compile.hxml
+
+      # ==========================================
+      # Compile hxcpp tools - Windows
+      # ==========================================
       - name: Compile hxcpp tools (Windows)
-        if: matrix.setup == 'windows' && steps.haxelib-cache.outputs.cache-hit != 'true'
+        if: steps.target-selection.outputs.enabled == 'true' && matrix.setup == 'windows' && steps.haxelib-cache.outputs.cache-hit != 'true'
         shell: cmd
         run: |
-          cd /d "%HAXELIB_PATH%\hxcpp\git\tools\run" && haxe compile.hxml
-          cd /d "%HAXELIB_PATH%\hxcpp\git\tools\hxcpp" && haxe compile.hxml
+          cd /d "%HAXELIB_PATH%\hxcpp\git\tools\run"
+          haxe compile.hxml
 
+          cd /d "%HAXELIB_PATH%\hxcpp\git\tools\hxcpp"
+          haxe compile.hxml
+
+      # ==========================================
+      # Save haxelib cache
+      # ==========================================
       - name: Save haxelib and hxcpp tools
-        if: always() && steps.haxelib-cache.outputs.cache-hit != 'true'
+        if: always() && steps.target-selection.outputs.enabled == 'true' && steps.haxelib-cache.outputs.cache-hit != 'true'
         uses: actions/cache/save@v4
         with:
           path: ${{ env.HAXELIB_PATH }}
           key: ${{ steps.haxelib-cache.outputs.cache-primary-key }}
 
-      # Restore the most recent generated C++ files even when the source hash
-      # changes. Lime/hxcpp then recompiles only the files affected by the change.
+      # ==========================================
+      # Restore generated C++ cache
+      # ==========================================
       - name: Restore generated C++ cache
         id: build-cache
+        if: steps.target-selection.outputs.enabled == 'true'
         uses: actions/cache/restore@v4
         with:
           path: |
@@ -169,39 +386,56 @@ jobs:
             hxcpp-${{ runner.os }}-${{ matrix.cache_name }}-${{ inputs.buildFlags || 'commit' }}-
             hxcpp-${{ runner.os }}-${{ matrix.cache_name }}-
 
+      # ==========================================
+      # Compile Unix / Linux / macOS
+      # ==========================================
       - name: Compile (Unix)
-        if: matrix.setup == 'unix'
+        if: steps.target-selection.outputs.enabled == 'true' && matrix.setup == 'unix'
         shell: bash
         env:
           HXCPP_COMPILE_THREADS: 4
         run: |
-          # The restored compile cache carries objs built against a PCH from a
-          # previous haxelib checkout; restored headers may have different
-          # mtimes, so clang refuses the PCH and mismatched objs break the
-          # final link. Drop the entire cache so everything is regenerated
-          # consistently against the real headers.
           rm -f assets/preload/gameRenders/renderlol.bat
+
           rm -rf "$HXCPP_COMPILE_CACHE" 2>/dev/null || true
+
           haxelib run lime build ${{ matrix.target }} ${{ matrix.target_args }} -D"${{ inputs.buildFlags || 'commit' }}" ${{ env.HXCPP_PERF_FLAGS }}
 
+      # ==========================================
+      # Compile Windows
+      # ==========================================
       - name: Compile (Windows)
-        if: matrix.setup == 'windows'
+        if: steps.target-selection.outputs.enabled == 'true' && matrix.setup == 'windows'
         shell: pwsh
         env:
           HXCPP_COMPILE_THREADS: $env:NUMBER_OF_PROCESSORS
         run: |
-          # The restored object cache is only consistent as a whole (objs are
-          # built against a specific PCH, and MSVC bails with C1382 link-time
-          # errors if files from different PCH generations mix). Deleting just
-          # the *.pch files isn't enough - orphaned objs still reference the
-          # old PCH. Drop the entire compile cache so every object is compiled
-          # fresh and consistently against the current headers.
-          if (Test-Path $env:HXCPP_COMPILE_CACHE) { Remove-Item $env:HXCPP_COMPILE_CACHE -Recurse -Force }
+          if (Test-Path $env:HXCPP_COMPILE_CACHE) {
+            Remove-Item $env:HXCPP_COMPILE_CACHE -Recurse -Force
+          }
+
           Remove-Item -Force assets/preload/gameRenders/renderlinux.sh
+
           haxelib run lime build windows -D"${{ inputs.buildFlags || 'commit' }}" ${{ env.HXCPP_PERF_FLAGS }}
 
+      # ==========================================
+      # Compile Android
+      # ==========================================
+      - name: Compile (Android)
+        if: steps.target-selection.outputs.enabled == 'true' && matrix.target == 'android'
+        shell: bash
+        env:
+          HXCPP_COMPILE_THREADS: 4
+        run: |
+          rm -rf "$HXCPP_COMPILE_CACHE" 2>/dev/null || true
+
+          haxelib run lime build android ${{ inputs.buildFlags != '' && format('-D {0}', inputs.buildFlags) || '' }} ${{ env.HXCPP_PERF_FLAGS }}
+
+      # ==========================================
+      # Save generated C++ cache
+      # ==========================================
       - name: Save generated C++ cache
-        if: always() && steps.build-cache.outputs.cache-hit != 'true'
+        if: always() && steps.target-selection.outputs.enabled == 'true' && steps.build-cache.outputs.cache-hit != 'true'
         uses: actions/cache/save@v4
         with:
           path: |
@@ -210,7 +444,11 @@ jobs:
             ${{ env.HXCPP_COMPILE_CACHE }}
           key: ${{ steps.build-cache.outputs.cache-primary-key }}
 
+      # ==========================================
+      # Publish artifact
+      # ==========================================
       - name: Publish artifact
+        if: steps.target-selection.outputs.enabled == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.artifact }}
