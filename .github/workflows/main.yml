@@ -10,7 +10,18 @@ on:
       buildFlags:
         required: false
         type: string
+      buildAllTargets:
+        description: "Build all targets"
+        required: false
+        type: boolean
+        default: false
   workflow_dispatch:
+    inputs:
+      buildAllTargets:
+        description: "Build all targets"
+        required: false
+        type: boolean
+        default: false
 
 # Keep the haxelib installation inside the workspace so it can be restored on
 # subsequent runs instead of downloading and compiling dependencies every time.
@@ -31,6 +42,7 @@ jobs:
   build:
     name: ${{ matrix.name }}
     runs-on: ${{ matrix.os }}
+    if: ${{ matrix.target == 'windows' || inputs.buildAllTargets == true || inputs.buildAllTargets == 'true' }}
     strategy:
       fail-fast: false
       matrix:
