@@ -127,7 +127,7 @@ jobs:
         if: steps.target-selection.outputs.enabled == 'true'
         uses: krdlab/setup-haxe@master
         with:
-          haxe-version: 4.3.6
+          haxe-version: 4.3.7
 
 
       # ==========================================
@@ -184,11 +184,26 @@ jobs:
         run: |
           set -eux
 
-          haxelib install hscript || true
-          haxelib install hmm || true
-          haxelib install lime || true
+          chmod +x ./setup/unix.sh
+          SKIP_SYSTEM_DEPENDENCIES=1 ./setup/unix.sh
 
-          haxelib run hmm install --quiet || true
+      # ==========================================
+      # Compile hxcpp tools
+      # ==========================================
+      - name: Compile hxcpp tools
+        if: steps.target-selection.outputs.enabled == 'true'
+        shell: bash
+        run: |
+          set -eux
+
+          HAXELIB_PATH=$(haxelib config)
+          if [ -d "$HAXELIB_PATH/hxcpp/git/tools/run" ]; then
+            cd "$HAXELIB_PATH/hxcpp/git/tools/run"
+            haxe compile.hxml
+
+            cd "$HAXELIB_PATH/hxcpp/git/tools/hxcpp"
+            haxe compile.hxml
+          fi
 
 
       # ==========================================

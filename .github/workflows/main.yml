@@ -371,7 +371,7 @@ jobs:
         uses: actions/cache/save@v4
         with:
           path: ${{ env.HAXELIB_PATH }}
-          key: ${{ steps.haxelib-cache.outputs.cache-primary-key }}
+          key: haxelib-${{ runner.os }}-haxe-4.3.7-${{ hashFiles('hmm.json', 'setup/unix.sh', 'setup/windows.bat') }}
 
       # ==========================================
       # Restore generated C++ cache
@@ -446,7 +446,7 @@ jobs:
             build/release/${{ matrix.target_dir }}/haxe
             build/release/${{ matrix.target_dir }}/obj
             ${{ env.HXCPP_COMPILE_CACHE }}
-          key: ${{ steps.build-cache.outputs.cache-primary-key }}
+          key: hxcpp-${{ runner.os }}-${{ matrix.cache_name }}-${{ inputs.buildFlags || 'commit' }}-${{ hashFiles('project.hxp', 'source/**') }}
 
       # ==========================================
       # Publish artifact
