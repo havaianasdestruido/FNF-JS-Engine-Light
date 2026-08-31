@@ -9,6 +9,7 @@ on:
         required: false
         type: boolean
         default: false
+
   workflow_call:
     inputs:
       buildFlags:
