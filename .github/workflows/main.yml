@@ -164,6 +164,45 @@ jobs:
             artifact_path: build/release/macos/bin
             setup: unix
 
+          # =========================
+          # HTML5 (disabled)
+          # =========================
+          - name: HTML5
+            os: ubuntu-latest
+            target: html5
+            target_dir: html5
+            cache_name: html5
+            artifact: html5Build
+            artifact_path: build/release/html5/bin
+            setup: unix
+            disabled: true
+
+          # =========================
+          # Neko (disabled)
+          # =========================
+          - name: Neko
+            os: ubuntu-latest
+            target: neko
+            target_dir: neko
+            cache_name: neko
+            artifact: nekoBuild
+            artifact_path: build/release/neko/bin
+            setup: unix
+            disabled: true
+
+          # =========================
+          # Flash (disabled)
+          # =========================
+          - name: Flash
+            os: ubuntu-latest
+            target: flash
+            target_dir: html5
+            cache_name: flash
+            artifact: flashBuild
+            artifact_path: build/release/html5/bin
+            setup: unix
+            disabled: true
+
     steps:
       # ==========================================
       # Checkout
@@ -178,6 +217,13 @@ jobs:
         id: target-selection
         shell: bash
         run: |
+          # Explicitly disabled targets never build (experimental targets tracked for future enablement)
+          if [ "${{ matrix.disabled }}" = "true" ]; then
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            echo "Target ${{ matrix.name }} is disabled (experimental)."
+            exit 0
+          fi
+
           BUILD_ALL="${{ inputs.buildAllTargets }}"
           BUILD_WINDOWS="${{ inputs.buildWindows }}"
           BUILD_ANDROID="${{ inputs.buildAndroid }}"
