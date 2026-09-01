@@ -245,7 +245,7 @@ class PlayStateNotes
 				state.hitsound.play(true);
 				state.hitsound.pitch = state.playbackRate;
 				#if sys
-				var hitsoundImageExists = FileSystem.exists('assets/shared/images/' + state.hitsoundImageToLoad + '.png') || (MODS_ALLOWED && FileSystem.exists(Paths.modFolders('images/' + state.hitsoundImageToLoad + '.png')));
+				var hitsoundImageExists = FileSystem.exists('assets/shared/images/' + state.hitsoundImageToLoad + '.png') || (#if MODS_ALLOWED FileSystem.exists(Paths.modFolders('images/' + state.hitsoundImageToLoad + '.png')) #else false #end);
 				#else
 				var hitsoundImageExists = OpenFlAssets.exists('assets/shared/images/' + state.hitsoundImageToLoad + '.png');
 				#end

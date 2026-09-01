@@ -408,11 +408,11 @@ class Project extends HXProject
 		}
 		else
 		{
-			LUA_ALLOWED.apply(this, (isDesktop() || isMobile()) && (!isWeb() || !isHashLink()) && !isFlash());
-			PYTHON_ALLOWED.apply(this, (isDesktop() || isMobile()) && (!isWeb() || !isHashLink()) && !isFlash());
+			LUA_ALLOWED.apply(this, (isDesktop() || isMobile()) && (!isWeb() || !isHashLink()) && !isFlash() && isCPP());
+			PYTHON_ALLOWED.apply(this, (isDesktop() || isMobile()) && (!isWeb() || !isHashLink()) && !isFlash() && isCPP());
 		}
 
-		VIDEOS_ALLOWED.apply(this, (isDesktop() || isMobile()) && (!isWeb() || !is32Bit()) && !isFlash());
+		VIDEOS_ALLOWED.apply(this, (isDesktop() || isMobile()) && (!isWeb() || !is32Bit()) && !isFlash() && isCPP());
 		// Feral GameMode integration (Linux only). Degrades gracefully when
 		// gamemode isn't installed, so it is safe to enable on all Linux builds.
 		GAMEMODE_ALLOWED.apply(this, isDesktop() && isLinux());
@@ -420,7 +420,7 @@ class Project extends HXProject
 		ACHIEVEMENTS_ALLOWED.apply(this, true);
 		CHECK_FOR_UPDATES.apply(this, true);
 		HSCRIPT_ALLOWED.apply(this, (isDesktop() || isMobile() || isWeb()) && !isFlash());
-		DISCORD_ALLOWED.apply(this, (isDesktop() || isMobile()) && !isFlash());
+		DISCORD_ALLOWED.apply(this, (isDesktop() || isMobile()) && !isFlash() && isCPP());
 		SHADERS_ALLOWED.apply(this, true);
 		FUNNY_ALLOWED.apply(this, isDesktop() && !isFlash());
 		// TITLE_SCREEN_EASTER_EGG.apply(this, true);
@@ -609,7 +609,7 @@ class Project extends HXProject
 		addHaxelib('grig.audio');
 		addHaxelib('funkin.vis');
 		addHaxelib('flxanimate'); // Texture atlas rendering
-		if (!isFlash() && !isWeb())
+		if (!isFlash() && !isWeb() && isCPP())
 			addHaxelib('hxnativefiledialog');
 		addHaxelib('tjson');
 

@@ -105,9 +105,9 @@ class ChartingSaveLoad
     var songName:String = Paths.formatToSongPath(state._song.song);
     #if sys
     var jsonExists = sys.FileSystem.exists(Paths.json(songName + '/' + songName))
-      || (MODS_ALLOWED && sys.FileSystem.exists(Paths.modsJson(songName + '/' + songName)));
+      || (#if MODS_ALLOWED sys.FileSystem.exists(Paths.modsJson(songName + '/' + songName)) #else false #end);
     var diffJsonExists = sys.FileSystem.exists(Paths.json(songName + '/' + songName + '-$diff'))
-      || (MODS_ALLOWED && sys.FileSystem.exists(Paths.modsJson(songName + '/' + songName + '-$diff')));
+      || (#if MODS_ALLOWED sys.FileSystem.exists(Paths.modsJson(songName + '/' + songName + '-$diff')) #else false #end);
     #else
     var jsonExists = Assets.exists(Paths.json(songName + '/' + songName));
     var diffJsonExists = Assets.exists(Paths.json(songName + '/' + songName + '-$diff'));
