@@ -200,6 +200,34 @@ jobs:
             cache_name: flash
             artifact: flashBuild
             artifact_path: build/release/html5/bin
+            target_args: -D disable-version-check
+            setup: unix
+            disabled: true
+
+          # =========================
+          # HashLink (disabled)
+          # =========================
+          - name: HashLink
+            os: ubuntu-latest
+            target: hl
+            target_dir: hl
+            cache_name: hl
+            artifact: hlBuild
+            artifact_path: build/release/hl/bin
+            setup: unix
+            disabled: true
+
+          # =========================
+          # AIR (disabled)
+          # =========================
+          - name: AIR
+            os: ubuntu-latest
+            target: air
+            target_dir: air
+            cache_name: air
+            artifact: airBuild
+            artifact_path: build/release/air/bin
+            target_args: -D disable-version-check
             setup: unix
             disabled: true
 

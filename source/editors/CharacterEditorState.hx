@@ -47,7 +47,9 @@ class CharacterEditorState extends MusicBeatState
 	var music:EditingMusic;
 	var char:Character;
 	var ghostChar:Character;
+	#if flxanimate
 	var animateGhost:FlxAnimate;
+	#end
 	var animateGhostImage:String;
 	var bgLayer:FlxTypedGroup<FlxSprite>;
 	var charLayer:FlxTypedGroup<Character>;
@@ -471,6 +473,7 @@ class CharacterEditorState extends MusicBeatState
 					ghostChar.animation.play(char.animation.curAnim.name, true, false, char.animation.curAnim.curFrame);
 					ghostChar.animation.pause();
 				}
+				#if flxanimate
 				else if(myAnim != null) //This is VERY unoptimized and bad, I hope to find a better replacement that loads only a specific frame as bitmap in the future.
 				{
 					if(animateGhost == null) //If I created the animateGhost on create() and you didn't load an atlas, it would crash the game on destroy, so we create it here
@@ -494,8 +497,13 @@ class CharacterEditorState extends MusicBeatState
 
 					animateGhostImage = char.imageFile;
 				}
+				#end
 
+				#if flxanimate
 				var spr:FlxSprite = !char.isAnimateAtlas ? ghostChar : animateGhost;
+				#else
+				var spr:FlxSprite = ghostChar;
+				#end
 				if(spr != null)
 				{
 					spr.setPosition(char.x, char.y);
@@ -509,7 +517,11 @@ class CharacterEditorState extends MusicBeatState
 					spr.offset.set(char.offset.x, char.offset.y);
 					spr.visible = true;
 
+					#if flxanimate
 					var otherSpr:FlxSprite = (spr == animateGhost) ? ghostChar : animateGhost;
+					#else
+					var otherSpr:FlxSprite = ghostChar;
+					#end
 					if(otherSpr != null) otherSpr.visible = false;
 				}
 				/*hideGhostButton.active = true;
@@ -525,12 +537,14 @@ class CharacterEditorState extends MusicBeatState
 			ghostChar.colorTransform.redOffset = value;
 			ghostChar.colorTransform.greenOffset = value;
 			ghostChar.colorTransform.blueOffset = value;
+			#if flxanimate
 			if(animateGhost != null)
 			{
 				animateGhost.colorTransform.redOffset = value;
 				animateGhost.colorTransform.greenOffset = value;
 				animateGhost.colorTransform.blueOffset = value;
 			}
+			#end
 		};
 
 		var ghostAlphaSlider:FlxUISlider = new FlxUISlider(this, 'ghostAlpha', 10, makeGhostButton.y + 25, 0, 1, 210, null, 5, FlxColor.WHITE, FlxColor.BLACK);
@@ -538,7 +552,9 @@ class CharacterEditorState extends MusicBeatState
 		ghostAlphaSlider.decimals = 2;
 		ghostAlphaSlider.callback = function(relativePos:Float) {
 			ghostChar.alpha = ghostAlpha;
+			#if flxanimate
 			if(animateGhost != null) animateGhost.alpha = ghostAlpha;
+			#end
 		};
 		ghostAlphaSlider.value = ghostAlpha;
 
@@ -937,8 +953,10 @@ class CharacterEditorState extends MusicBeatState
 					lastOffsets = anim.offsets;
 					if(char.animOffsets.exists(animationInputText.text))
 					{
-						if(!char.isAnimateAtlas) char.animation.remove(animationInputText.text);
-						else @:privateAccess char.atlas.anim.animsMap.remove(animationInputText.text);
+					if(!char.isAnimateAtlas) char.animation.remove(animationInputText.text);
+					#if flxanimate
+					else @:privateAccess char.atlas.anim.animsMap.remove(animationInputText.text);
+					#end
 					}
 					char.animationsArray.remove(anim);
 				}
@@ -966,9 +984,11 @@ class CharacterEditorState extends MusicBeatState
 					if(anim.anim == char.getAnimationName()) resetAnim = true;
 					if(char.hasAnimation(anim.anim))
 					{
-						if(!char.isAnimateAtlas) char.animation.remove(anim.anim);
-						else @:privateAccess char.atlas.anim.animsMap.remove(anim.anim);
-						char.animOffsets.remove(anim.anim);
+if(!char.isAnimateAtlas) char.animation.remove(anim.anim);
+					#if flxanimate
+					else @:privateAccess char.atlas.anim.animsMap.remove(anim.anim);
+					#end
+					char.animOffsets.remove(anim.anim);
 						char.animationsArray.remove(anim);
 					}
 
@@ -1349,11 +1369,13 @@ class CharacterEditorState extends MusicBeatState
 					frames = char.animation.curAnim.curFrame;
 					length = char.animation.curAnim.numFrames;
 				}
+				#if flxanimate
 				else if(char.isAnimateAtlas && char.atlas.anim != null)
 				{
 					frames = char.atlas.anim.curFrame;
 					length = char.atlas.anim.length;
 				}
+				#end
 
 				if(length >= 0)
 				{
@@ -1367,7 +1389,9 @@ class CharacterEditorState extends MusicBeatState
 						{
 							frames = FlxMath.wrap(frames + Std.int(isLeft ? -shiftMult : shiftMult), 0, length-1);
 							if(!char.isAnimateAtlas) char.animation.curAnim.curFrame = frames;
+							#if flxanimate
 							else char.atlas.anim.curFrame = frames;
+							#end
 							holdingFrameElapsed -= 0.1;
 						}
 					}

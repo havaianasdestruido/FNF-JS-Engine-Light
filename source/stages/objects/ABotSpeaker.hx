@@ -15,8 +15,13 @@ class ABotSpeaker extends FlxSpriteGroup
 	public var bg:FlxSprite;
 	public var vizSprites:Array<FlxSprite> = [];
 	public var eyeBg:FlxSprite;
+	#if flxanimate
 	public var eyes:FlxAnimate;
 	public var speaker:FlxAnimate;
+	#else
+	public var eyes:FlxSprite;
+	public var speaker:FlxSprite;
+	#end
 
 	#if funkin.vis
 	var analyzer:SpectralAnalyzer;
@@ -68,6 +73,7 @@ class ABotSpeaker extends FlxSpriteGroup
 		eyeBg.updateHitbox();
 		add(eyeBg);
 
+		#if flxanimate
 		eyes = new FlxAnimate(-10, 230);
 		Paths.loadAnimateAtlas(eyes, 'abot/systemEyes');
 		eyes.anim.addBySymbolIndices('lookleft', 'a bot eyes lookin', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17], 24, false);
@@ -83,6 +89,7 @@ class ABotSpeaker extends FlxSpriteGroup
 		speaker.anim.curFrame = speaker.anim.length - 1;
 		speaker.antialiasing = antialias;
 		add(speaker);
+		#end
 	}
 
 	#if funkin.vis
@@ -108,7 +115,7 @@ class ABotSpeaker extends FlxSpriteGroup
 		if(levelMax >= 4)
 		{
 			//trace(levelMax);
-			if(oldLevelMax <= levelMax && (levelMax >= 5 || speaker.anim.curFrame >= 3))
+			if(oldLevelMax <= levelMax && (levelMax >= 5 || #if flxanimate speaker.anim.curFrame >= 3 #else false #end))
 				beatHit();
 		}
 	}
@@ -116,7 +123,9 @@ class ABotSpeaker extends FlxSpriteGroup
 
 	public function beatHit()
 	{
+		#if flxanimate
 		speaker.anim.play('anim', true);
+		#end
 	}
 
 	#if funkin.vis
@@ -140,12 +149,16 @@ class ABotSpeaker extends FlxSpriteGroup
 	var lookingAtRight:Bool = true;
 	public function lookLeft()
 	{
+		#if flxanimate
 		if(lookingAtRight) eyes.anim.play('lookleft', true);
+		#end
 		lookingAtRight = false;
 	}
 	public function lookRight()
 	{
+		#if flxanimate
 		if(!lookingAtRight) eyes.anim.play('lookright', true);
+		#end
 		lookingAtRight = true;
 	}
 }

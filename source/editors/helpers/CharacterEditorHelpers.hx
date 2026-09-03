@@ -69,11 +69,14 @@ class CharacterEditorHelpers
 		var lastAnim:String = state.char.getAnimationName();
 		var anims:Array<AnimArray> = state.char.animationsArray.copy();
 
+		#if flxanimate
 		state.char.atlas = FlxDestroyUtil.destroy(state.char.atlas);
+		#end
 		state.char.isAnimateAtlas = false;
 		state.char.color = FlxColor.WHITE;
 		state.char.alpha = 1;
 
+		#if flxanimate
 		if(Paths.fileExists('images/' + state.char.imageFile + '/Animation.json', TEXT))
 		{
 			state.char.atlas = new FlxAnimate();
@@ -88,7 +91,9 @@ class CharacterEditorHelpers
 			}
 			state.char.isAnimateAtlas = true;
 		}
-		else if (Paths.fileExists('images/' + state.char.imageFile + '.png', IMAGE))
+		else
+		#end
+		if (Paths.fileExists('images/' + state.char.imageFile + '.png', IMAGE))
 		{
 			var split:Array<String> = state.char.imageFile.split(',');
 			var charFrames:FlxAtlasFrames = Paths.getAtlas(split[0].trim());
@@ -175,6 +180,7 @@ class CharacterEditorHelpers
 			else
 				state.char.animation.addByPrefix(anim, name, fps, loop);
 		}
+		#if flxanimate
 		else
 		{
 			if(indices != null && indices.length > 0)
@@ -182,6 +188,7 @@ class CharacterEditorHelpers
 			else
 				state.char.atlas.anim.addBySymbol(anim, name, fps, loop);
 		}
+		#end
 
 		if(!state.char.animOffsets.exists(anim))
 			state.char.addOffset(anim, 0, 0);

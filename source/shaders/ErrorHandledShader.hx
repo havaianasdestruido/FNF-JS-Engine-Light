@@ -1,7 +1,9 @@
 package shaders;
 
 import flixel.system.FlxAssets.FlxShader;
+#if (!flash)
 import flixel.addons.display.FlxRuntimeShader;
+#end
 import lime.graphics.opengl.GLProgram;
 #if !flash
 import lime.app.Application;
@@ -64,6 +66,7 @@ class ErrorHandledShader extends FlxShader implements IErrorHandler
 	}
 }
 
+#if (SHADERS_ALLOWED && !flash && !neko)
 class ErrorHandledRuntimeShader extends FlxRuntimeShader implements IErrorHandler
 {
 	public var shaderName:String = '';
@@ -92,6 +95,21 @@ class ErrorHandledRuntimeShader extends FlxRuntimeShader implements IErrorHandle
 		}
 	}
 }
+#else
+class ErrorHandledRuntimeShader implements IErrorHandler
+{
+	public var shaderName:String = '';
+
+	public dynamic function onError(error:Dynamic):Void
+	{
+	}
+
+	public function new(?shaderName:String, ?fragmentSource:String, ?vertexSource:String)
+	{
+		this.shaderName = shaderName;
+	}
+}
+#end
 
 interface IErrorHandler
 {

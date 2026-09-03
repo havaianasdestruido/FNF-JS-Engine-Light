@@ -14,12 +14,17 @@ class SpraycanAtlasSprite extends FlxSpriteGroup
 {
 	public var currentState:SpraycanState = WAITING;
 
+	#if flxanimate
 	public var canAtlas:FlxAnimate;
+	#else
+	public var canAtlas:FlxSprite;
+	#end
 	public var explosion:FlxSprite;
 	public function new(x:Float = 0, y:Float = 0)
 	{
 		super();
 
+		#if flxanimate
 		canAtlas = new FlxAnimate(x, y);
 		Paths.loadAnimateAtlas(canAtlas, 'spraycanAtlas');
 		canAtlas.anim.addBySymbolIndices('Can Start', 'Can with Labels', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18], 24, false);
@@ -29,6 +34,7 @@ class SpraycanAtlasSprite extends FlxSpriteGroup
 		canAtlas.visible = canAtlas.active = false;
 		canAtlas.antialiasing = ClientPrefs.globalAntialiasing;
 		add(canAtlas);
+		#end
 
 		explosion = new FlxSprite(x - 25, y - 450);
 		explosion.frames = Paths.getSparrowAtlas('spraypaintExplosionEZ');
@@ -84,7 +90,9 @@ class SpraycanAtlasSprite extends FlxSpriteGroup
 	var playingAnim:String;
 	public function playAnimation(name:String)
 	{
+		#if flxanimate
 		canAtlas.anim.play(name, true);
+		#end
 		playingAnim = name;
 	}
 }

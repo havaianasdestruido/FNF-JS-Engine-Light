@@ -535,8 +535,8 @@ class PlayStateEvents
 				}
 			}
 
-			case 'Rainbow Eyesore':
-				#if SHADERS_ALLOWED
+		case 'Rainbow Eyesore':
+			#if (SHADERS_ALLOWED && !neko)
 				final val2:Float = (Std.parseFloat(value2) <= 0 || Math.isNaN(Std.parseFloat(value2))) ? 1 : Std.parseFloat(value2);
 
 				if(ClientPrefs.flashing && ClientPrefs.shaders && state.curStep < Std.parseInt(value1)) {

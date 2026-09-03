@@ -1,7 +1,9 @@
 package psychlua;
 
 import haxe.ds.*;
+#if LUA_ALLOWED
 import hxluajit.Types;
+#end
 import psychlua.FunkinLua.State;
 import play.PlayState;
 

@@ -1,6 +1,8 @@
 package psychlua;
 
+#if LUA_ALLOWED
 import hxluajit.Types;
+#end
 
 /**
  * Holds a Lua function that can be called from Haxe.

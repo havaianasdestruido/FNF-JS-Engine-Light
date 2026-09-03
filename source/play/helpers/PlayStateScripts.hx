@@ -6,15 +6,10 @@ import shaders.ErrorHandledShader.ErrorHandledRuntimeShader;
 import backend.ClientPrefs;
 import backend.Paths;
 #if MODS_ALLOWED
-#if MODS_ALLOWED
 import backend.Mods;
-#end
 #end
 
 import play.PlayState;
-
-#if SHADERS_ALLOWED
-#end
 
 // REFACTOR: script/shader plumbing extracted from play.PlayState
 @:access(play.PlayState)
@@ -219,9 +214,7 @@ class PlayStateScripts
 		var luaToLoad:String = Paths.modFolders(luaFile);
 		if(FileSystem.exists(luaToLoad))
 		{
-			#if LUA_ALLOWED
 			new FunkinLua(luaToLoad);
-			#end
 			return true;
 		}
 		else
@@ -229,9 +222,7 @@ class PlayStateScripts
 			luaToLoad = Paths.getPreloadPath(luaFile);
 			if(FileSystem.exists(luaToLoad))
 			{
-				#if LUA_ALLOWED
 				new FunkinLua(luaToLoad);
-				#end
 				return true;
 			}
 		}
@@ -239,9 +230,7 @@ class PlayStateScripts
 		var luaToLoad:String = Paths.getPreloadPath(luaFile);
 		if(OpenFlAssets.exists(luaToLoad))
 		{
-			#if LUA_ALLOWED
 			new FunkinLua(luaToLoad);
-			#end
 			return true;
 		}
 		#end
