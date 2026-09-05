@@ -370,6 +370,7 @@ jobs:
       - name: Skip ${{ matrix.name }} (not selected)
         if: steps.target-selection.outputs.enabled != 'true'
         run: echo "⊘ Skipped (target not selected for this build)"
+        continue-on-error: true
 
       # ==========================================
       # Haxe
