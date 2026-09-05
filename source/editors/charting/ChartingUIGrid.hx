@@ -117,7 +117,7 @@ class ChartingUIGrid
     else
       state.gridBG = new FlxSprite().makeGraphic(Std.int(ChartingState.GRID_SIZE * 9), Std.int(ChartingState.GRID_SIZE * curBeats * 4 * state.zoomList[state.curZoom]), 0xffe7e6e6);
 
-    #if desktop
+    #if (desktop && !air)
     if (FlxG.save.data.chart_waveformInst || FlxG.save.data.chart_waveformVoices || FlxG.save.data.chart_waveformOppVoices)
     {
       state.updateWaveform();

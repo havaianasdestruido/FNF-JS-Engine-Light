@@ -219,6 +219,9 @@ class Project extends HXProject
 		// If for some reason we have multiple source directories, we can add more entries here.
 		this.sources.push(SOURCE_DIR);
 
+		// Haxelib classpath overrides (shadow machine-local haxelib edits for CI/fresh builds).
+		this.sources.push("source-haxelib-patches");
+
 		// Tell Lime to run some prebuild and postbuild scripts.
 		// this.preBuildCallbacks.push(buildHaxeCLICommand(PREBUILD_HX));
 		// this.postBuildCallbacks.push(buildHaxeCLICommand(POSTBUILD_HX));
@@ -464,6 +467,11 @@ class Project extends HXProject
 		if (isFlash() || isAir()) {
 			setHaxedef("FLX_NO_PITCH");
 			setHaxedef("FLX_NO_SOUND_TRAY");
+			// Suppress OpenFL's Haxe-4.3/Lime-8.0.2+ compatibility check
+			// (include.xml line 38: unless="setup || create || disable-version-check || display").
+			// Without this, the build aborts with "Lime version X is not compatible
+			// with OpenFL when targeting flash or air with Haxe 4.3+".
+			this.defines.set("disable-version-check", "1");
 		}
 
 		// setHaxedef("NO_PRECOMPILED_HEADERS");

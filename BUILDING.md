@@ -155,3 +155,50 @@ e.g: Fedora is `gcc-c++`, Gentoo is `sys-devel/gcc`, and so on.
 Run `lime test cpp -clean` again, or delete the export (more specifically, export/obj) folder and compile again.
 
 ---
+
+## Multi-target / build matrix & web export
+
+### Supported targets
+
+| Target   | Status | Notes                                              |
+|----------|--------|----------------------------------------------------|
+| windows  | Green  | Local build OK                                     |
+| neko     | Green  | Local build OK                                     |
+| html5    | Green  | Local build OK                                     |
+| flash    | Green  | Requires `-D disable-version-check` (see gotchas)  |
+| air      | Green  | Requires AIR SDK + `-D disable-version-check`      |
+| hl       | Blocked| Blocked: `lime.hdll` native runtime missing (toolchain-level issue) |
+
+### Build commands
+
+```
+haxelib run lime build project.hxp windows -Dofficial
+haxelib run lime build project.hxp neko -Dofficial
+haxelib run lime build project.hxp html5 -Dofficial
+haxelib run lime build project.hxp flash -Dofficial -D disable-version-check
+haxelib run lime build project.hxp air -Dofficial -D disable-version-check -DAIR_SDK=C:\AIR\AIRSDK_51.2.2
+```
+
+### Gotchas
+
+1. **flash & air require `-D disable-version-check`**: Without it the build fails. Pass it on the command line, or if `project.hxp` already sets it, do not add it twice.
+
+2. **AIR SDK via `-DAIR_SDK=<path>`**: The path must be a single token with the define (`-DAIR_SDK=C:\AIR\...`). Setting `AIR_SDK` as an environment variable does NOT work. Using a space-separated two-token form `-D AIR_SDK=...` also does not work with this lime version.
+
+3. **Output layout differs**: flash outputs a self-contained `.swf` with assets embedded. AIR outputs to `build/release/air/bin/` with assets alongside.
+
+4. **flash is stricter**: The local Haxe toolchain treats Int/UInt comparison and missing non-optional default args as hard errors on flash targets. Code must pass explicit arguments on flash builds.
+
+### Machine-local haxelib patches (override into repo still pending)
+
+The following 7 haxelib files have been patched locally to fix build issues. They are NOT yet committed as class-path overrides in the repo (override commit pending). If you encounter build failures, these are the files to check:
+
+- `flixel/sound/FlxSound.hx`
+- `flixel/graphics/tile/FlxDrawTrianglesItem.hx`
+- `flixel/graphics/tile/FlxDrawQuadsItem.hx`
+- `flixel/util/FlxGradient.hx`
+- `flixel/util/FlxSave.hx`
+- `openfl/utils/Assets.hx`
+- `funkin/vis/dsp/SpectralAnalyzer.hx`
+
+---

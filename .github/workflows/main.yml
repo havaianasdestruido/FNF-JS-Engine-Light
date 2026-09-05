@@ -38,6 +38,30 @@ on:
         type: boolean
         default: false
 
+      buildHTML5:
+        description: "Build HTML5"
+        required: false
+        type: boolean
+        default: false
+
+      buildNeko:
+        description: "Build Neko"
+        required: false
+        type: boolean
+        default: false
+
+      buildFlash:
+        description: "Build Flash"
+        required: false
+        type: boolean
+        default: false
+
+      buildAIR:
+        description: "Build AIR"
+        required: false
+        type: boolean
+        default: false
+
       buildAllTargets:
         description: "Build all targets"
         required: false
@@ -66,6 +90,30 @@ on:
 
       buildMacOS:
         description: "Build macOS"
+        required: false
+        type: boolean
+        default: false
+
+      buildHTML5:
+        description: "Build HTML5"
+        required: false
+        type: boolean
+        default: false
+
+      buildNeko:
+        description: "Build Neko"
+        required: false
+        type: boolean
+        default: false
+
+      buildFlash:
+        description: "Build Flash"
+        required: false
+        type: boolean
+        default: false
+
+      buildAIR:
+        description: "Build AIR"
         required: false
         type: boolean
         default: false
@@ -165,7 +213,7 @@ jobs:
             setup: unix
 
           # =========================
-          # HTML5 (disabled)
+          # HTML5
           # =========================
           - name: HTML5
             os: ubuntu-latest
@@ -175,10 +223,9 @@ jobs:
             artifact: html5Build
             artifact_path: build/release/html5/bin
             setup: unix
-            disabled: true
 
           # =========================
-          # Neko (disabled)
+          # Neko
           # =========================
           - name: Neko
             os: ubuntu-latest
@@ -188,21 +235,19 @@ jobs:
             artifact: nekoBuild
             artifact_path: build/release/neko/bin
             setup: unix
-            disabled: true
 
           # =========================
-          # Flash (disabled)
+          # Flash
           # =========================
           - name: Flash
             os: ubuntu-latest
             target: flash
-            target_dir: html5
+            target_dir: flash
             cache_name: flash
             artifact: flashBuild
-            artifact_path: build/release/html5/bin
+            artifact_path: build/release/flash/bin
             target_args: -D disable-version-check
             setup: unix
-            disabled: true
 
           # =========================
           # HashLink (disabled)
@@ -218,7 +263,7 @@ jobs:
             disabled: true
 
           # =========================
-          # AIR (disabled)
+          # AIR
           # =========================
           - name: AIR
             os: ubuntu-latest
@@ -229,7 +274,6 @@ jobs:
             artifact_path: build/release/air/bin
             target_args: -D disable-version-check
             setup: unix
-            disabled: true
 
     steps:
       # ==========================================
@@ -257,6 +301,10 @@ jobs:
           BUILD_ANDROID="${{ inputs.buildAndroid }}"
           BUILD_LINUX="${{ inputs.buildLinux }}"
           BUILD_MACOS="${{ inputs.buildMacOS }}"
+          BUILD_HTML5="${{ inputs.buildHTML5 }}"
+          BUILD_NEKO="${{ inputs.buildNeko }}"
+          BUILD_FLASH="${{ inputs.buildFlash }}"
+          BUILD_AIR="${{ inputs.buildAIR }}"
 
           # Push / pull_request events don't provide workflow_dispatch inputs.
           # For those events, default to Windows + Android.
@@ -265,6 +313,10 @@ jobs:
             BUILD_ANDROID="true"
             BUILD_LINUX="false"
             BUILD_MACOS="false"
+            BUILD_HTML5="false"
+            BUILD_NEKO="false"
+            BUILD_FLASH="false"
+            BUILD_AIR="false"
           fi
 
           if [ "$BUILD_ALL" = "true" ]; then
@@ -285,6 +337,18 @@ jobs:
               ;;
             mac)
               ENABLED="$BUILD_MACOS"
+              ;;
+            html5)
+              ENABLED="$BUILD_HTML5"
+              ;;
+            neko)
+              ENABLED="$BUILD_NEKO"
+              ;;
+            flash)
+              ENABLED="$BUILD_FLASH"
+              ;;
+            air)
+              ENABLED="$BUILD_AIR"
               ;;
             *)
               ENABLED="false"
@@ -438,6 +502,26 @@ jobs:
           haxe compile.hxml
 
       # ==========================================
+      # AIR SDK
+      # ==========================================
+      # Manual download chosen over air-sdk-setup-action: the action does not
+      # exist at the expected public path, so a known-good zip URL is used instead.
+      # The zip is extracted to RUNNER_TEMP so it is available to the compile step.
+      # AIR_SDK is written to GITHUB_ENV so subsequent steps can reference it via
+      # the standard ${{ env.AIR_SDK }} syntax.
+      - name: Download AIR SDK
+        if: steps.target-selection.outputs.enabled == 'true' && matrix.target == 'air'
+        shell: bash
+        run: |
+          AIR_SDK_URL="https://airsdk.adobe.com/air/compiler/air/air-sdk.zip"
+          AIR_SDK_DIR="$RUNNER_TEMP/air-sdk"
+          mkdir -p "$AIR_SDK_DIR"
+          curl -sL "$AIR_SDK_URL" -o "$AIR_SDK_DIR/air-sdk.zip"
+          unzip -q "$AIR_SDK_DIR/air-sdk.zip" -d "$AIR_SDK_DIR"
+          echo "AIR_SDK=$AIR_SDK_DIR" >> "$GITHUB_ENV"
+          echo "Installed AIR SDK to $AIR_SDK_DIR"
+
+      # ==========================================
       # Save haxelib cache
       # ==========================================
       - name: Save haxelib and hxcpp tools
@@ -477,7 +561,7 @@ jobs:
 
           rm -rf "$HXCPP_COMPILE_CACHE" 2>/dev/null || true
 
-          haxelib run lime build ${{ matrix.target }} ${{ matrix.target_args }} -D"${{ inputs.buildFlags || 'commit' }}" ${{ env.HXCPP_PERF_FLAGS }}
+          haxelib run lime build ${{ matrix.target }} ${{ matrix.target_args }} -D"${{ inputs.buildFlags || 'commit' }}" ${{ env.HXCPP_PERF_FLAGS }} ${AIR_SDK:+-DAIR_SDK=$AIR_SDK}
 
       # ==========================================
       # Compile Windows

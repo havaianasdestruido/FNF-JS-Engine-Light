@@ -1356,7 +1356,7 @@ class ChartingUISections
     var tab_group_chart = new FlxUI(null, state.UI_box);
     tab_group_chart.name = 'Charting';
 
-    #if desktop
+    #if (desktop && !air)
     if (FlxG.save.data.chart_waveformInst == null) FlxG.save.data.chart_waveformInst = false;
     if (FlxG.save.data.chart_waveformVoices == null) FlxG.save.data.chart_waveformVoices = false;
     if (FlxG.save.data.chart_waveformOppVoices == null) FlxG.save.data.chart_waveformOppVoices = false;
@@ -1573,7 +1573,7 @@ class ChartingUISections
     tab_group_chart.add(state.disableAutoScrolling);
     tab_group_chart.add(state.metronomeStepper);
     tab_group_chart.add(state.metronomeOffsetStepper);
-    #if desktop
+    #if (desktop && !air)
     tab_group_chart.add(waveformUseInstrumental);
     tab_group_chart.add(waveformUseVoices);
     tab_group_chart.add(waveformUseOppVoices);
