@@ -16,7 +16,7 @@ class ChartingUIWaveform
 {
   public static function updateWaveform(state:ChartingState)
   {
-    #if desktop
+    #if (desktop && !air)
     if (state.waveformPrinted)
     {
       var width:Int = Std.int(ChartingState.GRID_SIZE * 8);
