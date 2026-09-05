@@ -141,8 +141,8 @@ class FPSCounter extends TextField
       else newColor = 0xFFFFFFFF;
 
       #if flash
-      var newColorUInt2:UInt = newColor;
-      if (newColorUInt2 != textColor) textColor = newColorUInt2;
+      var newColorUInt:UInt = newColor;
+      if (newColorUInt != textColor) textColor = newColorUInt;
       #else
       if (newColor != textColor) textColor = newColor;
       #end
