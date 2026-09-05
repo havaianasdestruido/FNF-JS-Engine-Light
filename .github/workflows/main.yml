@@ -137,6 +137,7 @@ env:
   HXCPP_PERF_FLAGS: "-D HXCPP_OPTIMIZE_LINK"
 
 # Cancel previous runs for the same branch/PR concurrency:
+concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
@@ -362,6 +363,13 @@ jobs:
           else
             echo "Target ${{ matrix.name }} is disabled."
           fi
+
+      # ==========================================
+      # Skip step for non-selected targets
+      # ==========================================
+      - name: Skip ${{ matrix.name }} (not selected)
+        if: steps.target-selection.outputs.enabled != 'true'
+        run: echo "⊘ Skipped (target not selected for this build)"
 
       # ==========================================
       # Haxe
