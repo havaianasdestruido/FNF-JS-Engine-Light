@@ -34,6 +34,13 @@ class ColorSwap {
 }
 
 class ColorSwapShader extends FlxFixedShader {
+	#if flash
+	public var uTime:Dynamic = {};
+	public var awesomeOutline:Dynamic = {};
+	public var y:Dynamic = {};
+	public var passes:Dynamic = {};
+	#end
+
 	@:glFragmentSource('
 		varying float openfl_Alphav;
 		varying vec4 openfl_ColorMultiplierv;

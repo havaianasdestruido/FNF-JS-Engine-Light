@@ -57,7 +57,7 @@ class FlxHitbox extends FlxSpriteGroup
 
 		hints = new Array<FlxButton>();
 
-		if (colors == null || (colors != null && colors.length < ammo))
+		if (colors == null || (colors != null && colors.length < Std.int(ammo)))
 			colors = [0xFFFFFF, 0xFFFFFF, 0xFFFFFF, 0xFFFFFF];
 
 		for (i in 0...ammo)

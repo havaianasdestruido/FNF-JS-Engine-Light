@@ -249,7 +249,9 @@ class Paths
   inline static function destroyGraphic(graphic:FlxGraphic)
   {
     // free some gpu memory
+    #if !flash
     if (graphic != null && graphic.bitmap != null && graphic.bitmap.__texture != null) graphic.bitmap.__texture.dispose();
+    #end
     FlxG.bitmap.remove(graphic);
   }
 
@@ -564,6 +566,7 @@ class Paths
       }
     }
 
+    #if !flash
     if (ClientPrefs.cacheOnGPU && bitmap.image != null)
     {
       bitmap.lock();
@@ -578,6 +581,7 @@ class Paths
       bitmap.image = null;
       bitmap.readable = true;
     }
+    #end
 
     var graph:FlxGraphic = FlxGraphic.fromBitmapData(bitmap, false, key);
     graph.persist = true;

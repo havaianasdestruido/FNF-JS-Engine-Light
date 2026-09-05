@@ -1533,7 +1533,7 @@ class ChartingUISections
     state.blockPressWhileTypingOnStepper.push(state.hitsoundVolume);
 
     #if !html5
-    state.sliderRate = new FlxUISlider(state, 'playbackSpeed', 120, 120, 0.25, 4, 150, null, 5, FlxColor.WHITE, FlxColor.BLACK);
+    state.sliderRate = new FlxUISlider(state, 'playbackSpeed', 120, 120, 0.25, 4, 150, 15, 5, FlxColor.WHITE, FlxColor.BLACK);
     state.sliderRate.nameLabel.text = 'Playback Rate';
     tab_group_chart.add(state.sliderRate);
     #end

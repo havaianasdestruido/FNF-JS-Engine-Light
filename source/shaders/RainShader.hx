@@ -367,7 +367,9 @@ class RainShader extends FlxFixedShader
 
 	function set_time(value:Float):Float
 	{
+		#if !flash
 		this.uTime.value[0] = value;
+		#end
 		return time = value;
 	}
 
@@ -378,7 +380,9 @@ class RainShader extends FlxFixedShader
 
 	function set_scale(value:Float):Float
 	{
+		#if !flash
 		this.uScale.value[0] = value;
+		#end
 		return scale = value;
 	}
 
@@ -387,7 +391,9 @@ class RainShader extends FlxFixedShader
 
 	function set_intensity(value:Float):Float
 	{
+		#if !flash
 		this.uIntensity.value[0] = value;
+		#end
 		return intensity = value;
 	}
 
@@ -396,7 +402,9 @@ class RainShader extends FlxFixedShader
 
 	function set_puddleY(value:Float):Float
 	{
+		#if !flash
 		this.uPuddleY.value[0] = value;
+		#end
 		return puddleY = value;
 	}
 
@@ -405,7 +413,9 @@ class RainShader extends FlxFixedShader
 
 	function set_puddleScaleY(value:Float):Float
 	{
+		#if !flash
 		this.uPuddleScaleY.value[0] = value;
+		#end
 		return puddleScaleY = value;
 	}
 
@@ -413,7 +423,9 @@ class RainShader extends FlxFixedShader
 
 	function set_blurredScreen(value:BitmapData):BitmapData
 	{
+		#if !flash
 		this.uBlurredScreen.input = value;
+		#end
 		return blurredScreen = value;
 	}
 
@@ -421,7 +433,9 @@ class RainShader extends FlxFixedShader
 
 	function set_mask(value:BitmapData):BitmapData
 	{
+		#if !flash
 		this.uMask.input = value;
+		#end
 		return mask = value;
 	}
 
@@ -429,7 +443,9 @@ class RainShader extends FlxFixedShader
 
 	function set_lightMap(value:BitmapData):BitmapData
 	{
+		#if !flash
 		this.uLightMap.input = value;
+		#end
 		return lightMap = value;
 	}
 
@@ -437,13 +453,16 @@ class RainShader extends FlxFixedShader
 
 	function set_numLightsSwag(value:Int):Int
 	{
+		#if !flash
 		this.numLights.value[0] = value;
+		#end
 		return numLightsSwag = value;
 	}
 
 	public function new()
 	{
 		super();
+		#if !flash
 		this.uTime.value = [1.0];
 		this.uScale.value = [1.0];
 		this.uIntensity.value = [0.5];
@@ -451,6 +470,7 @@ class RainShader extends FlxFixedShader
 		this.uPuddleScaleY.value = [0.0];
 		this.numLights.value = [0];
 		this.uScreenResolution.value = [FlxG.width, FlxG.height];
+		#end
 	}
 
 	public function update(elapsed:Float):Void
@@ -481,13 +501,17 @@ class RainShader extends FlxFixedShader
 	{
 		_size[0] = screenWidth;
 		_size[1] = screenHeight;
+		#if !flash
 		uScreenResolution.value = _size;
+		#end
 
 		_view[0] = camera.viewLeft;
 		_view[1] = camera.viewTop;
 		_view[2] = camera.viewRight;
 		_view[3] = camera.viewBottom;
+		#if !flash
 		uCameraBounds.value = _view;
+		#end
 	}
 
 	/*override function __createGLProgram(vertexSource:String, fragmentSource:String):GLProgram
@@ -504,6 +528,7 @@ class RainShader extends FlxFixedShader
 	  }
 	}*/
 
+	#if !flash
 	@:access(openfl.display.ShaderParameter)
 	function addFloatUniform(name:String, length:Int):ShaderParameter<Float>
 	{
@@ -517,4 +542,5 @@ class RainShader extends FlxFixedShader
 		__paramFloat.push(res);
 		return res;
 	}
+	#end
 }

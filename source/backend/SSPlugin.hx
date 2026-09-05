@@ -221,10 +221,12 @@ class SSPlugin extends flixel.FlxBasic
 		if (daContainer == null)
 			return;
 
+		#if !flash
 		@:privateAccess
 		for (parent in [daContainer, flashSprite, screenshotSprite])
 			for (child in parent.__children)
 				parent.removeChild(child);
+		#end
 
 		daContainer = null;
 		flashSprite = null;

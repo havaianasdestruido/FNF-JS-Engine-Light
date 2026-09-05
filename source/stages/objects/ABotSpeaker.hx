@@ -131,6 +131,7 @@ class ABotSpeaker extends FlxSpriteGroup
 	#if funkin.vis
 	public function initAnalyzer()
 	{
+		#if !flash
 		@:privateAccess
 		#if (openfl > "9.2.2")
 		analyzer = new SpectralAnalyzer(snd._channel.__audioSource, 7, 0.1, 40);
@@ -142,6 +143,7 @@ class ABotSpeaker extends FlxSpriteGroup
 		// On desktop it uses FFT stuff that isn't as optimized as the direct browser stuff we use on HTML5
 		// So we want to manually change it!
 		analyzer.fftN = 256;
+		#end
 		#end
 	}
 	#end

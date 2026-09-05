@@ -125,7 +125,12 @@ class FPSCounter extends TextField
       {
         _lastRainbowPhase = timeColor;
         var newColor:Int = FlxColor.fromHSB(timeColor, 1, 1);
+        #if flash
+        var newColorUInt:UInt = newColor;
+        if (newColorUInt != textColor) textColor = newColorUInt;
+        #else
         if (newColor != textColor) textColor = newColor;
+        #end
       }
     } else
     {
@@ -135,7 +140,12 @@ class FPSCounter extends TextField
       else if (currentFPS <= ClientPrefs.framerate / 2) newColor = 0xFFFFFF00;
       else newColor = 0xFFFFFFFF;
 
+      #if flash
+      var newColorUInt2:UInt = newColor;
+      if (newColorUInt2 != textColor) textColor = newColorUInt2;
+      #else
       if (newColor != textColor) textColor = newColor;
+      #end
     }
   }
 

@@ -158,6 +158,14 @@ class PixelSplashShaderRef {
 
 class PixelSplashShader extends FlxFixedShader
 {
+	#if flash
+	public var r:Dynamic = {};
+	public var g:Dynamic = {};
+	public var b:Dynamic = {};
+	public var mult:Dynamic = {};
+	public var uBlocksize:Dynamic = {};
+	#end
+
 	@:glFragmentHeader('
 		#pragma header
 

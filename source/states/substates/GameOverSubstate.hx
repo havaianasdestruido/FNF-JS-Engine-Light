@@ -89,7 +89,7 @@ class GameOverSubstate extends MusicBeatSubstate
 		doTween({"scale.x": 1.196, "scale.y": 1.196}, frameDur, {
 			onComplete: (_)->{ 
 				if (!isEnding) 
-					FlxG.sound.play(Paths.sound(genericSound), false);
+					FlxG.sound.play(Paths.sound(genericSound), 1, false);
 			}}
 		);
 		doTween({"scale.x": 1.1, "scale.y": 1.1}, frameDur*35);

@@ -134,11 +134,13 @@ class Main extends Sprite
       game.skipSplash, game.startFullscreen);
     // Literally just from Vanilla FNF but I implemented it my own way. -Torch
     // torch is my friend btw :3 -moxie
+    #if !FLX_NO_SOUND_TRAY
     @:privateAccess {
       final soundFrontEnd:flixel.system.frontEnds.SoundFrontEnd = new objects.CustomSoundTray.CustomSoundFrontEnd();
       FlxG.sound = soundFrontEnd;
       funkinGame._customSoundTray = objects.CustomSoundTray.CustomSoundTray;
     }
+    #end
 
     addChild(funkinGame);
 
@@ -203,10 +205,12 @@ class Main extends Sprite
 
   static function resetSpriteCache(sprite:Sprite):Void
   {
+    #if !flash
     @:privateAccess {
       sprite.__cacheBitmap = null;
       sprite.__cacheBitmapData = null;
     }
+    #end
   }
 
   public static function changeFPSColor(color:FlxColor)

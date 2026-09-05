@@ -71,7 +71,7 @@ class NoteSplashDebugState extends MusicBeatState
 		var txtx = 60;
 		var txty = 640;
 
-		var imageName:FlxText = new FlxText(txtx, txty - 120, 'Image Name:', 16);
+		var imageName:FlxText = new FlxText(txtx, txty - 120, 0, 'Image Name:', 16);
 		add(imageName);
 
 		imageInputText = new FlxInputText(txtx, txty - 100, 360, defaultTexture, 16);
@@ -109,7 +109,7 @@ class NoteSplashDebugState extends MusicBeatState
 		};
 		add(imageInputText);
 
-		var animName:FlxText = new FlxText(txtx, txty, 'Animation Name:', 16);
+		var animName:FlxText = new FlxText(txtx, txty, 0, 'Animation Name:', 16);
 		add(animName);
 
 		nameInputText = new FlxInputText(txtx, txty + 20, 360, '', 16);

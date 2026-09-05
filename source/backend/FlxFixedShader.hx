@@ -21,6 +21,7 @@ class FlxFixedShader extends OriginalFlxShader
 		super();
 	}
 
+	#if !flash
 	@:noCompletion private override function __initGL():Void
 	{
 		if (__glSourceDirty || __paramBool == null)
@@ -172,4 +173,21 @@ class FlxFixedShader extends OriginalFlxShader
 			}
 		}
 	}
+	#end
 }
+
+#if flash
+/**
+ * Minimal stand-in for the GLSL uniform parameters that OpenFL auto-generates
+ * on non-Flash targets. The Flash target renders with software blitting, so the
+ * uniforms are inert containers that let gameplay code compile and run unchanged.
+ */
+class FlashShaderValue
+{
+	public var value:Array<Dynamic> = [];
+
+	public function new():Void
+	{
+	}
+}
+#end

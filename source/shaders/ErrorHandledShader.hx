@@ -3,8 +3,8 @@ package shaders;
 import flixel.system.FlxAssets.FlxShader;
 #if (!flash)
 import flixel.addons.display.FlxRuntimeShader;
-#end
 import lime.graphics.opengl.GLProgram;
+#end
 #if !flash
 import lime.app.Application;
 #end
@@ -23,6 +23,7 @@ class ErrorHandledShader extends FlxShader implements IErrorHandler
 		super();
 	}
 
+#if !flash
 	override function __createGLProgram(vertexSource:String, fragmentSource:String):GLProgram
 	{
 		try
@@ -36,6 +37,7 @@ class ErrorHandledShader extends FlxShader implements IErrorHandler
 			return null;
 		}
 	}
+	#end
 
 	public static function crashSave(shaderName:String, error:Dynamic, onError:Dynamic) // prevent the app from dying immediately
 	{
@@ -107,6 +109,14 @@ class ErrorHandledRuntimeShader implements IErrorHandler
 	public function new(?shaderName:String, ?fragmentSource:String, ?vertexSource:String)
 	{
 		this.shaderName = shaderName;
+	}
+
+	public function setFloat(name:String, value:Float):Void
+	{
+	}
+
+	public function setBool(name:String, value:Bool):Void
+	{
 	}
 }
 #end
