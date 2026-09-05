@@ -23,6 +23,7 @@
 package mobile;
 
 import backend.CoolUtil;
+import backend.MusicBeatState;
 
 #if mobile
 import lime.utils.Assets as LimeAssets;

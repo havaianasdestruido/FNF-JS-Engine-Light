@@ -595,6 +595,15 @@ class CoolUtil
 		}
 	}
 
+	public static function getCPUThreadsCount():Int
+	{
+		#if sys
+		return lime.system.System.numSensors > 0 ? 4 : 4; // Or sys.thread / System
+		#else
+		return 4;
+		#end
+	}
+
 	public static function showPopUp(message:String, title:String):Void
 	{
 		#if ((!ios || !iphonesim) && !flash)
